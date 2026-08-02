@@ -12,13 +12,13 @@
       </div>
 
       <div class="filter-group">
-        <!-- Custom Dropdown 1: Usage Status -->
+        <!-- Custom Dropdown 1: Binary Usage Status -->
         <div class="custom-select-wrapper">
           <i class="fa-solid fa-layer-group select-icon"></i>
           <select v-model="selectedStatus" class="custom-select">
             <option value="all">All Statuses</option>
-            <option value="main_page">Main Page</option>
-            <option value="draft">Draft</option>
+            <option value="1">Published</option>
+            <option value="0">Draft</option>
           </select>
           <i class="fa-solid fa-chevron-down arrow-icon"></i>
         </div>
@@ -102,6 +102,9 @@
                   <div class="identity-info">
                     <div class="hairstyles-title">{{ item.name }}</div>
                     <div class="hairstyles-slug"><code>{{ item.slug }}</code></div>
+                    <div v-if="item.category" class="hairstyles-cat" style="font-size: 0.78rem; color: #7C3AED; font-weight: 600; margin-top: 2px;">
+                      <i class="fa-solid fa-folder-tree"></i> {{ item.category }}
+                    </div>
                     <div v-if="item.variation_name" class="hairstyles-var">
                       <i class="fa-solid fa-code-branch"></i> {{ item.variation_name }}
                     </div>
@@ -109,11 +112,11 @@
                 </div>
               </td>
 
-              <!-- Column 2: Status & Badges -->
+              <!-- Column 2: Binary Status & Badges -->
               <td class="td-cell cell-badges">
                 <div class="badge-group">
-                  <span v-if="item.status === 'main_page'" class="badge-item badge-status-main" title="Main Page Record - Locked from Editing">
-                    <i class="fa-solid fa-lock"></i> Main Page
+                  <span v-if="item.status === 1 || item.status === '1' || item.status === 'main_page'" class="badge-item badge-status-main" title="Published Record - Locked from Editing">
+                    <i class="fa-solid fa-lock"></i> Published
                   </span>
                   <span v-else class="badge-item badge-status-draft">
                     <i class="fa-solid fa-file-pen"></i> Draft
@@ -171,15 +174,14 @@
                 </div>
               </td>
 
-              <!-- Column 6: Actions (Edit Locked for Main Page Records) -->
+              <!-- Column 6: Actions (Edit Locked for Published status: 1) -->
               <td class="td-cell cell-actions" style="text-align: right;">
                 <div class="actions-wrapper">
-                  <!-- Disabled/Locked Edit Button if item.status === 'main_page' -->
                   <button 
-                    v-if="item.status === 'main_page'" 
+                    v-if="item.status === 1 || item.status === '1' || item.status === 'main_page'" 
                     class="btn-action btn-edit btn-locked" 
                     disabled 
-                    title="Main Page records are locked and cannot be edited"
+                    title="Published records (status: 1) are locked and cannot be edited"
                   >
                     <i class="fa-solid fa-lock"></i>
                     <span>Locked</span>
@@ -368,10 +370,15 @@ const filteredHairstyles = computed(() => {
     const matchesSearch = !q || 
       item.name?.toLowerCase().includes(q) || 
       item.slug?.toLowerCase().includes(q) ||
+      item.category?.toLowerCase().includes(q) ||
       item.faceshape?.toLowerCase().includes(q) ||
       item.description?.toLowerCase().includes(q);
 
-    const matchesStatus = selectedStatus.value === "all" || (item.status || "draft") === selectedStatus.value;
+    const isPublished = item.status === 1 || item.status === "1" || item.status === "main_page";
+    const matchesStatus = selectedStatus.value === "all" || 
+      (selectedStatus.value === "1" && isPublished) ||
+      (selectedStatus.value === "0" && !isPublished);
+
     const matchesShape = selectedShape.value === "all" || item.faceshape === selectedShape.value;
     const matchesGender = selectedGender.value === "all" || item.gender === selectedGender.value;
 
@@ -406,8 +413,8 @@ const visiblePageNumbers = computed(() => {
 
 const editHairstyle = (id) => {
   const targetItem = hairstyles.value.find(h => h.id === id);
-  if (targetItem && targetItem.status === 'main_page') {
-    emit("notify", { message: "Main Page records are locked from editing.", type: "error" });
+  if (targetItem && (targetItem.status === 1 || targetItem.status === "1" || targetItem.status === "main_page")) {
+    emit("notify", { message: "Published records (status: 1) are locked from editing.", type: "error" });
     return;
   }
   router.push(`/edit/${id}`);

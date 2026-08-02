@@ -2,12 +2,12 @@
   <section class="form-pane">
     <form @submit.prevent="handleSubmit" class="data-form">
 
-      <!-- Locked Warning Banner if record is Main Page -->
+      <!-- Locked Warning Banner if record is Published (status = 1) -->
       <div v-if="isLockedFromEdit" class="locked-banner">
         <i class="fa-solid fa-lock lock-banner-icon"></i>
         <div>
-          <h3>Main Page Record - Locked from Editing</h3>
-          <p>This record is marked for <strong>Main Page</strong> usage. Main Page records are protected and cannot be edited in the Data Collector.</p>
+          <h3>Published Record - Locked from Editing</h3>
+          <p>This record is marked as <strong>Published</strong>. Published records are protected and cannot be edited in the Data Collector.</p>
         </div>
       </div>
 
@@ -29,9 +29,9 @@
               <label>Usage Status <span class="required">*</span></label>
               <div class="custom-select-wrapper">
                 <i class="fa-solid fa-layer-group select-icon"></i>
-                <select v-model="formData.status" :disabled="isSubmitting || isLockedFromEdit" class="custom-select">
-                  <option value="draft">Draft (Editable)</option>
-                  <option value="main_page">Main Page (Locked once saved)</option>
+                <select v-model.number="formData.status" :disabled="isSubmitting || isLockedFromEdit" class="custom-select">
+                  <option :value="0">Draft (Editable)</option>
+                  <option :value="1">Published (Locked once saved)</option>
                 </select>
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
               </div>
@@ -52,6 +52,38 @@
             <div class="form-group">
               <label>Variation Name</label>
               <input type="text" v-model="formData.variation_name" :disabled="isSubmitting || isLockedFromEdit" placeholder="e.g. Low Taper Side Part">
+            </div>
+
+            <div class="form-group">
+              <label>Hairstyle Category</label>
+              <input type="text" v-model="formData.category" list="category-list" :disabled="isSubmitting || isLockedFromEdit" placeholder="e.g. Side Part, Bob Cut, Quiff">
+              <datalist id="category-list">
+                <option value="Side Part"></option>
+                <option value="Textured Crop"></option>
+                <option value="Quiff"></option>
+                <option value="Slick Back"></option>
+                <option value="Curtains"></option>
+                <option value="Pompadour"></option>
+                <option value="Faux Hawk"></option>
+                <option value="Crew Cut"></option>
+                <option value="Textured Fringe"></option>
+                <option value="Ivy League"></option>
+                <option value="Bob Cut"></option>
+                <option value="Layered Hair"></option>
+                <option value="Pixie Cut"></option>
+                <option value="Lob"></option>
+                <option value="Shag Hair"></option>
+                <option value="Wolf Cut"></option>
+                <option value="Asymmetrical Cut"></option>
+                <option value="Wavy Hair"></option>
+                <option value="Side-Part Styles"></option>
+                <option value="Chin-Length Hair"></option>
+                <option value="Bangs"></option>
+                <option value="Shoulder-Length Hair"></option>
+                <option value="Medium-Length Hair"></option>
+                <option value="Curly Hair"></option>
+                <option value="Volume Styles"></option>
+              </datalist>
             </div>
 
             <div class="form-group" :class="{'has-error': errors.faceshape}">
@@ -297,9 +329,10 @@ const faceShapeKeys = [
 
 const formData = reactive({
   id: null,
-  status: "draft",
+  status: 0, // 0 = Draft (Editable), 1 = Published (Not Editable)
   name: "",
   slug: "",
+  category: "",
   variation_name: "",
   faceshape: "oval",
   gender: "male",
@@ -348,9 +381,11 @@ const loadRecordForEdit = async (id) => {
 
     if (record) {
       formData.id = record.id;
-      formData.status = record.status || "draft";
+      // Binary status logic: 0 = draft, 1 = published
+      formData.status = (record.status === 1 || record.status === "1" || record.status === "main_page") ? 1 : 0;
       formData.name = record.name || "";
       formData.slug = record.slug || "";
+      formData.category = record.category || "";
       formData.variation_name = record.variation_name || "";
       formData.faceshape = record.faceshape || "oval";
       formData.gender = record.gender || "male";
@@ -365,9 +400,9 @@ const loadRecordForEdit = async (id) => {
       formData.reasons = record.reasons && record.reasons.length ? [...record.reasons] : [""];
       formData.tips = record.tips && record.tips.length ? [...record.tips] : [""];
 
-      if (formData.status === 'main_page') {
+      if (formData.status === 1) {
         isLockedFromEdit.value = true;
-        emit("notify", { message: "🔒 Main Page record is locked from editing.", type: "info" });
+        emit("notify", { message: "🔒 Published record (status: 1) is locked from editing.", type: "info" });
       }
 
       userEditedSlug.value = true;
@@ -449,7 +484,7 @@ const validateForm = () => {
 
 const handleSubmit = async () => {
   if (isLockedFromEdit.value) {
-    emit("notify", { message: "Main Page records cannot be edited.", type: "error" });
+    emit("notify", { message: "Published records (status: 1) cannot be edited.", type: "error" });
     return;
   }
 
@@ -488,9 +523,10 @@ const handleSubmit = async () => {
     uploadProgress.percentage = 90;
 
     const record = {
-      status: formData.status,
+      status: Number(formData.status), // 0 = Draft, 1 = Published
       name: formData.name.trim(),
       slug: formData.slug.trim(),
+      category: formData.category.trim(),
       variation_name: formData.variation_name.trim() || formData.name.trim(),
       faceshape: formData.faceshape,
       ideal_shape: formData.faceshape,
