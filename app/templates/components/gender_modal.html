@@ -1,0 +1,29 @@
+<!-- Gender Selection Modal Component -->
+<div class="modal-backdrop" id="modal-gender-select">
+  <div class="modal-card" style="max-width: 480px; text-align: center; padding: 32px 28px; border-radius: 20px;">
+    <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--purple-light); color: var(--purple-primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 16px; box-shadow: var(--shadow-sm);">
+      <i class="fa-solid fa-user-gear"></i>
+    </div>
+
+    <h3 style="font-size: 1.45rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Select Gender Preference</h3>
+    <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 24px; line-height: 1.5;">
+      Which hairstyle collection would you like our AI to analyze and recommend for your face shape?
+    </p>
+
+    <div class="grid-12" style="gap: 16px;">
+      <!-- Female Option Card -->
+      <button class="col-6 col-sm-12 gender-modal-option" id="gender-opt-female" data-gender="female" style="background: var(--bg-subtle); border: 2px solid var(--border-light); border-radius: var(--radius-md); padding: 22px 16px; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <div style="font-size: 2.2rem; line-height: 1;"><i class="fa-solid fa-venus" style="color: #EC4899;"></i></div>
+        <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);">Female Styles</div>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">Bobs, Lobs & Soft Layers</span>
+      </button>
+
+      <!-- Male Option Card -->
+      <button class="col-6 col-sm-12 gender-modal-option" id="gender-opt-male" data-gender="male" style="background: var(--bg-subtle); border: 2px solid var(--border-light); border-radius: var(--radius-md); padding: 22px 16px; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <div style="font-size: 2.2rem; line-height: 1;"><i class="fa-solid fa-mars" style="color: #0284C7;"></i></div>
+        <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);">Male Styles</div>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">Crops, Fades & Side Parts</span>
+      </button>
+    </div>
+  </div>
+</div>

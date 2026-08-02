@@ -1,3 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Shape and Shade UI loaded');
-});
+/* ==========================================================================
+   StyleMe - Global Application Utilities
+   ========================================================================== */
+
+console.log("StyleMe Application Loaded.");

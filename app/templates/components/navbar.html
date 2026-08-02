@@ -1,0 +1,41 @@
+<!-- Header Navigation Component -->
+<header class="navbar">
+  <div class="container nav-container">
+    <a href="{{ url_for('index') }}" class="brand-logo">
+      <div class="logo-icon">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+      <span>Style<span class="gradient-text">Me</span></span>
+    </a>
+
+    <nav>
+      <ul class="nav-links">
+        <li>
+          <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Home</a>
+        </li>
+        <li>
+          <a href="{{ url_for('recommendation') }}" class="nav-link {% if request.endpoint == 'recommendation' %}active{% endif %}">Recommendation</a>
+        </li>
+        <li>
+          <a href="{{ url_for('hairstyles') }}" class="nav-link {% if request.endpoint == 'hairstyles' %}active{% endif %}">All Hairstyles</a>
+        </li>
+        <li>
+          <a href="{{ url_for('color_analysis') }}" class="nav-link {% if request.endpoint == 'color_analysis' %}active{% endif %}">Color Analysis</a>
+        </li>
+        <li>
+          <a href="{{ url_for('about') }}" class="nav-link {% if request.endpoint == 'about' %}active{% endif %}">About Us</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="nav-user-actions">
+      <button class="icon-btn" aria-label="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notification-dot"></span>
+      </button>
+      <div class="user-avatar" title="User Profile">
+        <img src="{{ url_for('static', filename='images/hero_model.jpg') }}" alt="User Profile">
+      </div>
+    </div>
+  </div>
+</header>
