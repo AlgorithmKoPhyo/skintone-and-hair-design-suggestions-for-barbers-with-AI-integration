@@ -54,6 +54,38 @@
               <input type="text" v-model="formData.variation_name" :disabled="isSubmitting || isLockedFromEdit" placeholder="e.g. Low Taper Side Part">
             </div>
 
+            <div class="form-group">
+              <label>Hairstyle Category</label>
+              <input type="text" v-model="formData.category" list="category-list" :disabled="isSubmitting || isLockedFromEdit" placeholder="e.g. Side Part, Bob Cut, Quiff">
+              <datalist id="category-list">
+                <option value="Side Part"></option>
+                <option value="Textured Crop"></option>
+                <option value="Quiff"></option>
+                <option value="Slick Back"></option>
+                <option value="Curtains"></option>
+                <option value="Pompadour"></option>
+                <option value="Faux Hawk"></option>
+                <option value="Crew Cut"></option>
+                <option value="Textured Fringe"></option>
+                <option value="Ivy League"></option>
+                <option value="Bob Cut"></option>
+                <option value="Layered Hair"></option>
+                <option value="Pixie Cut"></option>
+                <option value="Lob"></option>
+                <option value="Shag Hair"></option>
+                <option value="Wolf Cut"></option>
+                <option value="Asymmetrical Cut"></option>
+                <option value="Wavy Hair"></option>
+                <option value="Side-Part Styles"></option>
+                <option value="Chin-Length Hair"></option>
+                <option value="Bangs"></option>
+                <option value="Shoulder-Length Hair"></option>
+                <option value="Medium-Length Hair"></option>
+                <option value="Curly Hair"></option>
+                <option value="Volume Styles"></option>
+              </datalist>
+            </div>
+
             <div class="form-group" :class="{'has-error': errors.faceshape}">
               <label>Primary Face Shape <span class="required">*</span></label>
               <div class="custom-select-wrapper">
@@ -300,6 +332,7 @@ const formData = reactive({
   status: 0, // 0 = Draft (Editable), 1 = Published (Not Editable)
   name: "",
   slug: "",
+  category: "",
   variation_name: "",
   faceshape: "oval",
   gender: "male",
@@ -352,6 +385,7 @@ const loadRecordForEdit = async (id) => {
       formData.status = (record.status === 1 || record.status === "1" || record.status === "main_page") ? 1 : 0;
       formData.name = record.name || "";
       formData.slug = record.slug || "";
+      formData.category = record.category || "";
       formData.variation_name = record.variation_name || "";
       formData.faceshape = record.faceshape || "oval";
       formData.gender = record.gender || "male";
@@ -492,6 +526,7 @@ const handleSubmit = async () => {
       status: Number(formData.status), // 0 = Draft, 1 = Published
       name: formData.name.trim(),
       slug: formData.slug.trim(),
+      category: formData.category.trim(),
       variation_name: formData.variation_name.trim() || formData.name.trim(),
       faceshape: formData.faceshape,
       ideal_shape: formData.faceshape,

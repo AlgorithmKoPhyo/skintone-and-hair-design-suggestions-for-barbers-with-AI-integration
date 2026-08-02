@@ -102,6 +102,9 @@
                   <div class="identity-info">
                     <div class="hairstyles-title">{{ item.name }}</div>
                     <div class="hairstyles-slug"><code>{{ item.slug }}</code></div>
+                    <div v-if="item.category" class="hairstyles-cat" style="font-size: 0.78rem; color: #7C3AED; font-weight: 600; margin-top: 2px;">
+                      <i class="fa-solid fa-folder-tree"></i> {{ item.category }}
+                    </div>
                     <div v-if="item.variation_name" class="hairstyles-var">
                       <i class="fa-solid fa-code-branch"></i> {{ item.variation_name }}
                     </div>
@@ -367,6 +370,7 @@ const filteredHairstyles = computed(() => {
     const matchesSearch = !q || 
       item.name?.toLowerCase().includes(q) || 
       item.slug?.toLowerCase().includes(q) ||
+      item.category?.toLowerCase().includes(q) ||
       item.faceshape?.toLowerCase().includes(q) ||
       item.description?.toLowerCase().includes(q);
 
