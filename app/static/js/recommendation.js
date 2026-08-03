@@ -366,7 +366,7 @@ function updateRecommendationViewFromDB(data, relatedStyles = []) {
 
   if (galleryContainer && relatedStyles && relatedStyles.length) {
     galleryContainer.innerHTML = relatedStyles.map((style, idx) => `
-      <a href="/hairstyle-detail?style=${style.slug}&gender=${style.gender}" class="style-variation-card col-2 col-md-4 col-sm-6 ${idx === 0 ? 'active' : ''}" data-title="${style.name}" data-img="${style.main_img}" style="text-decoration: none; color: inherit;">
+      <a href="/hairstyle-detail?style=${style.slug}&gender=${style.gender}" class="style-variation-card ${idx === 0 ? 'active' : ''}" data-title="${style.name}" data-img="${style.main_img}" style="text-decoration: none; color: inherit;">
         <div class="var-img-wrapper">
           <img src="${style.main_img}" alt="${style.name}">
         </div>

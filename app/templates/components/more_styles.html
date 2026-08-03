@@ -10,10 +10,10 @@
     </a>
   </div>
 
-  <div class="styles-gallery-grid grid-12" id="more-styles-cards-container">
+  <div class="styles-gallery-grid" id="more-styles-cards-container">
     {% if related_styles %}
       {% for style in related_styles %}
-      <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="style-variation-card col-2 col-md-4 col-sm-6 {% if loop.first %}active{% endif %}" data-title="{{ style.name }}" data-img="{{ style.main_img }}" style="text-decoration: none; color: inherit;">
+      <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="style-variation-card {% if loop.first %}active{% endif %}" data-title="{{ style.name }}" data-img="{{ style.main_img }}" style="text-decoration: none; color: inherit;">
         <div class="var-img-wrapper">
           <img src="{{ style.main_img }}" alt="{{ style.name }}">
         </div>
@@ -30,7 +30,7 @@
       {% endfor %}
     {% else %}
       <!-- Fallback cards if client-rendered via JS -->
-      <div class="style-variation-card col-2 col-md-4 col-sm-6 active" data-title="Classic Bob" data-img="{{ url_for('static', filename='images/classic_bob.jpg') }}">
+      <div class="style-variation-card active" data-title="Classic Bob" data-img="{{ url_for('static', filename='images/classic_bob.jpg') }}">
         <div class="var-img-wrapper">
           <img src="{{ url_for('static', filename='images/classic_bob.jpg') }}" alt="Classic Bob">
         </div>
