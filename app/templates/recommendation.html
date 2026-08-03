@@ -51,9 +51,21 @@
         <div class="ai-preview-tag">
           <i class="fa-solid fa-wand-magic-sparkles"></i> AI Preview
         </div>
-        <div class="drag-upload-hint-overlay" id="btn-quick-upload">
-          <i class="fa-solid fa-cloud-arrow-up"></i> Drop Photo to Analyze
+
+        <!-- Slider Arrow Navigation -->
+        <button class="slider-arrow slider-arrow-prev" id="rec-slider-prev" aria-label="Previous Angle" type="button">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="slider-arrow slider-arrow-next" id="rec-slider-next" aria-label="Next Angle" type="button">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Slider Angle Badge & Pagination Dots -->
+        <div class="slider-controls-bar">
+          <span class="slider-angle-label" id="rec-slider-label">Front View</span>
+          <div class="slider-dots-container" id="rec-slider-dots"></div>
         </div>
+
       </div>
 
 

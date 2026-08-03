@@ -1738,3 +1738,125 @@ img {
   background: var(--purple-primary);
   color: white;
 }
+
+/* ==========================================================================
+   StyleMe - Interactive Image Slider Overlay Controls (Fade on Hover)
+   ========================================================================== */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) scale(0.9);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 8;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.rec-preview-wrapper:hover .slider-arrow {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+
+.slider-arrow:hover {
+  background: var(--purple-primary) !important;
+  border-color: var(--purple-primary) !important;
+  transform: translateY(-50%) scale(1.1) !important;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45) !important;
+}
+
+.slider-arrow:active {
+  transform: translateY(-50%) scale(0.95) !important;
+}
+
+.slider-arrow-prev {
+  left: 14px;
+}
+
+.slider-arrow-next {
+  right: 14px;
+}
+
+.slider-controls-bar {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 8;
+  opacity: 0.4;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.rec-preview-wrapper:hover .slider-controls-bar {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.slider-angle-label {
+  color: #FFFFFF;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.slider-dots-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slider-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.slider-dot:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.slider-dot.active {
+  background: #FFFFFF;
+  width: 18px;
+  border-radius: 9999px;
+}
+
+@media (max-width: 768px) {
+  .slider-arrow {
+    opacity: 0.85;
+    pointer-events: auto;
+    transform: translateY(-50%) scale(1);
+  }
+  .slider-controls-bar {
+    opacity: 0.9;
+    transform: translateX(-50%) translateY(0);
+  }
+}
