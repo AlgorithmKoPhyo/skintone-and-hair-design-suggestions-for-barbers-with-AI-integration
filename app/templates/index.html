@@ -80,10 +80,7 @@
   </div>
 </section>
 
-<!-- Include Reusable Gender Selection Modal -->
-{% include 'components/gender_modal.html' %}
+<!-- gender_modal.html and gender_upload.js are loaded globally via base.html -->
 {% endblock %}
 
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
-{% endblock %}
+{% block scripts %}{% endblock %}

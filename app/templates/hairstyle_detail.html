@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}StyleMe - Hairstyle Detail{% endblock %}
+{% block title %}StyleMe - {{ style_data.name if style_data else 'Hairstyle Detail' }}{% endblock %}
 
 {% block content %}
 <section class="page-view active">
@@ -10,11 +10,12 @@
       <i class="fa-solid fa-arrow-left"></i> Back to Catalog
     </a>
 
-    <!-- Top Header Title Row (Exact same design as recommendation page) -->
+    {% if style_data %}
+    <!-- Top Header Title Row -->
     <div class="rec-header-row">
       <div>
-        <h1 id="detail-style-name">Classic Bob Cut <i class="fa-solid fa-scissors" style="color: var(--purple-primary); font-size: 1.8rem; margin-left: 6px;"></i></h1>
-        <p id="detail-tagline">A timeless chin-length cut enhancing natural balance and symmetry.</p>
+        <h1 id="detail-style-name">{{ style_data.name }} <i class="fa-solid fa-scissors" style="color: var(--purple-primary); font-size: 1.8rem; margin-left: 6px;"></i></h1>
+        <p id="detail-tagline">{{ style_data.tagline or style_data.description }}</p>
       </div>
 
       <div class="face-shape-badge" style="cursor: default;">
@@ -22,17 +23,17 @@
           <i class="fa-solid fa-circle-user"></i>
         </div>
         <div class="badge-text">
-          <span class="badge-title" id="detail-badge-shape">Oval Face Choice</span>
-          <span class="badge-subtitle" id="detail-badge-sub">95% Match Score</span>
+          <span class="badge-title" id="detail-badge-shape">{{ style_data.shape_badge or ('Ideal for ' ~ style_data.faceshape.capitalize() ~ ' Face') }}</span>
+          <span class="badge-subtitle" id="detail-badge-sub">{{ style_data.score_badge or '95% Match Score' }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Main Hairstyle Detail Card (Identical layout to recommendation page) -->
+    <!-- Main Hairstyle Detail Card -->
     <div class="main-rec-card grid-12">
       <!-- Left Column: AI Image Preview (col-5) -->
       <div class="rec-preview-wrapper col-5 col-md-12">
-        <img id="detail-main-img" src="{{ url_for('static', filename='images/classic_bob.jpg') }}" alt="Classic Bob Cut Preview">
+        <img id="detail-main-img" src="{{ style_data.main_img }}" alt="{{ style_data.name }} Preview">
         <div class="ai-preview-tag">
           <i class="fa-solid fa-wand-magic-sparkles"></i> HD Style Preview
         </div>
@@ -42,33 +43,32 @@
       <div class="rec-details-col col-7 col-md-12">
         <div>
           <div class="style-title-group">
-            <h2 id="detail-heading-title">Classic Bob Cut</h2>
-            <div class="style-tagline" id="detail-heading-tagline">Perfect for Oval & Heart Face</div>
+            <h2 id="detail-heading-title">{{ style_data.name }}</h2>
+            <div class="style-tagline" id="detail-heading-tagline">{{ style_data.tagline }}</div>
           </div>
           <p class="style-desc" id="detail-desc-text">
-            A classic bob cut features clean perimeter lines falling between the chin and collarbone. It creates a framing silhouette that enhances cheekbones and balances facial proportions with effortless sophistication.
+            {{ style_data.description }}
           </p>
 
-          <!-- Why it suits you (Suitability Breakdown Box) -->
+          <!-- Face Shape Compatibility / Reasons -->
           <div class="why-suits-box">
             <div class="section-label">Face Shape Compatibility Breakdown</div>
             <ul class="checklist" id="detail-suitability-checklist">
-              <li>
-                <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                <span>Oval Face: <strong style="color: var(--purple-primary);">95% (Ideal)</strong></span>
-              </li>
-              <li>
-                <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                <span>Heart Face: <strong style="color: var(--purple-primary);">92% (Great)</strong></span>
-              </li>
-              <li>
-                <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                <span>Round Face: <strong>85% (Good)</strong></span>
-              </li>
-              <li>
-                <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                <span>Square Face: <strong>80% (Moderate)</strong></span>
-              </li>
+              {% if style_data.suitability %}
+                {% for s in style_data.suitability %}
+                <li>
+                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                  <span>{{ s.shape }}: <strong style="color: var(--purple-primary);">{{ s.score }}</strong></span>
+                </li>
+                {% endfor %}
+              {% elif style_data.reasons %}
+                {% for r in style_data.reasons %}
+                <li>
+                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                  <span>{{ r }}</span>
+                </li>
+                {% endfor %}
+              {% endif %}
             </ul>
           </div>
 
@@ -76,26 +76,26 @@
           <div class="details-grid-table">
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-ruler-vertical"></i> Hair Length</span>
-              <span class="detail-val" id="detail-spec-length">Chin to Shoulder</span>
+              <span class="detail-val" id="detail-spec-length">{{ style_data.hair_length or 'Medium' }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-scissors"></i> Hair Texture</span>
-              <span class="detail-val" id="detail-spec-texture">Straight / Wavy</span>
+              <span class="detail-val" id="detail-spec-texture">{{ style_data.hair_texture or 'Layered' }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-clock"></i> Styling Time</span>
-              <span class="detail-val" id="detail-spec-time">10 - 15 mins</span>
+              <span class="detail-val" id="detail-spec-time">{{ style_data.styling_time or '10 mins' }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-hand-sparkles"></i> Maintenance</span>
-              <span class="detail-val" id="detail-spec-maint">Easy</span>
+              <span class="detail-val" id="detail-spec-maint">{{ style_data.maintenance or 'Easy' }}</span>
             </div>
           </div>
         </div>
 
         <!-- Action Buttons Bar -->
         <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
-          <a href="{{ url_for('recommendation') }}" class="btn-action-camera" id="detail-btn-try" style="flex: 1; text-align: center;">
+          <a href="{{ url_for('recommendation', gender=style_data.gender, shape=style_data.faceshape) }}" class="btn-action-camera" id="detail-btn-try" style="flex: 1; text-align: center;">
             <i class="fa-solid fa-wand-magic-sparkles"></i> Try On With AI Recommendation
           </a>
           <a href="{{ url_for('camera') }}" class="btn-action-upload" style="flex: 1; text-align: center;">
@@ -105,39 +105,29 @@
       </div>
     </div>
 
-    <!-- Secondary Row: Multi-Angle Views & Styling Tips (12 Grid Layout: col-7 Angles, col-5 Tips) -->
+    <!-- Secondary Row: Multi-Angle Views & Styling Tips -->
     <div class="secondary-rec-grid grid-12">
       <!-- Angles View -->
       <div class="angles-box col-7 col-md-12">
         <h3>View from Different Angles</h3>
         <div class="angles-thumbnails-grid grid-12">
-          <div class="angle-card col-3 col-sm-6 active" data-detail-img="{{ url_for('static', filename='images/classic_bob.jpg') }}">
-            <div class="angle-thumb-wrapper">
-              <img src="{{ url_for('static', filename='images/classic_bob.jpg') }}" alt="Front Angle">
+          {% if style_data.angles %}
+            {% for angle in style_data.angles %}
+            <div class="angle-card col-3 col-sm-6 {% if loop.first %}active{% endif %}" data-detail-img="{{ angle.img }}">
+              <div class="angle-thumb-wrapper">
+                <img src="{{ angle.img }}" alt="{{ angle.name }} Angle">
+              </div>
+              <span class="angle-name">{{ angle.name }}</span>
             </div>
-            <span class="angle-name">Front</span>
-          </div>
-
-          <div class="angle-card col-3 col-sm-6" data-detail-img="{{ url_for('static', filename='images/bob_cut_side.jpg') }}">
-            <div class="angle-thumb-wrapper">
-              <img src="{{ url_for('static', filename='images/bob_cut_side.jpg') }}" alt="Side Angle">
+            {% endfor %}
+          {% else %}
+            <div class="angle-card col-3 col-sm-6 active" data-detail-img="{{ style_data.main_img }}">
+              <div class="angle-thumb-wrapper">
+                <img src="{{ style_data.main_img }}" alt="Front Angle">
+              </div>
+              <span class="angle-name">Front View</span>
             </div>
-            <span class="angle-name">Side</span>
-          </div>
-
-          <div class="angle-card col-3 col-sm-6" data-detail-img="{{ url_for('static', filename='images/bob_cut_34.jpg') }}">
-            <div class="angle-thumb-wrapper">
-              <img src="{{ url_for('static', filename='images/bob_cut_34.jpg') }}" alt="3/4 Angle">
-            </div>
-            <span class="angle-name">3/4 View</span>
-          </div>
-
-          <div class="angle-card col-3 col-sm-6" data-detail-img="{{ url_for('static', filename='images/bob_cut_back.jpg') }}">
-            <div class="angle-thumb-wrapper">
-              <img src="{{ url_for('static', filename='images/bob_cut_back.jpg') }}" alt="Back Angle">
-            </div>
-            <span class="angle-name">Back</span>
-          </div>
+          {% endif %}
         </div>
       </div>
 
@@ -150,12 +140,24 @@
           <span>Styling & Care Tips</span>
         </div>
         <ul class="tips-list" id="detail-tips-list">
-          <li>Use a round brush for natural volume.</li>
-          <li>Tuck behind the ear for a chic look.</li>
-          <li>Add soft waves for a more relaxed and feminine vibe.</li>
-          <li>A lightweight serum keeps hair smooth and shiny.</li>
+          {% if style_data.tips %}
+            {% for tip in style_data.tips %}
+            <li>{{ tip }}</li>
+            {% endfor %}
+          {% else %}
+            <li>Use texturizing product for natural separation.</li>
+            <li>Schedule trims every 4-6 weeks for crisp shape.</li>
+          {% endif %}
         </ul>
       </div>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 60px 20px;">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--purple-primary); margin-bottom: 16px;"></i>
+      <h3>Hairstyle Not Found</h3>
+      <p style="color: var(--text-muted);">The requested hairstyle could not be loaded.</p>
+    </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

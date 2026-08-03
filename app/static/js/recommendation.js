@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchRecommendationFromAPI(gender, shape) {
   try {
     const res = await fetch(`/api/recommendation?gender=${gender}&shape=${shape}`);
+    console.log("THis is the result", res)
     const json = await res.json();
     if (json.status === 'success' && json.data) {
       updateRecommendationViewFromDB(json.data, json.related_styles);

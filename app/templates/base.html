@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}StyleMe - AI-Powered Beauty & Hairstyle Recommendation{% endblock %}</title>
-  <meta name="description" content="Get personalized AI-powered hairstyle and color recommendations based on your unique face shape and skin tone features.">
-  
+  <meta name="description"
+    content="Get personalized AI-powered hairstyle and color recommendations based on your unique face shape and skin tone features.">
+
   <!-- Font Awesome 6 Icon Package -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <!-- Application CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
   <!-- Navigation Header Include -->
@@ -25,8 +28,13 @@
   <!-- Footer Include -->
   {% include 'components/footer.html' %}
 
+  <!-- Global Gender Selection Modal (visible on all pages) -->
+  {% include 'components/gender_modal.html' %}
+
   <!-- Application Scripts -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/gender_upload.js') }}"></script>
   {% block scripts %}{% endblock %}
 </body>
+
 </html>

@@ -65,187 +65,44 @@
 
     <!-- Hairstyles Grid (12-Column System: col-4 per card) -->
     <div class="grid-12" id="hairstyles-catalog-grid" style="gap: 28px;">
-      
-      <!-- 1. Classic Bob Cut -->
-      <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="female" data-shape="oval" data-title="Classic Bob Cut">
-        <div class="catalog-card-inner">
-          <div class="catalog-img-wrapper">
-            <img src="{{ url_for('static', filename='images/classic_bob.jpg') }}" alt="Classic Bob Cut" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-            <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-              <i class="fa-solid fa-venus"></i> Female
-            </span>
-            <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-              Ideal for Oval Face
-            </span>
-          </div>
-          <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Classic Bob Cut</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-              Chin-length classic haircut with clean ends that frames oval faces with timeless symmetry.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Chin Length</span>
-              <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                <i class="fa-solid fa-star"></i> 95% Match
+      {% if hairstyles %}
+        {% for style in hairstyles %}
+        <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="{{ style.gender }}" data-shape="{{ style.faceshape }}" data-title="{{ style.name }}">
+          <div class="catalog-card-inner">
+            <div class="catalog-img-wrapper" style="background: var(--bg-subtle, #f8fafc); display: flex; align-items: center; justify-content: center; height: 260px; overflow: hidden; border-radius: var(--radius-md) var(--radius-md) 0 0; position: relative;">
+              <img src="{{ style.main_img }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: contain; object-position: center; transition: transform 0.5s ease;">
+              <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
+                {% if style.gender == 'female' %}<i class="fa-solid fa-venus"></i> Female{% else %}<i class="fa-solid fa-mars"></i> Male{% endif %}
+              </span>
+              <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                {{ style.shape_badge or ('Ideal for ' ~ style.faceshape.capitalize() ~ ' Face') }}
               </span>
             </div>
-            <a href="{{ url_for('hairstyle_detail', style='classic_bob', gender='female') }}" class="btn-details-pill">
-              <i class="fa-solid fa-circle-info"></i> View Details
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. Textured Long Bob (Lob) -->
-      <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="female" data-shape="round" data-title="Textured Long Bob">
-        <div class="catalog-card-inner">
-          <div class="catalog-img-wrapper">
-            <img src="{{ url_for('static', filename='images/textured_bob.jpg') }}" alt="Textured Long Bob" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-            <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-              <i class="fa-solid fa-venus"></i> Female
-            </span>
-            <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-              Ideal for Round Face
-            </span>
-          </div>
-          <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Textured Long Bob (Lob)</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-              Collarbone length with subtle layers that elongate round faces and soften cheek curves.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Collarbone</span>
-              <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                <i class="fa-solid fa-star"></i> 92% Match
-              </span>
+            <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
+              <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">{{ style.name }}</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
+                {{ style.tagline or style.description }}
+              </p>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
+                <span><i class="fa-solid fa-ruler-vertical"></i> {{ style.hair_length or 'Medium' }}</span>
+                <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
+                  <i class="fa-solid fa-star"></i> {{ style.score_badge or '95% Match' }}
+                </span>
+              </div>
+              <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="btn-details-pill">
+                <i class="fa-solid fa-circle-info"></i> View Details
+              </a>
             </div>
-            <a href="{{ url_for('hairstyle_detail', style='textured_bob', gender='female') }}" class="btn-details-pill">
-              <i class="fa-solid fa-circle-info"></i> View Details
-            </a>
           </div>
         </div>
-      </div>
-
-      <!-- 3. Layered Soft Bob -->
-      <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="female" data-shape="square" data-title="Layered Soft Bob">
-        <div class="catalog-card-inner">
-          <div class="catalog-img-wrapper">
-            <img src="{{ url_for('static', filename='images/layered_bob.jpg') }}" alt="Layered Soft Bob" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-            <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-              <i class="fa-solid fa-venus"></i> Female
-            </span>
-            <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-              Ideal for Square Face
-            </span>
-          </div>
-          <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Layered Soft Bob</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-              Feathered soft layers around the jawline designed to soften strong square angles gracefully.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Past Jawline</span>
-              <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                <i class="fa-solid fa-star"></i> 94% Match
-              </span>
-            </div>
-            <a href="{{ url_for('hairstyle_detail', style='layered_bob', gender='female') }}" class="btn-details-pill">
-              <i class="fa-solid fa-circle-info"></i> View Details
-            </a>
-          </div>
+        {% endfor %}
+      {% else %}
+        <div style="grid-column: span 12; text-align: center; padding: 60px 20px;">
+          <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 16px;"></i>
+          <h3 style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 8px;">No Hairstyles Found</h3>
+          <p style="color: var(--text-muted);">Try adjusting your search query or face shape filters.</p>
         </div>
-      </div>
-
-      <!-- 4. French A-Line Bob -->
-      <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="female" data-shape="heart" data-title="French A-Line Bob">
-        <div class="catalog-card-inner">
-          <div class="catalog-img-wrapper">
-            <img src="{{ url_for('static', filename='images/french_bob.jpg') }}" alt="French A-Line Bob" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-            <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-              <i class="fa-solid fa-venus"></i> Female
-            </span>
-            <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-              Ideal for Heart Face
-            </span>
-          </div>
-          <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">French A-Line Bob</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-              Chic French cut with soft chin fullness to balance forehead width and petite chin lines.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Jaw Length</span>
-              <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                <i class="fa-solid fa-star"></i> 96% Match
-              </span>
-            </div>
-            <a href="{{ url_for('hairstyle_detail', style='french_bob', gender='female') }}" class="btn-details-pill">
-              <i class="fa-solid fa-circle-info"></i> View Details
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. Modern Textured Crop -->
-      <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="male" data-shape="oval" data-title="Textured Crop Fade">
-        <div class="catalog-card-inner">
-          <div class="catalog-img-wrapper">
-            <img src="{{ url_for('static', filename='images/male_crop.jpg') }}" alt="Textured Crop Fade" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-            <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-              <i class="fa-solid fa-mars"></i> Male
-            </span>
-            <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-              Ideal for Oval Face
-            </span>
-          </div>
-          <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Textured Crop Fade</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-              Short textured top paired with clean tapered side fade that highlights natural male jawlines.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Short Fade</span>
-              <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                <i class="fa-solid fa-star"></i> 97% Match
-              </span>
-            </div>
-            <a href="{{ url_for('hairstyle_detail', style='male_crop', gender='male') }}" class="btn-details-pill">
-              <i class="fa-solid fa-circle-info"></i> View Details
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. Classic Side Part -->
-      <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="male" data-shape="square" data-title="Classic Side Part">
-        <div class="catalog-card-inner">
-          <div class="catalog-img-wrapper">
-            <img src="{{ url_for('static', filename='images/male_side_part.jpg') }}" alt="Classic Side Part" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-            <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-              <i class="fa-solid fa-mars"></i> Male
-            </span>
-            <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-              Ideal for Square Face
-            </span>
-          </div>
-          <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Classic Side Part</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-              Refined side part with subtle taper accentuating masculine jawlines for professional polish.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-              <span><i class="fa-solid fa-ruler-vertical"></i> Short/Medium</span>
-              <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                <i class="fa-solid fa-star"></i> 96% Match
-              </span>
-            </div>
-            <a href="{{ url_for('hairstyle_detail', style='male_side_part', gender='male') }}" class="btn-details-pill">
-              <i class="fa-solid fa-circle-info"></i> View Details
-            </a>
-          </div>
-        </div>
-      </div>
-
+      {% endif %}
     </div>
   </div>
 </section>

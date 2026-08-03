@@ -41,8 +41,13 @@
 
     <!-- Main Recommendation Card (Fetched Directly From SQLite DB) -->
     <div class="main-rec-card grid-12">
-      <div class="rec-preview-wrapper col-5 col-md-12" id="rec-drag-drop-zone" style="cursor: pointer; position: relative;">
-        <img id="main-ai-preview-img" src="{{ rec_data.main_img if rec_data else url_for('static', filename='images/classic_bob.jpg') }}" alt="{{ rec_data.name if rec_data else 'Recommended Hairstyle' }}">
+
+      <!-- AI Hairstyle Preview -->
+      <div class="rec-preview-wrapper col-5 col-md-12"
+           id="rec-drag-drop-zone" style="cursor: pointer; position: relative;">
+        <img id="main-ai-preview-img"
+             src="{{ rec_data.main_img if rec_data else url_for('static', filename='images/classic_bob.jpg') }}"
+             alt="{{ rec_data.name if rec_data else 'Recommended Hairstyle' }}">
         <div class="ai-preview-tag">
           <i class="fa-solid fa-wand-magic-sparkles"></i> AI Preview
         </div>
@@ -50,6 +55,7 @@
           <i class="fa-solid fa-cloud-arrow-up"></i> Drop Photo to Analyze
         </div>
       </div>
+
 
       <div class="rec-details-col col-7 col-md-12">
         <div>

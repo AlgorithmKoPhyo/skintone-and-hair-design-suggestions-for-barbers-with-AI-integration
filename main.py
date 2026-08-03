@@ -31,8 +31,12 @@ def recommendation():
     return render_template('recommendation.html', gender=gender, shape=shape, user_img=user_img, rec_data=rec_data, related_styles=related_styles)
 
 @app.route('/hairstyles')
-def hairstyles():          
-    return render_template('hairstyles.html')
+def hairstyles():
+    gender = request.args.get('gender', 'all')
+    shape = request.args.get('shape', 'all')
+    search = request.args.get('search', '')
+    all_styles = hairstyle_service.get_all_hairstyles(gender=gender, shape=shape, search=search)
+    return render_template('hairstyles.html', hairstyles=all_styles, selected_gender=gender, selected_shape=shape, search=search)
 
 @app.route('/hairstyle-detail')
 def hairstyle_detail():
@@ -70,56 +74,83 @@ def api_recommendation():
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    gender = request.form.get('gender', 'female')
+    gender        = request.form.get('gender', 'female')
     analysis_type = request.form.get('analysis_type', 'hairstyle')
-    
+
+    # ── Save uploaded image ─────────────────────────────────────────────────
     timestamp = int(time.time())
-    filename = f"user_photo_{timestamp}.jpg"
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    filename  = f"user_photo_{timestamp}.jpg"
+    filepath  = os.path.join(UPLOAD_FOLDER, filename)
     saved_url = f"/static/uploads/{filename}"
 
-    # Handle file upload or base64 image data
     if 'image' in request.files and request.files['image'].filename != '':
-        file = request.files['image']
-        file.save(filepath)
-    elif 'image_base64' in request.form and request.form['image_base64'].strip() != '':
+        request.files['image'].save(filepath)
+    elif 'image_base64' in request.form and request.form['image_base64'].strip():
         base64_data = request.form['image_base64']
         if ',' in base64_data:
             base64_data = base64_data.split(',')[1]
         try:
-            image_bytes = base64.b64decode(base64_data)
             with open(filepath, 'wb') as f:
-                f.write(image_bytes)
+                f.write(base64.b64decode(base64_data))
         except Exception as e:
             print("Error decoding base64 image:", e)
-            saved_url = "/static/images/bob_cut_front.jpg"
+            saved_url = ''
     else:
-        saved_url = "/static/images/bob_cut_front.jpg"
+        saved_url = ''
 
-    # Save analysis log entry via Service Layer
+    # ── AI Face Shape Detection (STUB — replace with real model) ───────────
+    # TODO: Replace this block with the actual face_shape_classifier module.
+    # The classifier should accept `filepath` and return:
+    #   detected_shape : str  — one of "oval", "round", "square", "heart"
+    #   confidence     : float — 0.0 to 1.0
+    #
+    # Example integration once model is ready:
+    #   from modules.face_shape_classifier import FaceShapeClassifier
+    #   classifier = FaceShapeClassifier()
+    #   detected_shape, confidence = classifier.predict(filepath)
+    #
+    detected_shape = "oval"   # ← stub: replace with classifier output
+    confidence     = 0.96     # ← stub: replace with classifier confidence
+
+    # ── AI Skin Tone Detection (STUB — replace with real model) ────────────
+    # TODO: Replace with skin_tone_classifier module.
+    # from modules.skin_tone_classifier import SkinToneClassifier
+    # undertone = SkinToneClassifier().predict(filepath)
+    undertone = "Warm Autumn"  # ← stub
+
+    # ── Log analysis session ────────────────────────────────────────────────
     hairstyle_service.log_user_analysis(
         user_image_url=saved_url,
-        detected_shape="oval",
+        detected_shape=detected_shape,
         gender=gender,
         analysis_type=analysis_type,
-        confidence=0.96
+        confidence=confidence
     )
 
-    # Classification Response
-    classification = {
-        "status": "success",
-        "detected_face_shape": "oval",
-        "face_shape_title": "Oval Face",
-        "face_shape_subtitle": "Balanced & Versatile",
-        "undertone": "Warm Autumn",
-        "confidence": 0.96,
-        "user_image_url": saved_url,
-        "gender": gender,
-        "analysis_type": analysis_type,
-        "redirect_url": f"/recommendation?user_img={saved_url}&shape=oval&gender={gender}" if analysis_type == 'hairstyle' else f"/color-analysis?user_img={saved_url}&gender={gender}"
-    }
+    # ── Build redirect URL ──────────────────────────────────────────────────
+    if analysis_type == 'hairstyle':
+        redirect_url = (
+            f"/recommendation?user_img={saved_url}"
+            f"&shape={detected_shape}&gender={gender}"
+        )
+    else:
+        redirect_url = (
+            f"/color-analysis?user_img={saved_url}"
+            f"&undertone={undertone}&gender={gender}"
+        )
 
-    return jsonify(classification)
+    return jsonify({
+        "status":             "success",
+        "detected_face_shape": detected_shape,
+        "face_shape_title":    detected_shape.capitalize() + " Face",
+        "undertone":           undertone,
+        "confidence":          confidence,
+        "user_image_url":      saved_url,
+        "gender":              gender,
+        "analysis_type":       analysis_type,
+        "redirect_url":        redirect_url
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=5050)
