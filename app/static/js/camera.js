@@ -16,6 +16,7 @@ function initLiveCamera() {
   const btnFlipCam = document.getElementById('btn-flip-cam');
   const btnRetake = document.getElementById('btn-retake');
   const btnChooseHairstyle = document.getElementById('btn-choose-hairstyle-trigger');
+  const btnChooseColor = document.getElementById('btn-choose-color-trigger');
   const genderModal = document.getElementById('modal-gender-select');
   const btnOptFemale = document.getElementById('gender-opt-female');
   const btnOptMale = document.getElementById('gender-opt-male');
@@ -39,7 +40,20 @@ function initLiveCamera() {
   // Open Gender Selection Modal when clicking "Choose Hairstyle"
   if (btnChooseHairstyle && genderModal) {
     btnChooseHairstyle.addEventListener('click', () => {
+      const optColor = document.getElementById('opt-color-analysis');
+      if (optColor) optColor.style.display = 'none';
+      const modalTitle = document.getElementById('gender-modal-title');
+      if (modalTitle) modalTitle.textContent = "Select Gender Preference";
+      const modalSubtitle = document.getElementById('gender-modal-subtitle');
+      if (modalSubtitle) modalSubtitle.textContent = "Which hairstyle collection would you like our AI to recommend for your face shape?";
       genderModal.classList.add('active');
+    });
+  }
+
+  // Handle "Choose Color Analysis" directly from camera flow
+  if (btnChooseColor) {
+    btnChooseColor.addEventListener('click', async () => {
+      await submitCapturedPhoto('female', 'color');
     });
   }
 
@@ -192,25 +206,50 @@ function resetCameraState() {
 
 async function submitCapturedPhoto(gender, analysisType) {
   const formData = new FormData();
-  formData.append('image_base64', capturedImageDataUrl);
-  formData.append('gender', gender);
-  formData.append('analysis_type', analysisType);
 
-  try {
-    const res = await fetch('/api/analyze', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    stopCamera();
-    if (data.redirect_url) {
-      window.location.href = data.redirect_url;
-    } else {
+  if (analysisType === 'color') {
+    try {
+      const resBlob = await fetch(capturedImageDataUrl).then(res => res.blob());
+      formData.append('file', resBlob, 'photo.jpg');
+      formData.append('gender', gender);
+      formData.append('analysis_type', analysisType);
+
+      const res = await fetch('/analyze', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      const html = await res.text();
+      stopCamera();
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (err) {
+      console.error("Camera submit error:", err);
+      stopCamera();
       window.location.href = `/recommendation?gender=${gender}`;
     }
-  } catch (err) {
-    console.error("Camera submit error:", err);
-    stopCamera();
-    window.location.href = `/recommendation?gender=${gender}`;
+  } else {
+    formData.append('image_base64', capturedImageDataUrl);
+    formData.append('gender', gender);
+    formData.append('analysis_type', analysisType);
+
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      stopCamera();
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        window.location.href = `/recommendation?gender=${gender}`;
+      }
+    } catch (err) {
+      console.error("Camera submit error:", err);
+      stopCamera();
+      window.location.href = `/recommendation?gender=${gender}`;
+    }
   }
 }

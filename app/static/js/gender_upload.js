@@ -89,8 +89,17 @@
     if (loading) loading.style.display = 'none';
     const btnF = getBtnFemale();
     const btnM = getBtnMale();
+    const btnC = $('opt-color-analysis');
     if (btnF) btnF.disabled = false;
     if (btnM) btnM.disabled = false;
+    if (btnC) {
+      btnC.disabled = false;
+      btnC.style.display = 'flex';
+    }
+    const modalTitle = $('gender-modal-title');
+    if (modalTitle) modalTitle.textContent = "Select Recommendation";
+    const modalSubtitle = $('gender-modal-subtitle');
+    if (modalSubtitle) modalSubtitle.textContent = "Which recommendation would you like our AI to generate?";
 
     const modal = getModal();
     if (modal) modal.classList.add('active');
@@ -104,18 +113,31 @@
   }
 
   // ---- Submit to API -------------------------------------------------------
-  async function submitToAPI(file, gender) {
+  async function submitToAPI(file, gender, analysisType = 'hairstyle') {
     showLoading();
 
     const formData = new FormData();
-    formData.append('image', file);
+    if (analysisType === 'color') {
+      formData.append('file', file, 'photo.jpg');
+    } else {
+      formData.append('image', file);
+    }
     formData.append('gender', gender);
-    formData.append('analysis_type', 'hairstyle');
+    formData.append('analysis_type', analysisType);
 
     try {
-      const res  = await fetch('/api/analyze', { method: 'POST', body: formData });
-      const data = await res.json();
-      window.location.href = data.redirect_url || `/recommendation?gender=${gender}`;
+      if (analysisType === 'color') {
+        const res = await fetch('/analyze', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error('Network response was not ok');
+        const html = await res.text();
+        document.open();
+        document.write(html);
+        document.close();
+      } else {
+        const res  = await fetch('/api/analyze', { method: 'POST', body: formData });
+        const data = await res.json();
+        window.location.href = data.redirect_url || `/recommendation?gender=${gender}`;
+      }
     } catch {
       window.location.href = `/recommendation?gender=${gender}`;
     }
@@ -125,12 +147,13 @@
   function wireGenderButtons() {
     const btnF = getBtnFemale();
     const btnM = getBtnMale();
+    const btnC = $('opt-color-analysis');
 
     if (btnF && !btnF._genderBound) {
       btnF._genderBound = true;
       btnF.addEventListener('click', () => {
         if (!pendingFile) return;
-        submitToAPI(pendingFile, 'female');
+        submitToAPI(pendingFile, 'female', 'hairstyle');
       });
     }
 
@@ -138,7 +161,15 @@
       btnM._genderBound = true;
       btnM.addEventListener('click', () => {
         if (!pendingFile) return;
-        submitToAPI(pendingFile, 'male');
+        submitToAPI(pendingFile, 'male', 'hairstyle');
+      });
+    }
+
+    if (btnC && !btnC._colorBound) {
+      btnC._colorBound = true;
+      btnC.addEventListener('click', () => {
+        if (!pendingFile) return;
+        submitToAPI(pendingFile, 'female', 'color');
       });
     }
 
