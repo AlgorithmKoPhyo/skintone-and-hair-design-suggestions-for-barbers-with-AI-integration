@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__, template_folder='app/templates')
 
@@ -10,6 +10,7 @@ def index():
 @app.route('/result')
 def result():
     return render_template('result.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
