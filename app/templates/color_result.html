@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleMe - Your Color Analysis Result</title>
+    <!-- Font Awesome Icons & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --purple-main: #9066e0;
+            --purple-hover: #7b52cc;
+            --purple-light: #f6f2fc;
+            --purple-gradient: linear-gradient(135deg, #a855f7, #6366f1);
+            --pink-accent: #f06292;
+            --bg-light: #fbfbfe;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #eaeaf0;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow-subtle: 0 10px 30px rgba(144, 102, 224, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* --- Header / Navigation --- */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 8%;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--purple-main);
+            text-decoration: none;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+
+        .btn-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
+            background: #ffffff;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-header:hover {
+            background: var(--purple-light);
+            color: var(--purple-main);
+            border-color: rgba(144, 102, 224, 0.2);
+        }
+
+        .user-profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            background: #fff;
+        }
+
+        /* --- Container Layout --- */
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .page-title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title-section h1 {
+            font-size: 32px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title-section h1 i {
+            color: var(--purple-main);
+        }
+
+        .page-title-section p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* --- Hero Analysis Banner Card --- */
+        .hero-result-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid var(--border-light);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .user-photo-box {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: #f1f5f9;
+        }
+
+        .user-photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .analysis-summary {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .summary-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .summary-label i {
+            color: var(--purple-main);
+        }
+
+        .color-type-title {
+            font-size: 64px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: var(--purple-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .confidence-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--purple-light);
+            border-radius: 30px;
+            padding: 6px 6px 6px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .confidence-score {
+            background: var(--purple-main);
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .summary-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 440px;
+        }
+
+        /* --- Section Header Helper --- */
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 20px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+        }
+
+        .section-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* --- Grid & Color Cards --- */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .color-card {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 20px 10px;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s;
+        }
+
+        .color-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .color-swatch {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+        }
+
+        .color-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .color-hex {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* --- Colors To Avoid Section --- */
+        .avoid-wrapper {
+            background: #fdfbf7;
+            border: 1px dashed #fcd34d;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .avoid-wrapper .section-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avoid-wrapper .section-header h3 {
+            justify-content: center;
+        }
+
+        .avoid-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Personal Recommendations Section --- */
+        .recommendations-wrapper {
+            margin-bottom: 40px;
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .rec-card {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 24px 20px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .rec-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .rec-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--purple-light);
+            color: var(--purple-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .rec-title-block h4 {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .rec-title-block p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* Content previews within recommendation cards */
+        .swatch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .mini-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        .hair-image-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .accessory-img {
+            height: 40px;
+            object-fit: contain;
+        }
+
+        /* --- Action Footer Buttons --- */
+        .action-footer {
+            display: flex;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-save {
+            background: var(--purple-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(144, 102, 224, 0.3);
+        }
+
+        .btn-save:hover {
+            opacity: 0.95;
+            transform: translateY(-2px);
+        }
+
+        .btn-share {
+            background: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-share:hover {
+            background: #f8fafc;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 850px) {
+            .hero-result-card { grid-template-columns: 1fr; }
+            .user-photo-box { height: 350px; }
+            .color-grid { grid-template-columns: repeat(3, 1fr); }
+            .rec-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 550px) {
+            .color-grid { grid-template-columns: repeat(2, 1fr); }
+            .avoid-grid { grid-template-columns: 1fr; }
+            .action-footer { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header>
+        <a href="/" class="logo">
+            <i class="fa-solid fa-scissors"></i> StyleMe
+        </a>
+        <div class="header-actions">
+            <a href="/" class="btn-header">
+                <i class="fa-solid fa-rotate-right"></i> New Analysis
+            </a>
+            <button class="user-profile-btn">
+                <i class="fa-regular fa-user"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <a href="/" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Home
+        </a>
+
+        <!-- Page Header -->
+        <div class="page-title-section">
+            <h1>Your Color Analysis Result <i class="fa-solid fa-sparkles"></i></h1>
+            <p>AI-Powered Personal Color Analysis Just For You</p>
+        </div>
+
+        <!-- Hero Result Banner Card -->
+        <div class="hero-result-card">
+            <div class="user-photo-box">
+                <!-- User input/captured photo preview (replace with Jinja2 variable {{ image_url }}) -->
+                <img src="{{ image_url or 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600' }}" alt="Analyzed Face">
+            </div>
+            
+            <div class="analysis-summary">
+                <div class="summary-label">
+                    <i class="fa-solid fa-sparkles"></i> Your Color Type
+                </div>
+                
+                <div class="color-type-title">
+                    {{ color_type | upper if color_type else 'COOL' }}
+                </div>
+
+                <div class="confidence-badge">
+                    Confidence Score 
+                    <span class="confidence-score">{{ confidence_score or '92%' }}</span>
+                </div>
+
+                <p class="summary-description">
+                    You have <strong>cool undertones</strong>! Colors with blue, purple, and pink undertones enhance your natural beauty and make you glow.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 1: Recommended Colors -->
+        <div class="section-header">
+            <h3><i class="fa-solid fa-palette" style="color: var(--purple-main);"></i> Recommended Colors</h3>
+            <p>Colors that enhance your natural beauty</p>
+        </div>
+
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: #000080;"></div>
+                <div class="color-name">Navy Blue</div>
+                <div class="color-hex">#000080</div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: #E6E6FA;"></div>
+                <div class="color-name">Lavender</div>
+                <div class="color-hex">#E6E6FA</div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: #50C878;"></div>
+                <div class="color-name">Emerald Green</div>
+                <div class="color-hex">#50C878</div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: #FF66CC;"></div>
+                <div class="color-name">Rose Pink</div>
+                <div class="color-hex">#FF66CC</div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: #99FFFF;"></div>
+                <div class="color-name">Ice Blue</div>
+                <div class="color-hex">#99FFFF</div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-swatch" style="background-color: #FFFFFF;"></div>
+                <div class="color-name">White</div>
+                <div class="color-hex">#FFFFFF</div>
+            </div>
+        </div>
+
+        <!-- Section 2: Colors To Avoid -->
+        <div class="avoid-wrapper">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> Colors To Avoid</h3>
+                <p>Colors that may wash you out or dull your natural glow</p>
+            </div>
+
+            <div class="avoid-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #FFA500;"></div>
+                    <div class="color-name">Orange</div>
+                    <div class="color-hex">#FFA500</div>
+                </div>
+
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #FFDB58;"></div>
+                    <div class="color-name">Mustard Yellow</div>
+                    <div class="color-hex">#FFDB58</div>
+                </div>
+
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #A52A2A;"></div>
+                    <div class="color-name">Warm Brown</div>
+                    <div class="color-hex">#A52A2A</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Personal Recommendations -->
+        <div class="recommendations-wrapper">
+            <div class="section-header" style="text-align: center;">
+                <h3 style="justify-content: center;"><i class="fa-solid fa-sparkles" style="color: var(--purple-main);"></i> Personal Recommendations</h3>
+                <p>Tailored suggestions to help you look and feel your best</p>
+            </div>
+
+            <div class="rec-grid">
+                <!-- Neutral Colours -->
+                <div class="rec-card">
+                    <div class="rec-header">
+                        <div class="rec-icon"><i class="fa-solid fa-shirt"></i></div>
+                        <div class="rec-title-block">
+                            <h4>Neutral Colours That Flatter</h4>
+                            <p>Soft neutrals that balance your cool undertone and create effortless harmony.</p>
+                        </div>
+                    </div>
+                    <div class="swatch-row">
+                        <div class="mini-swatch" style="background: #F2F2F2;"></div>
+                        <div class="mini-swatch" style="background: #C0C0C0;"></div>
+                        <div class="mini-swatch" style="background: #808898;"></div>
+                        <div class="mini-swatch" style="background: #D8D0D5;"></div>
+                        <div class="mini-swatch" style="background: #363A45;"></div>
+                    </div>
+                </div>
+
+                <!-- Hair Color -->
+                <div class="rec-card">
+                    <div class="rec-header">
+                        <div class="rec-icon"><i class="fa-solid fa-user"></i></div>
+                        <div class="rec-title-block">
+                            <h4>Hair Color</h4>
+                            <p>Cool-toned shades that enhance your features and complement your undertone.</p>
+                        </div>
+                    </div>
+                    <div class="swatch-row">
+                        <img class="hair-image-circle" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=100" alt="Black Hair">
+                        <img class="hair-image-circle" src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=100" alt="Ash Brown Hair">
+                        <img class="hair-image-circle" src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&q=80&w=100" alt="Ash Blonde Hair">
+                    </div>
+                </div>
+
+                <!-- Accessories -->
+                <div class="rec-card">
+                    <div class="rec-header">
+                        <div class="rec-icon"><i class="fa-solid fa-gem"></i></div>
+                        <div class="rec-title-block">
+                            <h4>Accessories</h4>
+                            <p>Silver, pearls, and cool-toned gems complement your natural coloring.</p>
+                        </div>
+                    </div>
+                    <div class="swatch-row">
+                        <i class="fa-solid fa-gem" style="font-size: 24px; color: #94a3b8;"></i>
+                        <i class="fa-solid fa-ring" style="font-size: 24px; color: #cbd5e1;"></i>
+                        <i class="fa-solid fa-circle-dot" style="font-size: 24px; color: #38bdf8;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Footer -->
+        <div class="action-footer">
+            <button class="btn-action btn-save" onclick="window.print()">
+                <i class="fa-solid fa-download"></i> Save My Results
+            </button>
+            <button class="btn-action btn-share" onclick="shareResults()">
+                <i class="fa-solid fa-share-nodes"></i> Share Results
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        function shareResults() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My StyleMe Color Analysis Result',
+                    text: 'I just discovered my personal color analysis on StyleMe!',
+                    url: window.location.href,
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Result link copied to clipboard!");
+            }
+        }
+    </script>
+</body>
+</html>
