@@ -7,11 +7,11 @@ from app.services.hairstyle_service import HairstyleService
 
 # Import modules as whole packages to avoid specific function name errors
 try:
-    import modules.skin_region_detector as skin_detector
     import modules.face_shape_classifier as shape_classifier
-    import modules.skin_tone_classifier as tone_classifier
     import modules.hairstyle_recommender as hair_recommender
     import modules.color_analysis_recommender as color_recommender
+    from modules.skin_tone_service import SkinToneService
+    from modules.color_analysis_recommender import get_recommendations
 except ImportError:
     # Graceful fallback if module files aren't in place yet
     skin_detector = None
@@ -38,6 +38,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Instantiate Service Layer (Clean Request -> Service -> DAO Architecture)
 hairstyle_service = HairstyleService()
+skin_tone_service = SkinToneService() if SkinToneService else None
 
 @app.route('/')
 def index():
@@ -77,7 +78,34 @@ def hairstyle_detail():
 def color_analysis():
     gender = request.args.get('gender', 'female')
     user_img = request.args.get('user_img', '')
-    return render_template('color_analysis.html', gender=gender, user_img=user_img)
+    undertone_raw = request.args.get('undertone', 'warm').lower()
+
+    # Load palette from JSON file
+    palette_file = os.path.join(app.root_path, 'palettes_2.json')
+    recommendations = {}
+    
+    key = 'warm'
+    if 'cool' in undertone_raw:
+        key = 'cool'
+    elif 'neutral' in undertone_raw:
+        key = 'neutral'
+
+    if os.path.exists(palette_file):
+        with open(palette_file, 'r') as f:
+            all_palettes = json.load(f)
+            recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
+
+    return render_template(
+        'color_result.html',
+        image_url=user_img,
+        color_type=key.upper(),
+        confidence_score="96%",
+        palette=recommendations.get('recommended_colors', []),
+        avoid_colors=recommendations.get('avoid_colors', []),
+        neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
+        hair_colors=recommendations.get('hair_colors', []),
+        jewelry=recommendations.get('jewelry', [])
+    )
 
 @app.route('/about')
 def about():
@@ -145,6 +173,10 @@ def analyze():
     # from modules.skin_tone_classifier import SkinToneClassifier
     # undertone = SkinToneClassifier().predict(filepath)
     undertone = "Warm Autumn"  # ← stub
+    if skin_tone_service and os.path.exists(filepath):
+        analysis_res = skin_tone_service.analyze_image(filepath)
+        if analysis_res.get("status") == "success":
+            undertone = analysis_res.get("undertone", "warm")
 
     # ── Log analysis session ────────────────────────────────────────────────
     hairstyle_service.log_user_analysis(
@@ -215,11 +247,25 @@ def render_analyze_result():
         # hairstyles = hair_recommender.recommend_hairstyles(face_shape, gender) if hair_recommender else []
         # palette = color_recommender.recommend_color_palette(skin_tone) if color_recommender else []
         # -------------------------------------------------------------
+        undertone = 'warm'
+        confidence_val = 0.90
+        recommendations = {}
 
+        if skin_tone_service:
+            analysis_res = skin_tone_service.analyze_image(filepath)
+            if analysis_res.get("status") == "success":
+                undertone = analysis_res.get("undertone", "warm")
+                confidence_val = analysis_res.get("confidence", 0.90)
+                recommendations = analysis_res.get("recommendations", {})
+            elif get_recommendations:
+                recommendations = get_recommendations(undertone)
+
+        color_type = undertone.upper()
+        confidence_score = f"{int(confidence_val * 100)}%"
         # Dynamic sample data formatted for result templates
         face_shape = 'Round'
-        color_type = 'COOL'
-        confidence_score = '92%'
+        # color_type = 'COOL'
+        # confidence_score = '92%'
 
         hairstyles = [
             {
@@ -239,14 +285,14 @@ def render_analyze_result():
             }
         ]
 
-        palette = [
+        palette = recommendations.get('recommended_colors', [
             {'name': 'Navy Blue', 'hex': '#000080'},
             {'name': 'Lavender', 'hex': '#E6E6FA'},
             {'name': 'Emerald Green', 'hex': '#50C878'},
             {'name': 'Rose Pink', 'hex': '#FF66CC'},
             {'name': 'Ice Blue', 'hex': '#99FFFF'},
             {'name': 'White', 'hex': '#FFFFFF'}
-        ]
+        ])
 
         # Choose Color Analysis ခလုတ်မှ လာပါက color_result.html ကို ပြသခြင်း
         if analysis_type == 'color':
@@ -255,7 +301,11 @@ def render_analyze_result():
                 image_url=user_image_url,
                 color_type=color_type,
                 confidence_score=confidence_score,
-                palette=palette
+                palette=palette,
+                avoid_colors=recommendations.get('avoid_colors', []),
+                neutral_colors=recommendations.get('neutral_colors', []),
+                hair_colors=recommendations.get('hair_colors', []),
+                jewelry=recommendations.get('jewelry', [])
             )
 
         # Hairstyle Analysis ခလုတ်မှ လာပါက result.html ကို ပြသခြင်း
