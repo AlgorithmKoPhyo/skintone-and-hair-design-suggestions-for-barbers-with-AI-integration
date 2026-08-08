@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}StyleMe - Color Analysis{% endblock %}
+
+{% block content %}
+<section class="page-view active">
+  <div class="container">
+    <div class="rec-header-row">
+      <div>
+        <h1>Color Analysis Recommendation <i class="fa-solid fa-palette"></i></h1>
+        <p>Discover the best hair dye colors that match your skin tone undertones</p>
+      </div>
+      <div class="face-shape-badge">
+        <div class="badge-icon">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <div class="badge-text">
+          <span class="badge-title">Warm Autumn</span>
+          <span class="badge-subtitle">Golden & Olive Undertone</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-rec-card grid-12" style="grid-template-columns: 1fr;">
+      <div class="col-12">
+        <h2>Recommended Hair Color Palette</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">Based on AI skin tone spectrometry analysis, warm rich golden shades maximize your natural skin glow.</p>
+
+        <div class="grid-12">
+          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
+            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #4A2E2B; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
+            <h3>Chestnut Brown</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Rich warm brown with reddish undertones</p>
+            <div style="color: var(--purple-primary); font-weight: 700;">
+              <i class="fa-solid fa-star"></i> 96% Match
+            </div>
+          </div>
+
+          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
+            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #B8860B; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
+            <h3>Warm Honey Blonde</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Golden sun-kissed accent shades</p>
+            <div style="color: var(--purple-primary); font-weight: 700;">
+              <i class="fa-solid fa-star"></i> 94% Match
+            </div>
+          </div>
+
+          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
+            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #800020; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
+            <h3>Mahogany Red</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Deep auburn highlight for vibrant warmth</p>
+            <div style="color: var(--purple-primary); font-weight: 700;">
+              <i class="fa-solid fa-star"></i> 91% Match
+            </div>
+          </div>
+
+          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
+            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #2B1B17; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
+            <h3>Dark Mocha</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Deep chocolate espresso with glossy shine</p>
+            <div style="color: var(--purple-primary); font-weight: 700;">
+              <i class="fa-solid fa-star"></i> 89% Match
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

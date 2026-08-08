@@ -1,0 +1,103 @@
+<!-- Barber / Stylist Reference Board Modal Component -->
+{% set item = rec_data if (rec_data is defined and rec_data) else (style_data if (style_data is defined and style_data) else none) %}
+
+<div class="modal-backdrop" id="modal-barber-card">
+  <div class="modal-card barber-board-card" style="max-width: 720px; width: 92%; padding: 26px; border-radius: 24px; position: relative;">
+
+    <!-- Modal Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 14px; margin-bottom: 18px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--purple-light); color: var(--purple-primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+          <i class="fa-solid fa-scissors"></i>
+        </div>
+        <div>
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Barber Consultation Board</h3>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Show this reference card to your barber or hair stylist</span>
+        </div>
+      </div>
+      <button class="close-modal-btn" id="btn-close-barber-modal" type="button" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+    </div>
+
+    <!-- Printable & Exportable Board Container -->
+    <div id="barber-board-printable" style="background: #FAF8FF; border-radius: 18px; padding: 20px; margin-bottom: 18px;">
+
+      <!-- Board Title Row -->
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; flex-wrap: wrap;">
+        <div>
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--purple-primary);">StyleMe AI Consultation Spec</span>
+          <h2 id="barber-card-title" style="font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin-top: 2px; line-height: 1.2;">
+            {{ item.name if (item and item.name) else 'Hairstyle Reference' }}
+          </h2>
+          <p id="barber-card-tagline" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+            {{ item.tagline if (item and item.tagline) else '' }}
+          </p>
+        </div>
+
+        <!-- Specs Badge Tags (Unicode icons for PNG/Print compatibility) -->
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;">
+          <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 600;"><span style="color: #7C3AED; margin-right: 4px;">&#9135;</span> <span id="barber-card-length">{{ item.hair_length if (item and item.hair_length) else 'Medium' }}</span></span>
+          <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 600;"><span style="color: #7C3AED; margin-right: 4px;">&#9988;</span> <span id="barber-card-texture">{{ item.hair_texture if (item and item.hair_texture) else 'Textured' }}</span></span>
+          <span style="font-size: 0.85rem; color: var(--text-main); font-weight: 600;"><span style="color: #7C3AED; margin-right: 4px;">&#9673;</span> <span id="barber-card-shape">Ideal for {{ shape|capitalize if (shape is defined and shape) else 'Oval' }} Face</span></span>
+        </div>
+      </div>
+
+      <!-- 4-Angle Photo Grid (1:1 Aspect Ratio Photos, No Cover Crop) -->
+      <div style="margin-bottom: 14px;">
+        <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+          Multi-Angle Reference Photos (1:1 Ratio 4-Views)
+        </div>
+        <div class="grid-12" id="barber-card-angles-grid" style="gap: 10px;">
+          {% if item and item.angles %}
+            {% for angle in item.angles %}
+            <div class="col-3 col-sm-6" style="text-align: center;">
+              <div class="barber-angle-img-box" style="width: 100%; border-radius: 12px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: transparent;">
+                <img src="{{ angle.img }}" alt="{{ angle.name }}" style="width: 100%; max-height: 250px; object-fit: contain; object-position: center; background: transparent; border-radius: 12px;">
+              </div>
+              <span style="font-size: 0.73rem; font-weight: 600; color: var(--text-main);">{{ angle.name }}</span>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="col-3 col-sm-6" style="text-align: center;">
+              <div class="barber-angle-img-box" style="width: 100%; border-radius: 12px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: transparent;">
+                <img src="{{ item.main_img if (item and item.main_img) else url_for('static', filename='images/classic_bob.jpg') }}" alt="Front View" style="width: 100%; max-height: 250px; object-fit: contain; object-position: center; background: transparent; border-radius: 12px;">
+              </div>
+              <span style="font-size: 0.73rem; font-weight: 600; color: var(--text-main);">Front View</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Stylist Instructions & Notes -->
+      <div style="margin-top: 16px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+          <span style="color: #7C3AED;">&#9998;</span> Key Cutting &amp; Styling Instructions
+        </div>
+        <ul id="barber-card-instructions" style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 0;">
+          {% if item and item.reasons %}
+            {% for r in item.reasons %}
+            <li style="margin-bottom: 4px;">{{ r }}</li>
+            {% endfor %}
+          {% else %}
+            <li style="margin-bottom: 4px;">Maintain soft face-framing layers to balance facial symmetry.</li>
+            <li style="margin-bottom: 4px;">Use lightweight styling product for natural movement.</li>
+          {% endif %}
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+      <button class="btn-view-more-styles" id="btn-save-image-barber-card" type="button" style="width: auto; padding: 10px 20px; font-size: 0.88rem;">
+        <i class="fa-solid fa-file-image"></i> Save as Image (PNG)
+      </button>
+      <button class="btn-barber-card" id="btn-print-barber-card" type="button">
+        <i class="fa-solid fa-print"></i> Print / PDF (1 Page)
+      </button>
+      <button class="btn-view-more-styles" id="btn-share-barber-card" type="button" style="width: auto; padding: 10px 20px; font-size: 0.88rem;">
+        <i class="fa-solid fa-copy"></i> Copy Spec Info
+      </button>
+    </div>
+
+  </div>
+</div>
