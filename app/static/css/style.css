@@ -1613,7 +1613,9 @@ img {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .modal-header {
@@ -1855,6 +1857,7 @@ img {
     pointer-events: auto;
     transform: translateY(-50%) scale(1);
   }
+
   .slider-controls-bar {
     opacity: 0.9;
     transform: translateX(-50%) translateY(0);
@@ -1922,20 +1925,26 @@ img {
     size: A4 portrait;
     margin: 6mm;
   }
-  html, body {
+
+  html,
+  body {
     height: 100% !important;
     background: #ffffff !important;
     margin: 0 !important;
     padding: 0 !important;
   }
-  body > *:not(#modal-barber-card) {
+
+  body>*:not(#modal-barber-card) {
     display: none !important;
   }
-  #modal-barber-card, #modal-barber-card * {
+
+  #modal-barber-card,
+  #modal-barber-card * {
     visibility: visible !important;
     page-break-inside: avoid !important;
     page-break-after: avoid !important;
   }
+
   #modal-barber-card {
     position: relative !important;
     left: 0 !important;
@@ -1946,6 +1955,7 @@ img {
     box-shadow: none !important;
     display: block !important;
   }
+
   .barber-board-card {
     border: none !important;
     box-shadow: none !important;
@@ -1953,12 +1963,14 @@ img {
     padding: 0 !important;
     margin: 0 !important;
   }
+
   #barber-board-printable {
     margin-bottom: 0 !important;
     padding: 16px !important;
     background: #ffffff !important;
     border: none !important;
   }
+
   .barber-angle-img-box {
     height: auto !important;
     background: transparent !important;
@@ -1966,6 +1978,7 @@ img {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+
   .barber-angle-img-box img {
     width: 100% !important;
     height: auto !important;
@@ -1975,6 +1988,11 @@ img {
     background: transparent !important;
     border-radius: 12px !important;
   }
-  .close-modal-btn, #btn-print-barber-card, #btn-save-image-barber-card, #btn-share-barber-card {
+
+  .close-modal-btn,
+  #btn-print-barber-card,
+  #btn-save-image-barber-card,
+  #btn-share-barber-card {
     display: none !important;
   }
+}
