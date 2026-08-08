@@ -118,9 +118,14 @@
           </div>
         </div>
 
-        <a href="{{ url_for('hairstyles', shape=shape|default('oval'), gender=gender|default('female')) }}" class="btn-view-more-styles" style="display: block; text-align: center; text-decoration: none;">
-          View All Recommended Styles <i class="fa-solid fa-arrow-right"></i>
-        </a>
+        <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+          <button class="btn-barber-card" id="btn-open-barber-card" type="button" style="flex: 1; min-width: 200px;">
+            <i class="fa-solid fa-scissors"></i> Barber Consultation Board
+          </button>
+          <a href="{{ url_for('hairstyles', shape=shape|default('oval'), gender=gender|default('female')) }}" class="btn-view-more-styles" style="flex: 1; min-width: 200px; text-align: center; text-decoration: none;">
+            View All Styles <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
       </div>
     </div>
 

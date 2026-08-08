@@ -11,6 +11,9 @@
   <!-- Font Awesome 6 Icon Package -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+  <!-- HTML2Canvas for PNG Image Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <!-- Application CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -28,12 +31,14 @@
   <!-- Footer Include -->
   {% include 'components/footer.html' %}
 
-  <!-- Global Gender Selection Modal (visible on all pages) -->
+  <!-- Global Modals -->
   {% include 'components/gender_modal.html' %}
+  {% include 'components/barber_card_modal.html' %}
 
   <!-- Application Scripts -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   <script src="{{ url_for('static', filename='js/gender_upload.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/barber_card.js') }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 

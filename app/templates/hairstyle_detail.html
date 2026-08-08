@@ -109,11 +109,11 @@
 
         <!-- Action Buttons Bar -->
         <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
-          <a href="{{ url_for('recommendation', gender=style_data.gender, shape=style_data.faceshape) }}" class="btn-action-camera" id="detail-btn-try" style="flex: 1; text-align: center;">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Try On With AI Recommendation
-          </a>
-          <a href="{{ url_for('camera') }}" class="btn-action-upload" style="flex: 1; text-align: center;">
-            <i class="fa-solid fa-camera"></i> Test With Live Camera
+          <button class="btn-barber-card" id="btn-open-barber-card" type="button" style="flex: 1; min-width: 200px;">
+            <i class="fa-solid fa-scissors"></i> Barber Consultation Board
+          </button>
+          <a href="{{ url_for('recommendation', gender=style_data.gender, shape=style_data.faceshape) }}" class="btn-action-camera" id="detail-btn-try" style="flex: 1; text-align: center; min-width: 200px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Try With AI
           </a>
         </div>
       </div>
