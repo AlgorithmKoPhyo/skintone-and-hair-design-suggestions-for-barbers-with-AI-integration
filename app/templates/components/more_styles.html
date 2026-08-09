@@ -1,0 +1,47 @@
+<!-- More Related Styles Gallery Component (Fetched Dynamically From SQLite Database) -->
+<div class="more-styles-section" id="more-styles-gallery">
+  <div class="more-styles-header">
+    <div>
+      <h3>More Related {{ gender|title if gender else 'All' }} Styles</h3>
+      <p>Explore recommended {{ gender|default('female') }} hairstyles from database</p>
+    </div>
+    <a href="{{ url_for('hairstyles', shape=shape|default('oval'), gender=gender|default('female')) }}" class="view-all-link">
+      View All <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+
+  <div class="styles-gallery-grid" id="more-styles-cards-container">
+    {% if related_styles %}
+      {% for style in related_styles %}
+      <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="style-variation-card {% if loop.first %}active{% endif %}" data-title="{{ style.name }}" data-img="{{ style.main_img }}" style="text-decoration: none; color: inherit;">
+        <div class="var-img-wrapper">
+          <img src="{{ style.main_img }}" alt="{{ style.name }}">
+        </div>
+        <div class="var-info">
+          <div>
+            <div class="var-title">{{ style.name }}</div>
+            <div class="var-sub">{{ style.hair_length }}</div>
+          </div>
+          <div class="arrow-circle-btn">
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <!-- Fallback cards if client-rendered via JS -->
+      <div class="style-variation-card active" data-title="Classic Bob" data-img="{{ url_for('static', filename='images/classic_bob.jpg') }}">
+        <div class="var-img-wrapper">
+          <img src="{{ url_for('static', filename='images/classic_bob.jpg') }}" alt="Classic Bob">
+        </div>
+        <div class="var-info">
+          <div>
+            <div class="var-title">Classic Bob</div>
+            <div class="var-sub">Chin Length</div>
+          </div>
+          <div class="arrow-circle-btn"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>

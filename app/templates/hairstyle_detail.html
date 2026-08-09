@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}StyleMe - {{ style_data.name if style_data else 'Hairstyle Detail' }}{% endblock %}
+
+{% block content %}
+<section class="page-view active">
+  <div class="container">
+    <!-- Back to Catalog Link -->
+    <a href="{{ url_for('hairstyles') }}" class="back-link" style="margin-bottom: 20px; display: inline-flex;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Catalog
+    </a>
+
+    {% if style_data %}
+    <!-- Top Header Title Row -->
+    <div class="rec-header-row">
+      <div>
+        <h1 id="detail-style-name">{{ style_data.name }} <i class="fa-solid fa-scissors" style="color: var(--purple-primary); font-size: 1.8rem; margin-left: 6px;"></i></h1>
+        <p id="detail-tagline">{{ style_data.tagline or style_data.description }}</p>
+      </div>
+
+      <div class="face-shape-badge" style="cursor: default;">
+        <div class="badge-icon">
+          <i class="fa-solid fa-circle-user"></i>
+        </div>
+        <div class="badge-text">
+          <span class="badge-title" id="detail-badge-shape">{{ style_data.shape_badge or ('Ideal for ' ~ style_data.faceshape.capitalize() ~ ' Face') }}</span>
+          <span class="badge-subtitle" id="detail-badge-sub">{{ style_data.score_badge or '95% Match Score' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Hairstyle Detail Card -->
+    <div class="main-rec-card grid-12">
+      <!-- Left Column: AI Image Preview Slider (col-5) -->
+      <div class="rec-preview-wrapper col-5 col-md-12" style="position: relative;">
+        <img id="detail-main-img" src="{{ style_data.main_img }}" alt="{{ style_data.name }} Preview">
+        <div class="ai-preview-tag">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> HD Style Preview
+        </div>
+
+        <!-- Slider Arrow Navigation -->
+        <button class="slider-arrow slider-arrow-prev" id="detail-slider-prev" aria-label="Previous Angle" type="button">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="slider-arrow slider-arrow-next" id="detail-slider-next" aria-label="Next Angle" type="button">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Slider Angle Badge & Pagination Dots -->
+        <div class="slider-controls-bar">
+          <span class="slider-angle-label" id="detail-slider-label">Front View</span>
+          <div class="slider-dots-container" id="detail-slider-dots"></div>
+        </div>
+      </div>
+
+      <!-- Right Column: Details & Specs (col-7) -->
+      <div class="rec-details-col col-7 col-md-12">
+        <div>
+          <div class="style-title-group">
+            <h2 id="detail-heading-title">{{ style_data.name }}</h2>
+            <div class="style-tagline" id="detail-heading-tagline">{{ style_data.tagline }}</div>
+          </div>
+          <p class="style-desc" id="detail-desc-text">
+            {{ style_data.description }}
+          </p>
+
+          <!-- Face Shape Compatibility / Reasons -->
+          <div class="why-suits-box">
+            <div class="section-label">Face Shape Compatibility Breakdown</div>
+            <ul class="checklist" id="detail-suitability-checklist">
+              {% if style_data.suitability %}
+                {% for s in style_data.suitability %}
+                <li>
+                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                  <span>{{ s.shape }}: <strong style="color: var(--purple-primary);">{{ s.score }}</strong></span>
+                </li>
+                {% endfor %}
+              {% elif style_data.reasons %}
+                {% for r in style_data.reasons %}
+                <li>
+                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                  <span>{{ r }}</span>
+                </li>
+                {% endfor %}
+              {% endif %}
+            </ul>
+          </div>
+
+          <!-- Details Grid Table -->
+          <div class="details-grid-table">
+            <div class="detail-row">
+              <span class="detail-key"><i class="fa-solid fa-ruler-vertical"></i> Hair Length</span>
+              <span class="detail-val" id="detail-spec-length">{{ style_data.hair_length or 'Medium' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key"><i class="fa-solid fa-scissors"></i> Hair Texture</span>
+              <span class="detail-val" id="detail-spec-texture">{{ style_data.hair_texture or 'Layered' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key"><i class="fa-solid fa-clock"></i> Styling Time</span>
+              <span class="detail-val" id="detail-spec-time">{{ style_data.styling_time or '10 mins' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key"><i class="fa-solid fa-hand-sparkles"></i> Maintenance</span>
+              <span class="detail-val" id="detail-spec-maint">{{ style_data.maintenance or 'Easy' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons Bar -->
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button class="btn-barber-card" id="btn-open-barber-card" type="button" style="flex: 1; min-width: 200px;">
+            <i class="fa-solid fa-scissors"></i> Barber Consultation Board
+          </button>
+          <a href="{{ url_for('recommendation', gender=style_data.gender, shape=style_data.faceshape) }}" class="btn-action-camera" id="detail-btn-try" style="flex: 1; text-align: center; min-width: 200px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Try With AI
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Row: Multi-Angle Views & Styling Tips -->
+    <div class="secondary-rec-grid grid-12">
+      <!-- Angles View -->
+      <div class="angles-box col-7 col-md-12">
+        <h3>View from Different Angles</h3>
+        <div class="angles-thumbnails-grid grid-12">
+          {% if style_data.angles %}
+            {% for angle in style_data.angles %}
+            <div class="angle-card col-3 col-sm-6 {% if loop.first %}active{% endif %}" data-detail-img="{{ angle.img }}">
+              <div class="angle-thumb-wrapper">
+                <img src="{{ angle.img }}" alt="{{ angle.name }} Angle">
+              </div>
+              <span class="angle-name">{{ angle.name }}</span>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="angle-card col-3 col-sm-6 active" data-detail-img="{{ style_data.main_img }}">
+              <div class="angle-thumb-wrapper">
+                <img src="{{ style_data.main_img }}" alt="Front Angle">
+              </div>
+              <span class="angle-name">Front View</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Styling Tips -->
+      <div class="tips-box col-5 col-md-12">
+        <div class="tips-header">
+          <div class="tips-icon">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <span>Styling & Care Tips</span>
+        </div>
+        <ul class="tips-list" id="detail-tips-list">
+          {% if style_data.tips %}
+            {% for tip in style_data.tips %}
+            <li>{{ tip }}</li>
+            {% endfor %}
+          {% else %}
+            <li>Use texturizing product for natural separation.</li>
+            <li>Schedule trims every 4-6 weeks for crisp shape.</li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 60px 20px;">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--purple-primary); margin-bottom: 16px;"></i>
+      <h3>Hairstyle Not Found</h3>
+      <p style="color: var(--text-muted);">The requested hairstyle could not be loaded.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hairstyle_detail.js') }}"></script>
+{% endblock %}

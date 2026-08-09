@@ -13,47 +13,14 @@ __pycache__/
 
 # OS files
 .DS_Store
-Thumbs.db
+.uploads/
 
-# ──────────────────────────────────────────────
-# face_shape_classification — excluded folders
-# ──────────────────────────────────────────────
+# Face shape classification — data, tests & training scripts
 modules/face_shape_classification/data/
-modules/face_shape_classification/src/
 modules/face_shape_classification/tests/
-modules/face_shape_classification/models/
+modules/face_shape_classification/main.py
+modules/face_shape_classification/main_evaluate.py
+modules/face_shape_classification/main_svm.py
+modules/face_shape_classification/main_train.py
 
-# ──────────────────────────────────────────────
-# ML / Training artifacts (anywhere in project)
-# ──────────────────────────────────────────────
-# Trained model files
-*.h5
-*.pkl
-*.pth
-*.pt
-*.onnx
-*.joblib
-*.model
-*.weights
 
-# Dataset / binary files
-*.csv
-*.npy
-*.npz
-*.json
-*.parquet
-
-# Jupyter notebooks checkpoints
-.ipynb_checkpoints/
-*.ipynb
-
-# Logs and outputs
-logs/
-runs/
-outputs/
-*.log
-*.txt
-
-# Env / secrets
-.env
-*.env

@@ -1,0 +1,103 @@
+{
+  "cool": {
+    "recommended_colors": [
+      { "name": "Navy Blue", "hex": "#000080" },
+      { "name": "Lavender", "hex": "#E6E6FA" },
+      { "name": "Emerald Green", "hex": "#50C878" },
+      { "name": "Rose Pink", "hex": "#FF66CC" },
+      { "name": "Ice Blue", "hex": "#99FFFF" },
+      { "name": "Pure White", "hex": "#FFFFFF" }
+    ],
+    "avoid_colors": [
+      { "name": "Orange", "hex": "#FFA500" },
+      { "name": "Mustard Yellow", "hex": "#D4A017" },
+      { "name": "Warm Brown", "hex": "#A52A2A" }
+    ],
+    "neutral_colors_that_flatter": [
+      { "name": "Navy Blue", "hex": "#000080" },
+      { "name": "Cool Gray", "hex": "#8C92AC" },
+      { "name": "Pure White", "hex": "#FFFFFF" }
+    ],
+    "hair_colors": [
+      { "name": "Ash Brown", "image": "assets/cool/hair_ash_brown.jpg" },
+      { "name": "Cool Black", "image": "assets/cool/hair_cool_black.jpg" },
+      {
+        "name": "Platinum Blonde",
+        "image": "assets/cool/hair_platinum_blonde.jpg"
+      }
+    ],
+    "jewelry": [
+      { "name": "Silver", "image": "assets/cool/jewelry_silver.jpg" },
+      { "name": "White Gold", "image": "assets/cool/jewelry_white_gold.jpg" },
+      { "name": "Pearl", "image": "assets/cool/jewelry_pearl.jpg" }
+    ]
+  },
+
+  "warm": {
+    "recommended_colors": [
+      { "name": "Mustard Yellow", "hex": "#D4A017" },
+      { "name": "Olive Green", "hex": "#708238" },
+      { "name": "Coral", "hex": "#FF7F50" },
+      { "name": "Peach", "hex": "#FFDAB9" },
+      { "name": "Terracotta", "hex": "#E2725B" },
+      { "name": "Cream", "hex": "#FFFDD0" }
+    ],
+    "avoid_colors": [
+      { "name": "Icy Blue", "hex": "#D6F5FF" },
+      { "name": "Lavender", "hex": "#E6E6FA" },
+      { "name": "Pure White", "hex": "#FFFFFF" }
+    ],
+    "neutral_colors_that_flatter": [
+      { "name": "Cream", "hex": "#FFFDD0" },
+      { "name": "Camel", "hex": "#C19A6B" },
+      { "name": "Warm Beige", "hex": "#D8C3A5" }
+    ],
+    "hair_colors": [
+      { "name": "Golden Brown", "image": "assets/warm/hair_golden_brown.jpg" },
+      { "name": "Honey Brown", "image": "assets/warm/hair_honey_brown.jpg" },
+      { "name": "Caramel Brown", "image": "assets/warm/hair_caramel_brown.jpg" }
+    ],
+    "jewelry": [
+      { "name": "Gold", "image": "assets/warm/jewelry_gold.jpg" },
+      { "name": "Rose Gold", "image": "assets/warm/jewelry_rosegold.jpg" },
+      { "name": "Copper", "image": "assets/warm/jewelry_copper.jpg" }
+    ]
+  },
+
+  "neutral": {
+    "recommended_colors": [
+      { "name": "Taupe", "hex": "#8B8589" },
+      { "name": "Dusty Rose", "hex": "#D8A7B1" },
+      { "name": "Soft Teal", "hex": "#6FA3A3" },
+      { "name": "Beige", "hex": "#F5F5DC" },
+      { "name": "Soft White", "hex": "#F8F8F0" },
+      { "name": "Charcoal Gray", "hex": "#4B4B4B" }
+    ],
+    "avoid_colors": [
+      { "name": "Neon Yellow", "hex": "#FFFF33" },
+      { "name": "Neon Orange", "hex": "#FF5F1F" },
+      { "name": "Neon Pink", "hex": "#FF1493" }
+    ],
+    "neutral_colors_that_flatter": [
+      { "name": "Taupe", "hex": "#8B8589" },
+      { "name": "Beige", "hex": "#F5F5DC" },
+      { "name": "Soft White", "hex": "#F8F8F0" }
+    ],
+    "hair_colors": [
+      {
+        "name": "Medium Brown",
+        "image": "assets/neutral/hair_medium_brown.jpg"
+      },
+      { "name": "Soft Black", "image": "assets/neutral/hair_soft_black.jpg" },
+      {
+        "name": "Chocolate Brown",
+        "image": "assets/neutral/hair_chocolate_brown.jpg"
+      }
+    ],
+    "jewelry": [
+      { "name": "Silver", "image": "assets/neutral/jewelry_silver.jpg" },
+      { "name": "Rose Gold", "image": "assets/neutral/jewelry_rose_gold.jpg" },
+      { "name": "White Gold", "image": "assets/neutral/jewelry_white_gold.jpg" }
+    ]
+  }
+}

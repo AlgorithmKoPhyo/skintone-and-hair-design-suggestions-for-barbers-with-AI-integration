@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}StyleMe - All Hairstyles Catalog{% endblock %}
+
+{% block content %}
+<section class="page-view active">
+  <div class="container">
+    
+    <!-- Unified Seamless Catalog Header & Toolbar (No Box Stacking) -->
+    <div style="background: var(--bg-card); border: 1px solid rgba(124, 58, 237, 0.12); border-radius: 28px; padding: 26px 32px; margin-top: 10px; margin-bottom: 36px; box-shadow: 0 12px 40px -12px rgba(124, 58, 237, 0.08); display: flex; flex-direction: column; gap: 20px; backdrop-filter: blur(12px);">
+      
+      <!-- Top Row: AI Banner Title, Choose with AI Button & Gender Segmented Toggle -->
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+        <!-- AI Headline -->
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <h2 style="font-size: 1.28rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">AI Face Shape Hairstyle Catalog</h2>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">Explore styles or test your face shape with personal AI recommendation</p>
+          </div>
+        </div>
+
+        <!-- Action Controls Group -->
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <a href="{{ url_for('recommendation') }}" class="btn-choose-ai-glow" style="padding: 10px 24px; font-size: 0.9rem; text-decoration: none; border-radius: 9999px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Choose with AI <i class="fa-solid fa-arrow-right" style="font-size: 0.8rem; margin-left: 4px;"></i>
+          </a>
+
+          <!-- Gender Filter Toggle -->
+          <div class="gender-toggle-group">
+            <button class="gender-btn active" data-filter-gender="all" id="filter-gender-all">All Genders</button>
+            <button class="gender-btn" data-filter-gender="female" id="filter-gender-female"><i class="fa-solid fa-venus"></i> Female</button>
+            <button class="gender-btn" data-filter-gender="male" id="filter-gender-male"><i class="fa-solid fa-mars"></i> Male</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Soft Glowing Gradient Separator -->
+      <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.18) 50%, transparent 100%); width: 100%;"></div>
+
+      <!-- Bottom Row: Search Box & Single-Line Face Shape Filter Pills -->
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <!-- Search Box -->
+        <div style="position: relative; flex: 1; min-width: 240px;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+          <input type="text" id="catalog-search-input" class="catalog-search-field" placeholder="Search hairstyles by name...">
+        </div>
+
+        <!-- Face Shape Filter Pills (Single Unbroken Line) -->
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto;">
+          <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; margin-right: 2px;">
+            <i class="fa-solid fa-shapes" style="color: var(--purple-primary);"></i> Shape:
+          </span>
+          <button class="shape-filter-pill active" data-filter-shape="all">All Shapes</button>
+          <button class="shape-filter-pill" data-filter-shape="oval">Oval Face</button>
+          <button class="shape-filter-pill" data-filter-shape="round">Round Face</button>
+          <button class="shape-filter-pill" data-filter-shape="square">Square Face</button>
+          <button class="shape-filter-pill" data-filter-shape="heart">Heart Face</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Hairstyles Grid (12-Column System: col-4 per card) -->
+    <div class="grid-12" id="hairstyles-catalog-grid" style="gap: 28px;">
+      {% if hairstyles %}
+        {% for style in hairstyles %}
+        <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="{{ style.gender }}" data-shape="{{ style.faceshape }}" data-title="{{ style.name }}">
+          <div class="catalog-card-inner">
+            <div class="catalog-img-wrapper" style="background: var(--bg-subtle, #f8fafc); display: flex; align-items: center; justify-content: center; height: 260px; overflow: hidden; border-radius: var(--radius-md) var(--radius-md) 0 0; position: relative;">
+              <img src="{{ style.main_img }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.5s ease;">
+              <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
+                {% if style.gender == 'female' %}<i class="fa-solid fa-venus"></i> Female{% else %}<i class="fa-solid fa-mars"></i> Male{% endif %}
+              </span>
+              <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                {{ style.shape_badge or ('Ideal for ' ~ style.faceshape.capitalize() ~ ' Face') }}
+              </span>
+            </div>
+            <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
+              <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">{{ style.name }}</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
+                {{ style.tagline or style.description }}
+              </p>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
+                <span><i class="fa-solid fa-ruler-vertical"></i> {{ style.hair_length or 'Medium' }}</span>
+                <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
+                  <i class="fa-solid fa-star"></i> {{ style.score_badge or '95% Match' }}
+                </span>
+              </div>
+              <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="btn-details-pill">
+                <i class="fa-solid fa-circle-info"></i> View Details
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="grid-column: span 12; text-align: center; padding: 60px 20px;">
+          <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 16px;"></i>
+          <h3 style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 8px;">No Hairstyles Found</h3>
+          <p style="color: var(--text-muted);">Try adjusting your search query or face shape filters.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hairstyles.js') }}"></script>
+{% endblock %}
