@@ -5,9 +5,55 @@ venv/
 # Python cache
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 
 # VS Code
 .vscode/
 
 # OS files
 .DS_Store
+Thumbs.db
+
+# ──────────────────────────────────────────────
+# face_shape_classification — excluded folders
+# ──────────────────────────────────────────────
+modules/face_shape_classification/data/
+modules/face_shape_classification/src/
+modules/face_shape_classification/tests/
+modules/face_shape_classification/models/
+
+# ──────────────────────────────────────────────
+# ML / Training artifacts (anywhere in project)
+# ──────────────────────────────────────────────
+# Trained model files
+*.h5
+*.pkl
+*.pth
+*.pt
+*.onnx
+*.joblib
+*.model
+*.weights
+
+# Dataset / binary files
+*.csv
+*.npy
+*.npz
+*.json
+*.parquet
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs and outputs
+logs/
+runs/
+outputs/
+*.log
+*.txt
+
+# Env / secrets
+.env
+*.env
