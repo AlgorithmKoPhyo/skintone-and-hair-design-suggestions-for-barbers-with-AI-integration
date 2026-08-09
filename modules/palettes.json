@@ -59,7 +59,7 @@
     ],
     "jewelry": [
       { "name": "Gold", "image": "assets/warm/jewelry_gold.jpg" },
-      { "name": "Rose Gold", "image": "assets/warm/jewelry_rose_gold.jpg" },
+      { "name": "Rose Gold", "image": "assets/warm/jewelry_rosegold.jpg" },
       { "name": "Copper", "image": "assets/warm/jewelry_copper.jpg" }
     ]
   },
