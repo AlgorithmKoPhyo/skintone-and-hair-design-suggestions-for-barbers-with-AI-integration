@@ -13,7 +13,7 @@
   <div class="styles-gallery-grid" id="more-styles-cards-container">
     {% if related_styles %}
       {% for style in related_styles %}
-      <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="style-variation-card {% if loop.first %}active{% endif %}" data-title="{{ style.name }}" data-img="{{ style.main_img }}" style="text-decoration: none; color: inherit;">
+      <a href="#" class="style-variation-card {% if loop.first %}active{% endif %}" data-slug="{{ style.slug }}" data-title="{{ style.name }}" data-img="{{ style.main_img }}" style="text-decoration: none; color: inherit;">
         <div class="var-img-wrapper">
           <img src="{{ style.main_img }}" alt="{{ style.name }}">
         </div>

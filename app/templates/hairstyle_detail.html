@@ -66,24 +66,38 @@
 
           <!-- Face Shape Compatibility / Reasons -->
           <div class="why-suits-box">
-            <div class="section-label">Face Shape Compatibility Breakdown</div>
-            <ul class="checklist" id="detail-suitability-checklist">
-              {% if style_data.suitability %}
-                {% for s in style_data.suitability %}
-                <li>
-                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                  <span>{{ s.shape }}: <strong style="color: var(--purple-primary);">{{ s.score }}</strong></span>
-                </li>
-                {% endfor %}
-              {% elif style_data.reasons %}
-                {% for r in style_data.reasons %}
-                <li>
-                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                  <span>{{ r }}</span>
-                </li>
-                {% endfor %}
-              {% endif %}
-            </ul>
+            {% if request.args.get('source') == 'related' %}
+              <div class="section-label">Why It Suits You</div>
+              <ul class="checklist" id="detail-suitability-checklist">
+                {% if style_data.reasons %}
+                  {% for r in style_data.reasons %}
+                  <li>
+                    <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                    <span>{{ r }}</span>
+                  </li>
+                  {% endfor %}
+                {% endif %}
+              </ul>
+            {% else %}
+              <div class="section-label">Face Shape Compatibility Breakdown</div>
+              <ul class="checklist" id="detail-suitability-checklist">
+                {% if style_data.suitability %}
+                  {% for s in style_data.suitability %}
+                  <li>
+                    <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                    <span>{{ s.shape }}: <strong style="color: var(--purple-primary);">{{ s.score }}</strong></span>
+                  </li>
+                  {% endfor %}
+                {% elif style_data.reasons %}
+                  {% for r in style_data.reasons %}
+                  <li>
+                    <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                    <span>{{ r }}</span>
+                  </li>
+                  {% endfor %}
+                {% endif %}
+              </ul>
+            {% endif %}
           </div>
 
           <!-- Details Grid Table -->
@@ -177,5 +191,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/hairstyle_detail.js') }}"></script>
+<script src="{{ url_for('static', filename='js/hairstyle_detail.js') }}?v=1.3"></script>
 {% endblock %}

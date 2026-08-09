@@ -184,21 +184,20 @@ function initHairstyleGallery() {
   const titleElem = document.getElementById('rec-style-title');
 
   galleryCards.forEach(card => {
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const slug = card.getAttribute('data-slug');
+      if (slug && window.SERVER_RELATED_STYLES) {
+        const styleData = window.SERVER_RELATED_STYLES.find(s => s.slug === slug);
+        if (styleData) {
+          // Update the main view without re-rendering the gallery itself
+          updateRecommendationViewFromDB(styleData, null);
+        }
+      }
+
       galleryCards.forEach(c => c.classList.remove('active'));
       card.classList.add('active');
-
-      const styleTitle = card.getAttribute('data-title');
-      const styleImg = card.getAttribute('data-img');
-
-      if (titleElem && styleTitle) titleElem.textContent = styleTitle;
-      if (mainPreviewImg && styleImg) {
-        mainPreviewImg.style.opacity = '0.3';
-        setTimeout(() => {
-          mainPreviewImg.src = styleImg;
-          mainPreviewImg.style.opacity = '1';
-        }, 150);
-      }
 
       const recCard = document.querySelector('.main-rec-card');
       if (recCard) {
@@ -233,6 +232,7 @@ function initFaceShapeModal() {
     });
   }
 }
+
 
 function initQuickPhotoUpload() {
   const quickFileInput = document.getElementById('rec-quick-file-input');
@@ -477,7 +477,7 @@ function updateRecommendationViewFromDB(data, relatedStyles = []) {
 
   if (galleryContainer && relatedStyles && relatedStyles.length) {
     galleryContainer.innerHTML = relatedStyles.map((style, idx) => `
-      <a href="/hairstyle-detail?style=${style.slug}&gender=${style.gender}" class="style-variation-card ${idx === 0 ? 'active' : ''}" data-title="${style.name}" data-img="${style.main_img}" style="text-decoration: none; color: inherit;">
+      <a href="#" class="style-variation-card ${idx === 0 ? 'active' : ''}" data-slug="${style.slug}" data-title="${style.name}" data-img="${style.main_img}" style="text-decoration: none; color: inherit;">
         <div class="var-img-wrapper">
           <img src="${style.main_img}" alt="${style.name}">
         </div>

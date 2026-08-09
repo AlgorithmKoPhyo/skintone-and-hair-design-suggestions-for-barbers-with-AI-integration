@@ -12,3 +12,10 @@ __pycache__/
 # OS files
 .DS_Store
 .uploads/
+
+# Credentials & Secrets
+firebase-credentials.json
+*.env
+
+# Uploads
+app/static/uploads/

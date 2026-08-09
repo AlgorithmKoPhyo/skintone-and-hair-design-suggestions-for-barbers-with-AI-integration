@@ -12,9 +12,9 @@ class HairstyleService:
     def __init__(self):
         self.dao = HairstyleDAO()
 
-    def get_all_hairstyles(self, gender=None, shape=None, search=None):
+    def get_all_hairstyles(self, gender=None, shape=None, search=None, category=None):
         """Retrieve all catalog hairstyles with optional filtering."""
-        return self.dao.get_all_hairstyles(gender=gender, shape=shape, search=search)
+        return self.dao.get_all_hairstyles(gender=gender, shape=shape, search=search, category=category)
 
     def get_hairstyle_by_slug(self, slug):
         """Retrieve single hairstyle details by slug key."""
@@ -28,7 +28,7 @@ class HairstyleService:
         shape = shape if shape in ['oval', 'round', 'square', 'heart'] else 'oval'
         return self.dao.get_recommendation_by_shape_and_gender(gender, shape)
 
-    def get_related_hairstyles(self, gender='female', shape='oval', current_slug=None, limit=6):
+    def get_related_hairstyles(self, gender='female', shape='oval', current_slug=None, limit=5):
         """Get related hairstyles matching gender and face shape."""
         return self.dao.get_related_hairstyles(gender=gender, shape=shape, current_slug=current_slug, limit=limit)
 
