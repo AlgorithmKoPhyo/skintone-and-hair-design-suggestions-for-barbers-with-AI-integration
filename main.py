@@ -1,3 +1,4 @@
+from flask import json
 import os
 import time
 import base64
@@ -12,6 +13,7 @@ try:
     import modules.color_analysis_recommender as color_recommender
     from modules.skin_tone_service import SkinToneService
     from modules.color_analysis_recommender import get_recommendations
+    from modules.face_shape_classifier import FaceShapeClassifier
 except ImportError:
     # Graceful fallback if module files aren't in place yet
     skin_detector = None
@@ -19,6 +21,7 @@ except ImportError:
     tone_classifier = None
     hair_recommender = None
     color_recommender = None
+    FaceShapeClassifier = None
 
 
 app = Flask(
@@ -39,6 +42,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Instantiate Service Layer (Clean Request -> Service -> DAO Architecture)
 hairstyle_service = HairstyleService()
 skin_tone_service = SkinToneService() if SkinToneService else None
+face_shape_classifier = FaceShapeClassifier() if FaceShapeClassifier else None
 
 @app.route('/')
 def index():
@@ -54,10 +58,37 @@ def recommendation():
     gender = request.args.get('gender', 'female')
     shape = request.args.get('shape', 'oval')
     user_img = request.args.get('user_img', '')
-    rec_data = hairstyle_service.get_recommendation(gender=gender, shape=shape)
+
+    confidence = request.args.get('confidence', '0')
+
+    try:
+        confidence = float(confidence)
+    except (ValueError, TypeError):
+        confidence = 0.0
+
+    rec_data = hairstyle_service.get_recommendation(
+        gender=gender,
+        shape=shape
+    )
+
     current_slug = rec_data.get('slug') if rec_data else None
-    related_styles = hairstyle_service.get_related_hairstyles(gender=gender, shape=shape, current_slug=current_slug, limit=6)
-    return render_template('recommendation.html', gender=gender, shape=shape, user_img=user_img, rec_data=rec_data, related_styles=related_styles)
+
+    related_styles = hairstyle_service.get_related_hairstyles(
+        gender=gender,
+        shape=shape,
+        current_slug=current_slug,
+        limit=6
+    )
+
+    return render_template(
+        'recommendation.html',
+        gender=gender,
+        shape=shape,
+        confidence=confidence,
+        user_img=user_img,
+        rec_data=rec_data,
+        related_styles=related_styles
+    )
 
 @app.route('/hairstyles')
 def hairstyles():
@@ -154,19 +185,21 @@ def analyze():
     else:
         saved_url = ''
 
-    # ── AI Face Shape Detection (STUB — replace with real model) ───────────
-    # TODO: Replace this block with the actual face_shape_classifier module.
-    # The classifier should accept `filepath` and return:
-    #   detected_shape : str  — one of "oval", "round", "square", "heart"
-    #   confidence     : float — 0.0 to 1.0
-    #
-    # Example integration once model is ready:
-    #   from modules.face_shape_classifier import FaceShapeClassifier
-    #   classifier = FaceShapeClassifier()
-    #   detected_shape, confidence = classifier.predict(filepath)
-    #
-    detected_shape = "oval"   # ← stub: replace with classifier output
-    confidence     = 0.96     # ← stub: replace with classifier confidence
+    # ── AI Face Shape Detection ────────────────────────────────────────────
+    detected_shape = "oval"   # default fallback
+    confidence     = 0.0
+
+    if face_shape_classifier and os.path.exists(filepath):
+        shape_result = face_shape_classifier.classify(filepath)
+        if "error" in shape_result:
+            print(f"[FaceShapeClassifier] {shape_result['error']}")
+        else:
+            detected_shape = shape_result["face_shape"].lower()
+            confidence     = shape_result["confidence"]
+            print(f"\n{'='*40}")
+            print(f"  Face Shape : {shape_result['face_shape']}")
+            print(f"  Confidence : {confidence * 100:.1f}%")
+            print(f"{'='*40}\n")
 
     # ── AI Skin Tone Detection (STUB — replace with real model) ────────────
     # TODO: Replace with skin_tone_classifier module.
@@ -192,6 +225,8 @@ def analyze():
         redirect_url = (
             f"/recommendation?user_img={saved_url}"
             f"&shape={detected_shape}&gender={gender}"
+            f"&confidence={confidence}"
+            f"&gender={gender}"
         )
     else:
         redirect_url = (
@@ -263,10 +298,19 @@ def render_analyze_result():
         color_type = undertone.upper()
         confidence_score = f"{int(confidence_val * 100)}%"
         # Dynamic sample data formatted for result templates
-        face_shape = 'Round'
+        face_shape = "oval"
+        face_shape_confidence = 0.0
+
+        if face_shape_classifier and os.path.exists(filepath):
+            shape_result = face_shape_classifier.classify(filepath)
+
+        if "error" in shape_result:
+            print(f"[FaceShapeClassifier] {shape_result['error']}")
+        else:
+            face_shape = shape_result["face_shape"].lower()
+            face_shape_confidence = shape_result["confidence"]
         # color_type = 'COOL'
         # confidence_score = '92%'
-
         hairstyles = [
             {
                 'name': 'Long Layered Cut',
@@ -306,13 +350,14 @@ def render_analyze_result():
                 neutral_colors=recommendations.get('neutral_colors', []),
                 hair_colors=recommendations.get('hair_colors', []),
                 jewelry=recommendations.get('jewelry', [])
-            )
+        )
 
         # Hairstyle Analysis ခလုတ်မှ လာပါက result.html ကို ပြသခြင်း
         return render_template(
             'result.html',
             user_image=user_image_url,
             face_shape=face_shape,
+            face_shape_confidence=face_shape_confidence,
             skin_tone=color_type,
             gender=gender,
             hairstyles=hairstyles,

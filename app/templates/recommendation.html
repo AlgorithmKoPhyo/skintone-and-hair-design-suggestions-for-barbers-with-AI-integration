@@ -7,34 +7,68 @@
   <div class="container">
     {% if user_img %}
     <!-- Title & Detected Face Shape Badge Card (When Photo Analyzed) -->
+
     <div class="rec-header-row">
       <div>
-        <h1>Hairstyle Recommendation <i class="fa-solid fa-wand-magic-sparkles"></i></h1>
-        <p>Best hairstyle for your detected face shape (Loaded directly from Database)</p>
+        <h1>
+          Hairstyle Recommendation
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </h1>
+
+        <p>
+          Best hairstyle for your detected face shape
+        </p>
       </div>
 
-      <!-- Detected Face Shape Card (Clickable to view modal) -->
+      <!-- Detected Face Shape Card -->
       <div class="face-shape-badge" id="face-shape-badge-btn" title="Click to view detected face shape details">
         <div class="badge-icon">
           <i class="fa-solid fa-circle-user"></i>
         </div>
+
         <div class="badge-text">
+
+          <!-- Face Shape -->
           <span class="badge-title" id="badge-face-shape-title">
-            {% if shape == 'round' %}Round Face
-            {% elif shape == 'square' %}Square Face
-            {% elif shape == 'heart' %}Heart Face
-            {% else %}Oval Face{% endif %}
+            {{ shape|capitalize }} Face
           </span>
+
+          <!-- Face Shape Description -->
           <span class="badge-subtitle" id="badge-face-shape-sub">
-            {% if shape == 'round' %}Soft & Symmetrical
-            {% elif shape == 'square' %}Defined & Angular
-            {% elif shape == 'heart' %}Wide Forehead & Petite Chin
-            {% else %}Balanced & Versatile{% endif %}
+            {% if shape == 'round' %}
+            Soft & Symmetrical
+
+            {% elif shape == 'square' %}
+            Defined & Angular
+
+            {% elif shape == 'heart' %}
+            Wide Forehead & Petite Chin
+
+            {% elif shape == 'oblong' %}
+            Long & Balanced
+
+            {% elif shape == 'diamond' %}
+            Defined Cheekbones
+
+            {% elif shape == 'oval' %}
+            Balanced & Versatile
+
+            {% else %}
+            Face Shape Detected
+            {% endif %}
           </span>
+
         </div>
-        <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; color: var(--purple-primary); margin-left: 6px;"></i>
+
+        <i class="fa-solid fa-chevron-down" style="
+        font-size: 0.8rem;
+        color: var(--purple-primary);
+        margin-left: 6px;
+      "></i>
       </div>
     </div>
+
+
 
     <!-- Hidden File Input for Quick Uploads -->
     <input type="file" id="rec-quick-file-input" accept="image/*" style="display: none;">
@@ -43,11 +77,11 @@
     <div class="main-rec-card grid-12">
 
       <!-- AI Hairstyle Preview -->
-      <div class="rec-preview-wrapper col-5 col-md-12"
-           id="rec-drag-drop-zone" style="cursor: pointer; position: relative;">
+      <div class="rec-preview-wrapper col-5 col-md-12" id="rec-drag-drop-zone"
+        style="cursor: pointer; position: relative;">
         <img id="main-ai-preview-img"
-             src="{{ rec_data.main_img if rec_data else url_for('static', filename='images/classic_bob.jpg') }}"
-             alt="{{ rec_data.name if rec_data else 'Recommended Hairstyle' }}">
+          src="{{ rec_data.main_img if rec_data else url_for('static', filename='images/classic_bob.jpg') }}"
+          alt="{{ rec_data.name if rec_data else 'Recommended Hairstyle' }}">
         <div class="ai-preview-tag">
           <i class="fa-solid fa-wand-magic-sparkles"></i> AI Preview
         </div>
@@ -73,10 +107,12 @@
         <div>
           <div class="style-title-group">
             <h2 id="rec-style-title">{{ rec_data.name if rec_data else 'Classic Bob Cut' }}</h2>
-            <div class="style-tagline" id="rec-style-tagline">{{ rec_data.tagline if rec_data else 'Perfect for Oval Face' }}</div>
+            <div class="style-tagline" id="rec-style-tagline">{{ rec_data.tagline if rec_data else 'Perfect for Oval
+              Face' }}</div>
           </div>
           <p class="style-desc" id="rec-style-desc">
-            {{ rec_data.description if rec_data else 'Chin-length classic haircut with clean ends that frames oval faces with timeless symmetry.' }}
+            {{ rec_data.description if rec_data else 'Chin-length classic haircut with clean ends that frames oval faces
+            with timeless symmetry.' }}
           </p>
 
           <!-- Why it suits you (Fetched from Database reasons_json) -->
@@ -84,15 +120,17 @@
             <div class="section-label">Why it suits you</div>
             <ul class="checklist" id="rec-checklist">
               {% if rec_data and rec_data.reasons %}
-                {% for reason in rec_data.reasons %}
-                <li>
-                  <span class="check-icon"><i class="fa-solid fa-check"></i></span>
-                  <span>{{ reason }}</span>
-                </li>
-                {% endfor %}
+              {% for reason in rec_data.reasons %}
+              <li>
+                <span class="check-icon"><i class="fa-solid fa-check"></i></span>
+                <span>{{ reason }}</span>
+              </li>
+              {% endfor %}
               {% else %}
-                <li><span class="check-icon"><i class="fa-solid fa-check"></i></span><span>Maintains natural face symmetry</span></li>
-                <li><span class="check-icon"><i class="fa-solid fa-check"></i></span><span>Frames facial features beautifully</span></li>
+              <li><span class="check-icon"><i class="fa-solid fa-check"></i></span><span>Maintains natural face
+                  symmetry</span></li>
+              <li><span class="check-icon"><i class="fa-solid fa-check"></i></span><span>Frames facial features
+                  beautifully</span></li>
               {% endif %}
             </ul>
           </div>
@@ -101,11 +139,13 @@
           <div class="details-grid-table">
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-ruler-vertical"></i> Hair Length</span>
-              <span class="detail-val" id="detail-length">{{ rec_data.hair_length if rec_data else 'Chin Length' }}</span>
+              <span class="detail-val" id="detail-length">{{ rec_data.hair_length if rec_data else 'Chin Length'
+                }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-scissors"></i> Hair Texture</span>
-              <span class="detail-val" id="detail-texture">{{ rec_data.hair_texture if rec_data else 'Straight / Waves' }}</span>
+              <span class="detail-val" id="detail-texture">{{ rec_data.hair_texture if rec_data else 'Straight / Waves'
+                }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-hand-sparkles"></i> Maintenance</span>
@@ -113,7 +153,8 @@
             </div>
             <div class="detail-row">
               <span class="detail-key"><i class="fa-solid fa-chart-line"></i> Suitability Score</span>
-              <span class="detail-val stars-score" id="detail-score">★★★★★ {{ rec_data.score_badge if rec_data else '95% Match' }}</span>
+              <span class="detail-val stars-score" id="detail-score">★★★★★ {{ rec_data.score_badge if rec_data else '95%
+                Match' }}</span>
             </div>
           </div>
         </div>
@@ -122,7 +163,8 @@
           <button class="btn-barber-card" id="btn-open-barber-card" type="button" style="flex: 1; min-width: 200px;">
             <i class="fa-solid fa-scissors"></i> Barber Consultation Board
           </button>
-          <a href="{{ url_for('hairstyles', shape=shape|default('oval'), gender=gender|default('female')) }}" class="btn-view-more-styles" style="flex: 1; min-width: 200px; text-align: center; text-decoration: none;">
+          <a href="{{ url_for('hairstyles', shape=shape|default('oval'), gender=gender|default('female')) }}"
+            class="btn-view-more-styles" style="flex: 1; min-width: 200px; text-align: center; text-decoration: none;">
             View All Styles <i class="fa-solid fa-arrow-right"></i>
           </a>
         </div>
@@ -136,19 +178,21 @@
         <h3>View from Different Angles</h3>
         <div class="angles-thumbnails-grid grid-12">
           {% if rec_data and rec_data.angles %}
-            {% for angle in rec_data.angles %}
-            <div class="angle-card col-3 col-sm-6 {% if loop.first %}active{% endif %}" data-img="{{ angle.img }}">
-              <div class="angle-thumb-wrapper">
-                <img src="{{ angle.img }}" alt="{{ angle.name }} Angle">
-              </div>
-              <span class="angle-name">{{ angle.name }}</span>
+          {% for angle in rec_data.angles %}
+          <div class="angle-card col-3 col-sm-6 {% if loop.first %}active{% endif %}" data-img="{{ angle.img }}">
+            <div class="angle-thumb-wrapper">
+              <img src="{{ angle.img }}" alt="{{ angle.name }} Angle">
             </div>
-            {% endfor %}
+            <span class="angle-name">{{ angle.name }}</span>
+          </div>
+          {% endfor %}
           {% else %}
-            <div class="angle-card col-3 col-sm-6 active" data-img="{{ url_for('static', filename='images/bob_cut_front.jpg') }}">
-              <div class="angle-thumb-wrapper"><img src="{{ url_for('static', filename='images/bob_cut_front.jpg') }}" alt="Front"></div>
-              <span class="angle-name">Front</span>
-            </div>
+          <div class="angle-card col-3 col-sm-6 active"
+            data-img="{{ url_for('static', filename='images/bob_cut_front.jpg') }}">
+            <div class="angle-thumb-wrapper"><img src="{{ url_for('static', filename='images/bob_cut_front.jpg') }}"
+                alt="Front"></div>
+            <span class="angle-name">Front</span>
+          </div>
           {% endif %}
         </div>
       </div>
@@ -163,12 +207,12 @@
         </div>
         <ul class="tips-list" id="rec-tips-list">
           {% if rec_data and rec_data.tips %}
-            {% for tip in rec_data.tips %}
-            <li>{{ tip }}</li>
-            {% endfor %}
+          {% for tip in rec_data.tips %}
+          <li>{{ tip }}</li>
+          {% endfor %}
           {% else %}
-            <li>Blow dry with a round brush for natural volume.</li>
-            <li>A lightweight finishing oil keeps hair smooth and shiny.</li>
+          <li>Blow dry with a round brush for natural volume.</li>
+          <li>A lightweight finishing oil keeps hair smooth and shiny.</li>
           {% endif %}
         </ul>
       </div>
@@ -180,15 +224,19 @@
     {% else %}
 
     <!-- NO PHOTO STATE: Pure Action Landing Container (Drag & Drop Zone) -->
-    <div id="no-photo-dropzone" style="text-align: center; max-width: 680px; margin: 40px auto; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 52px 36px; box-shadow: var(--shadow-sm); cursor: pointer;">
-      <div style="width: 84px; height: 84px; border-radius: 50%; background: var(--purple-light); color: var(--purple-primary); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 24px; box-shadow: var(--shadow-sm);">
+    <div id="no-photo-dropzone"
+      style="text-align: center; max-width: 680px; margin: 40px auto; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 52px 36px; box-shadow: var(--shadow-sm); cursor: pointer;">
+      <div
+        style="width: 84px; height: 84px; border-radius: 50%; background: var(--purple-light); color: var(--purple-primary); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 24px; box-shadow: var(--shadow-sm);">
         <i class="fa-solid fa-cloud-arrow-up"></i>
       </div>
 
-      <h2 style="font-size: 1.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">No Photo Uploaded or Captured Yet</h2>
-      
+      <h2 style="font-size: 1.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">No Photo Uploaded
+        or Captured Yet</h2>
+
       <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 32px;">
-        Drag & drop your portrait photo here, or capture a photo using your live camera to get personalized AI recommendations.
+        Drag & drop your portrait photo here, or capture a photo using your live camera to get personalized AI
+        recommendations.
       </p>
 
       <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
@@ -212,7 +260,8 @@
 <!-- Modal for AI Face Shape Detection Result & Photo Upload -->
 <div class="modal-backdrop" id="modal-face-shapes">
   <div class="modal-card" style="max-width: 520px; padding: 28px; border-radius: 20px;">
-    <div class="modal-header" style="margin-bottom: 18px; border-bottom: 1px solid var(--border-light); padding-bottom: 14px;">
+    <div class="modal-header"
+      style="margin-bottom: 18px; border-bottom: 1px solid var(--border-light); padding-bottom: 14px;">
       <h3 style="display: flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 700;">
         <i class="fa-solid fa-brain" style="color: var(--purple-primary);"></i> AI Face Shape Detection Result
       </h3>
@@ -221,54 +270,73 @@
 
     {% if user_img %}
     <!-- Large Original Image in Rectangle with Rounded Corners -->
-    <div style="position: relative; width: 100%; height: 260px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); margin-bottom: 18px; background: #f8fafc; box-shadow: var(--shadow-sm);">
-      <img id="modal-analyzed-img" src="{{ user_img }}" alt="Original Analyzed Photo" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-      
+    <div
+      style="position: relative; width: 100%; height: 260px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); margin-bottom: 18px; background: #f8fafc; box-shadow: var(--shadow-sm);">
+      <img id="modal-analyzed-img" src="{{ user_img }}" alt="Original Analyzed Photo"
+        style="width: 100%; height: 100%; object-fit: cover; display: block;">
+
       <!-- Change photo badge overlay -->
-      <button id="btn-modal-change-photo" style="position: absolute; bottom: 12px; right: 12px; background: rgba(15, 23, 42, 0.75); color: white; border: none; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 500; backdrop-filter: blur(4px); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: var(--transition);">
+      <button id="btn-modal-change-photo"
+        style="position: absolute; bottom: 12px; right: 12px; background: rgba(15, 23, 42, 0.75); color: white; border: none; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 500; backdrop-filter: blur(4px); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: var(--transition);">
         <i class="fa-solid fa-arrow-up-from-bracket"></i> Change Photo
       </button>
     </div>
     {% endif %}
 
     <!-- AI Face Shape Detection Metrics Breakdown -->
-    <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
-      
+    <div
+      style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+
       <!-- Detected Face Shape Badge Header -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
         <div>
-          <span style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; color: var(--purple-primary); display: block;">Detected Shape</span>
-          <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-top: 2px;" id="modal-shape-title">
+          <span
+            style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; color: var(--purple-primary); display: block;">Detected
+            Shape</span>
+          <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-top: 2px;"
+            id="modal-shape-title">
             {% if shape == 'round' %}Round Face
             {% elif shape == 'square' %}Square Face
             {% elif shape == 'heart' %}Heart Face
+            {% elif shape == 'oblong' %}Oblong Face
+            {% elif shape == 'diamond'%}Diamond Face
             {% else %}Oval Face{% endif %}
           </h4>
         </div>
-        <span style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">
+        <span
+          style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">
           <i class="fa-solid fa-circle-check"></i> 96% AI Confidence
         </span>
       </div>
 
       <!-- Detection Metrics Grid -->
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 0.85rem;">
-        <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
-          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i class="fa-solid fa-ruler-combined" style="color: var(--purple-primary);"></i> Face Ratio</span>
+        <div
+          style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
+          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i
+              class="fa-solid fa-ruler-combined" style="color: var(--purple-primary);"></i> Face Ratio</span>
           <strong style="color: var(--text-main); font-size: 0.9rem;" id="metric-face-ratio">1.5 : 1 (Balanced)</strong>
         </div>
 
-        <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
-          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i class="fa-solid fa-face-smile" style="color: var(--purple-primary);"></i> Forehead Width</span>
+        <div
+          style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
+          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i
+              class="fa-solid fa-face-smile" style="color: var(--purple-primary);"></i> Forehead Width</span>
           <strong style="color: var(--text-main); font-size: 0.9rem;" id="metric-forehead">Proportional</strong>
         </div>
 
-        <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
-          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i class="fa-solid fa-vector-square" style="color: var(--purple-primary);"></i> Jawline Contour</span>
+        <div
+          style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
+          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i
+              class="fa-solid fa-vector-square" style="color: var(--purple-primary);"></i> Jawline Contour</span>
           <strong style="color: var(--text-main); font-size: 0.9rem;" id="metric-jawline">Soft Curve</strong>
         </div>
 
-        <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
-          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i class="fa-solid fa-star" style="color: #F59E0B;"></i> Symmetry Score</span>
+        <div
+          style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light);">
+          <span style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-bottom: 2px;"><i
+              class="fa-solid fa-star" style="color: #F59E0B;"></i> Symmetry Score</span>
           <strong style="color: var(--text-main); font-size: 0.9rem;" id="metric-symmetry">98% High Symmetry</strong>
         </div>
       </div>
@@ -279,8 +347,8 @@
 
 {% block scripts %}
 <script>
-  window.SERVER_REC_DATA = {{ rec_data|tojson|safe if rec_data else 'null' }};
-  window.SERVER_RELATED_STYLES = {{ related_styles|tojson|safe if related_styles else '[]' }};
+  window.SERVER_REC_DATA = {{ rec_data | tojson | safe if rec_data else 'null' }};
+  window.SERVER_RELATED_STYLES = {{ related_styles | tojson | safe if related_styles else '[]' }};
 </script>
 <script src="{{ url_for('static', filename='js/recommendation.js') }}"></script>
 {% endblock %}
