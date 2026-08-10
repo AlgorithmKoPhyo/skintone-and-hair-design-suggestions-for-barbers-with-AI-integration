@@ -14,6 +14,7 @@ try:
     from modules.skin_tone_service import SkinToneService
     from modules.color_analysis_recommender import get_recommendations
     from modules.face_shape_classifier import FaceShapeClassifier
+    from modules.face_shape_classification.src.validation.facevalidator import FaceValidator
 except ImportError:
     # Graceful fallback if module files aren't in place yet
     skin_detector = None
@@ -22,6 +23,7 @@ except ImportError:
     hair_recommender = None
     color_recommender = None
     FaceShapeClassifier = None
+    FaceValidator = None
 
 
 app = Flask(
@@ -43,6 +45,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 hairstyle_service = HairstyleService()
 skin_tone_service = SkinToneService() if SkinToneService else None
 face_shape_classifier = FaceShapeClassifier() if FaceShapeClassifier else None
+face_validator = FaceValidator() if FaceValidator else None
 
 @app.route('/')
 def index():
@@ -363,6 +366,54 @@ def render_analyze_result():
             hairstyles=hairstyles,
             palette=palette
         )
+
+
+@app.route('/validate-face', methods=['POST'])
+def validate_face():
+    """
+    Pre-analysis face check using FaceValidator (MediaPipe FaceDetection).
+    Accepts a multipart image, saves it to a temp file, runs validation,
+    then deletes the temp file.
+    Returns: {"valid": bool, "message": str, "face_count": int, "error": str|None}
+    """
+    if 'image' not in request.files or request.files['image'].filename == '':
+        return jsonify({'valid': False, 'message': 'No image provided.'}), 400
+
+    file = request.files['image']
+
+    # Save to a temp path so FaceValidator can read it from disk
+    timestamp = int(time.time() * 1000)
+    tmp_filename = f"_face_check_{timestamp}.jpg"
+    tmp_filepath = os.path.join(UPLOAD_FOLDER, tmp_filename)
+
+    try:
+        file.save(tmp_filepath)
+
+        if face_validator is None:
+            # Validator unavailable — fail open so UX isn't blocked
+            return jsonify({'valid': True, 'message': 'Validation skipped (validator unavailable).'})
+
+        result = face_validator.validate(tmp_filepath)
+
+        return jsonify({
+            'valid':      result['valid'],
+            'message':    result['message'],
+            'face_count': result.get('face_count', 0),
+            'error':      result.get('error')
+        })
+
+    except Exception as e:
+        print(f"[validate-face] Error: {e}")
+        return jsonify({'valid': False, 'message': 'Could not process the image. Please try another photo.'}), 500
+
+    finally:
+        # Always clean up the temp file
+        if os.path.exists(tmp_filepath):
+            try:
+                os.remove(tmp_filepath)
+            except OSError:
+                pass
+
 
 
 if __name__ == '__main__':

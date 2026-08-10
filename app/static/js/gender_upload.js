@@ -66,7 +66,7 @@
     if (thumb) thumb.src = '';
   }
 
-  // ---- Loading overlay -----------------------------------------------------
+  // ---- Loading overlay (post-selection analysis) -------------------------
   function showLoading() {
     const el = $('gender-modal-loading');
     if (el) el.style.display = 'flex';
@@ -78,31 +78,97 @@
     if (btnM) btnM.disabled = true;
   }
 
+  // ---- Face validation UI state -------------------------------------------
+  //  state: 'scanning' | 'valid' | 'invalid'
+  function setValidationState(state, message) {
+    const scanStatus = $('face-scan-status');
+    const warning    = $('face-validation-warning');
+    const msgEl      = $('face-validation-msg');
+    const btnF       = getBtnFemale();
+    const btnM       = getBtnMale();
+    const btnC       = $('opt-color-analysis');
+    const subtitle   = $('gender-modal-subtitle');
+
+    // Hide both indicators first
+    if (scanStatus) scanStatus.style.display = 'none';
+    if (warning)    warning.style.display    = 'none';
+
+    if (state === 'scanning') {
+      // Buttons disabled, spinner shown
+      if (scanStatus) scanStatus.style.display = 'flex';
+      if (btnF) btnF.disabled = true;
+      if (btnM) btnM.disabled = true;
+      if (btnC) btnC.disabled = true;
+      if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
+
+    } else if (state === 'valid') {
+      // Face found — enable buttons
+      if (btnF) btnF.disabled = false;
+      if (btnM) btnM.disabled = false;
+      if (btnC) {
+        btnC.disabled = false;
+        btnC.style.display = 'flex';
+      }
+      if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
+
+    } else if (state === 'invalid') {
+      // No face — keep buttons disabled, show warning
+      if (warning) warning.style.display = 'flex';
+      if (msgEl && message) msgEl.textContent = message;
+      if (btnF) btnF.disabled = true;
+      if (btnM) btnM.disabled = true;
+      if (btnC) btnC.disabled = true;
+      if (subtitle) subtitle.textContent = 'Please upload a clear photo showing your face to continue.';
+    }
+  }
+
+  // ---- Background face validation -----------------------------------------
+  async function validateFaceInBackground(file) {
+    setValidationState('scanning');
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res  = await fetch('/validate-face', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.valid) {
+        setValidationState('valid');
+      } else {
+        setValidationState('invalid', data.message || 'No face detected. Please upload a clear photo showing your face.');
+      }
+    } catch (err) {
+      // Network/server error — fail open so the user isn't permanently blocked
+      console.warn('[StyleMe] /validate-face failed, failing open:', err);
+      setValidationState('valid');
+    }
+  }
+
   // ---- Modal open / close --------------------------------------------------
   function showGenderModal(file, _unused) {
     if (!validateFile(file)) return;
     pendingFile = file;
     updateModalPreview(file);
 
-    // Reset loading state from previous use
+    // Reset loading overlay from previous use
     const loading = $('gender-modal-loading');
     if (loading) loading.style.display = 'none';
-    const btnF = getBtnFemale();
-    const btnM = getBtnMale();
-    const btnC = $('opt-color-analysis');
-    if (btnF) btnF.disabled = false;
-    if (btnM) btnM.disabled = false;
-    if (btnC) {
-      btnC.disabled = false;
-      btnC.style.display = 'flex';
-    }
-    const modalTitle = $('gender-modal-title');
-    if (modalTitle) modalTitle.textContent = "Select Recommendation";
-    const modalSubtitle = $('gender-modal-subtitle');
-    if (modalSubtitle) modalSubtitle.textContent = "Which recommendation would you like our AI to generate?";
 
+    // Reset validation warning/scan from previous use
+    const scanStatus = $('face-scan-status');
+    const warning    = $('face-validation-warning');
+    if (scanStatus) scanStatus.style.display = 'none';
+    if (warning)    warning.style.display    = 'none';
+
+    const modalTitle = $('gender-modal-title');
+    if (modalTitle) modalTitle.textContent = 'Select Recommendation';
+    const modalSubtitle = $('gender-modal-subtitle');
+    if (modalSubtitle) modalSubtitle.textContent = 'Which recommendation would you like our AI to generate?';
+
+    // Open the modal immediately for good UX
     const modal = getModal();
     if (modal) modal.classList.add('active');
+
+    // Kick off background face validation (disables buttons until result)
+    validateFaceInBackground(file);
   }
 
   function closeModal() {
