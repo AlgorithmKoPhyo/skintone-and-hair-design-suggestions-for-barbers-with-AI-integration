@@ -7,7 +7,7 @@
   <div class="container">
     {% if user_img %}
     <!-- Title & Detected Face Shape Badge Card (When Photo Analyzed) -->
-    ```html
+
     <div class="rec-header-row">
       <div>
         <h1>
@@ -67,7 +67,7 @@
       "></i>
       </div>
     </div>
-    ```
+
 
 
     <!-- Hidden File Input for Quick Uploads -->
@@ -299,6 +299,8 @@
             {% if shape == 'round' %}Round Face
             {% elif shape == 'square' %}Square Face
             {% elif shape == 'heart' %}Heart Face
+            {% elif shape == 'oblong' %}Oblong Face
+            {% elif shape == 'diamond'%}Diamond Face
             {% else %}Oval Face{% endif %}
           </h4>
         </div>
