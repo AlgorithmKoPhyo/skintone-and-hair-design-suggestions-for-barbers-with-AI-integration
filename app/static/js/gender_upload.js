@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  const MAX_FILE_MB   = 10;
+  const MAX_FILE_MB = 10;
   const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 
   // ---- State ---------------------------------------------------------------
@@ -18,9 +18,9 @@
   // ---- DOM helpers ---------------------------------------------------------
   const $ = (id) => document.getElementById(id);
 
-  function getModal()     { return $('modal-gender-select'); }
+  function getModal() { return $('modal-gender-select'); }
   function getBtnFemale() { return $('gender-opt-female'); }
-  function getBtnMale()   { return $('gender-opt-male'); }
+  function getBtnMale() { return $('gender-opt-male'); }
 
   // ---- File size check -----------------------------------------------------
   function validateFile(file) {
@@ -40,10 +40,10 @@
 
   // ---- Image preview inside modal ------------------------------------------
   function updateModalPreview(file) {
-    const previewBar  = $('gender-modal-preview-bar');
-    const thumb       = $('gender-modal-thumb');
-    const nameEl      = $('gender-modal-filename');
-    const sizeEl      = $('gender-modal-filesize');
+    const previewBar = $('gender-modal-preview-bar');
+    const thumb = $('gender-modal-thumb');
+    const nameEl = $('gender-modal-filename');
+    const sizeEl = $('gender-modal-filesize');
 
     if (!previewBar || !thumb) return;
 
@@ -61,12 +61,12 @@
 
   function resetModalPreview() {
     const previewBar = $('gender-modal-preview-bar');
-    const thumb      = $('gender-modal-thumb');
+    const thumb = $('gender-modal-thumb');
     if (previewBar) previewBar.style.display = 'none';
     if (thumb) thumb.src = '';
   }
 
-  // ---- Loading overlay -----------------------------------------------------
+  // ---- Loading overlay (post-selection analysis) -------------------------
   function showLoading() {
     const el = $('gender-modal-loading');
     if (el) el.style.display = 'flex';
@@ -78,31 +78,110 @@
     if (btnM) btnM.disabled = true;
   }
 
+  // ---- Face validation UI state -------------------------------------------
+  //  state: 'scanning' | 'valid' | 'invalid'
+  function setValidationState(state, message) {
+    const scanStatus = $('face-scan-status');
+    const warning = $('face-validation-warning');
+    const msgEl = $('face-validation-msg');
+    const btnF = getBtnFemale();
+    const btnM = getBtnMale();
+    const btnC = $('opt-color-analysis');
+    const subtitle = $('gender-modal-subtitle');
+    const statusIcon = $('gender-modal-status-icon');
+
+    // Hide both indicators first
+    if (scanStatus) scanStatus.style.display = 'none';
+    if (warning) warning.style.display = 'none';
+
+    if (state === 'scanning') {
+      // Buttons disabled, spinner shown — reset icon to neutral green while waiting
+      if (statusIcon) {
+        statusIcon.className = 'fa-solid fa-circle-check';
+        statusIcon.style.color = '#22C55E';
+      }
+      if (scanStatus) scanStatus.style.display = 'flex';
+      if (btnF) btnF.disabled = true;
+      if (btnM) btnM.disabled = true;
+      if (btnC) btnC.disabled = true;
+      if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
+
+    } else if (state === 'valid') {
+      // Face found — green check, enable buttons
+      if (statusIcon) {
+        statusIcon.className = 'fa-solid fa-circle-check';
+        statusIcon.style.color = '#22C55E';
+      }
+      if (btnF) btnF.disabled = false;
+      if (btnM) btnM.disabled = false;
+      if (btnC) {
+        btnC.disabled = false;
+        btnC.style.display = 'flex';
+      }
+      if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
+
+    } else if (state === 'invalid') {
+      // No face — red cross, keep buttons disabled, show warning
+      if (statusIcon) {
+        statusIcon.className = 'fa-solid fa-circle-xmark';
+        statusIcon.style.color = '#EF4444';
+      }
+      if (warning) warning.style.display = 'flex';
+      if (msgEl && message) msgEl.textContent = message;
+      if (btnF) btnF.disabled = true;
+      if (btnM) btnM.disabled = true;
+      if (btnC) btnC.disabled = true;
+      if (subtitle) subtitle.textContent = 'Please upload a clear photo showing your face to continue.';
+    }
+  }
+
+  // ---- Background face validation -----------------------------------------
+  async function validateFaceInBackground(file) {
+    setValidationState('scanning');
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await fetch('/validate-face', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.valid) {
+        setValidationState('valid');
+      } else {
+        setValidationState('invalid', data.message || 'No face detected. Please upload a clear photo showing your face.');
+      }
+    } catch (err) {
+      // Network/server error — fail open so the user isn't permanently blocked
+      console.warn('[StyleMe] /validate-face failed, failing open:', err);
+      setValidationState('valid');
+    }
+  }
+
   // ---- Modal open / close --------------------------------------------------
   function showGenderModal(file, _unused) {
     if (!validateFile(file)) return;
     pendingFile = file;
     updateModalPreview(file);
 
-    // Reset loading state from previous use
+    // Reset loading overlay from previous use
     const loading = $('gender-modal-loading');
     if (loading) loading.style.display = 'none';
-    const btnF = getBtnFemale();
-    const btnM = getBtnMale();
-    const btnC = $('opt-color-analysis');
-    if (btnF) btnF.disabled = false;
-    if (btnM) btnM.disabled = false;
-    if (btnC) {
-      btnC.disabled = false;
-      btnC.style.display = 'flex';
-    }
-    const modalTitle = $('gender-modal-title');
-    if (modalTitle) modalTitle.textContent = "Select Recommendation";
-    const modalSubtitle = $('gender-modal-subtitle');
-    if (modalSubtitle) modalSubtitle.textContent = "Which recommendation would you like our AI to generate?";
 
+    // Reset validation warning/scan from previous use
+    const scanStatus = $('face-scan-status');
+    const warning = $('face-validation-warning');
+    if (scanStatus) scanStatus.style.display = 'none';
+    if (warning) warning.style.display = 'none';
+
+    const modalTitle = $('gender-modal-title');
+    if (modalTitle) modalTitle.textContent = 'Select Recommendation';
+    const modalSubtitle = $('gender-modal-subtitle');
+    if (modalSubtitle) modalSubtitle.textContent = 'Which recommendation would you like our AI to generate?';
+
+    // Open the modal immediately for good UX
     const modal = getModal();
     if (modal) modal.classList.add('active');
+
+    // Kick off background face validation (disables buttons until result)
+    validateFaceInBackground(file);
   }
 
   function closeModal() {
@@ -134,7 +213,7 @@
         document.write(html);
         document.close();
       } else {
-        const res  = await fetch('/api/analyze', { method: 'POST', body: formData });
+        const res = await fetch('/api/analyze', { method: 'POST', body: formData });
         const data = await res.json();
         window.location.href = data.redirect_url || `/recommendation?gender=${gender}`;
       }
@@ -229,8 +308,8 @@
 
     // Home page
     const uploadCard = $('upload-action-card');
-    const fileInput  = $('file-upload-input');
-    const btnUpload  = $('btn-upload-image');
+    const fileInput = $('file-upload-input');
+    const btnUpload = $('btn-upload-image');
 
     if (fileInput) patchFileInput(fileInput);
     if (uploadCard) patchDropZone(uploadCard);
@@ -240,13 +319,13 @@
     }
 
     // Recommendation page
-    const quickInput   = $('rec-quick-file-input');
+    const quickInput = $('rec-quick-file-input');
     const heroDropZone = $('rec-drag-drop-zone');
-    const noPhotoZone  = $('no-photo-dropzone');
+    const noPhotoZone = $('no-photo-dropzone');
 
-    if (quickInput)   patchFileInput(quickInput);
+    if (quickInput) patchFileInput(quickInput);
     if (heroDropZone) patchDropZone(heroDropZone);
-    if (noPhotoZone)  patchDropZone(noPhotoZone);
+    if (noPhotoZone) patchDropZone(noPhotoZone);
 
     [$('btn-quick-upload'), $('btn-modal-upload'), $('btn-modal-change-photo')].forEach(btn => {
       if (btn && !btn._triggerBound) {

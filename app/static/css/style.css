@@ -1678,6 +1678,11 @@ img {
   transform: scale(0.97);
 }
 
+.gender-modal-option:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 
 /* Footer (12 Column Layout: col-4 brand, col-3 quick links, col-3 support, col-2 social) */
