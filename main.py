@@ -12,25 +12,17 @@ try:
     import modules.color_analysis_recommender as color_recommender
     from modules.skin_tone_service import SkinToneService
     from modules.color_analysis_recommender import get_recommendations
-<<<<<<< Updated upstream
-except ImportError:
-    # Graceful fallback if module files aren't in place yet
-=======
     from modules.face_shape_classifier import FaceShapeClassifier
     from modules.face_shape_classification.src.validation.facevalidator import FaceValidator
 except ImportError as e:
->>>>>>> Stashed changes
     skin_detector = None
     shape_classifier = None
     tone_classifier = None
     hair_recommender = None
     color_recommender = None
-<<<<<<< Updated upstream
-=======
     FaceShapeClassifier = None
     FaceValidator = None
     SkinToneService = None 
->>>>>>> Stashed changes
 
 
 app = Flask(
@@ -275,9 +267,6 @@ def render_analyze_result():
         color_type = undertone.upper()
         confidence_score = f"{int(confidence_val * 100)}%"
         # Dynamic sample data formatted for result templates
-<<<<<<< Updated upstream
-        face_shape = 'Round'
-=======
         # face_shape = "oval"
         # face_shape_confidence = 0.0
 
@@ -292,8 +281,8 @@ def render_analyze_result():
         face_shape = "oval"
         face_shape_confidence = 0.0
 
-        if face_shape_classifier and os.path.exists(filepath):
-            shape_result = face_shape_classifier.classify(filepath)
+        if FaceShapeClassifier and os.path.exists(filepath):
+            shape_result = FaceShapeClassifier.classify(filepath)
 
             # INDENT THESE LINES so they only run if shape_result exists
             if "error" in shape_result:
@@ -301,7 +290,6 @@ def render_analyze_result():
             else:
                 face_shape = shape_result["face_shape"].lower()
                 face_shape_confidence = shape_result["confidence"]
->>>>>>> Stashed changes
         # color_type = 'COOL'
         # confidence_score = '92%'
 
