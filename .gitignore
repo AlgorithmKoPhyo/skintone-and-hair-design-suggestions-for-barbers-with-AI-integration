@@ -5,6 +5,8 @@ venv/
 # Python cache
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 
 # VS Code
 .vscode/
@@ -19,3 +21,17 @@ firebase-credentials.json
 
 # Uploads
 app/static/uploads/
+# Face shape classification — data, tests & training scripts
+modules/face_shape_classification/data/
+modules/face_shape_classification/tests/
+modules/face_shape_classification/main.py
+modules/face_shape_classification/main_evaluate.py
+modules/face_shape_classification/main_svm.py
+modules/face_shape_classification/main_train.py
+
+modules/face_shape_classification/src/dataset/
+modules/face_shape_classification/src/detection/
+modules/face_shape_classification/src/prediction/
+modules/face_shape_classification/src/training/
+modules/face_shape_classification/src/pipeline.py
+
