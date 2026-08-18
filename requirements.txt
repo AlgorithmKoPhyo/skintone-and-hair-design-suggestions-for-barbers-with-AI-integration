@@ -11,6 +11,8 @@ Pillow
 # Machine Learning & Numerical Operations
 numpy
 scikit-learn
+joblib
+pandas
 torch
 torchvision
 
