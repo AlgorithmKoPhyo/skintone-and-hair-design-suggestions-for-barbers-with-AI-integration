@@ -24,6 +24,7 @@ except ImportError:
     color_recommender = None
     FaceShapeClassifier = None
     FaceValidator = None
+    SkinToneService = None 
 
 
 app = Flask(
@@ -101,7 +102,7 @@ def color_analysis():
     undertone_raw = request.args.get('undertone', 'warm').lower()
 
     # Load palette from JSON file
-    palette_file = os.path.join(app.root_path, 'palettes_2.json')
+    palette_file = os.path.join(app.root_path, 'palettes.json')
     recommendations = {}
     
     key = 'warm'
