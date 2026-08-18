@@ -180,6 +180,13 @@ async function startCamera() {
       videoElem.srcObject = currentStream;
       videoElem.style.display = 'block';
       if (sampleImg) sampleImg.style.display = 'none';
+      
+      // Mirror the video visually if using front camera
+      if (currentFacingMode === 'user') {
+        videoElem.style.transform = 'scaleX(-1)';
+      } else {
+        videoElem.style.transform = 'none';
+      }
     }
   } catch (err) {
     console.warn("Camera access unavailable or denied. Using high quality sample photo mode:", err);
@@ -240,6 +247,13 @@ function capturePhoto() {
   if (freezeImg && capturedImageDataUrl) {
     freezeImg.src = capturedImageDataUrl;
     freezeImg.style.display = 'block';
+    
+    // Mirror the freeze image visually if using front camera
+    if (currentFacingMode === 'user') {
+      freezeImg.style.transform = 'scaleX(-1)';
+    } else {
+      freezeImg.style.transform = 'none';
+    }
   }
 
   // Hide face frame guides during photo decision preview
@@ -248,6 +262,9 @@ function capturePhoto() {
 
   if (decisionContainer) decisionContainer.classList.add('active');
   if (controls) controls.style.display = 'none';
+
+  const retakeBtn = document.getElementById('btn-retake');
+  if (retakeBtn) retakeBtn.style.display = 'inline-flex';
 
   // White camera shutter flash effect
   const viewport = document.querySelector('.camera-viewport');
@@ -289,6 +306,9 @@ function resetCameraState() {
 
   if (decisionContainer) decisionContainer.classList.remove('active');
   if (controls) controls.style.display = 'flex';
+
+  const retakeBtn = document.getElementById('btn-retake');
+  if (retakeBtn) retakeBtn.style.display = 'none';
 
   // Reset validation UI for next capture
   const scanStatus = document.getElementById('cam-face-scan-status');
