@@ -24,6 +24,7 @@ except ImportError:
     color_recommender = None
     FaceShapeClassifier = None
     FaceValidator = None
+    SkinToneService = None 
 
 
 app = Flask(
@@ -75,31 +76,17 @@ def recommendation():
     )
 
     current_slug = rec_data.get('slug') if rec_data else None
-
-    related_styles = hairstyle_service.get_related_hairstyles(
-        gender=gender,
-        shape=shape,
-        current_slug=current_slug,
-        limit=6
-    )
-
-    return render_template(
-        'recommendation.html',
-        gender=gender,
-        shape=shape,
-        confidence=confidence,
-        user_img=user_img,
-        rec_data=rec_data,
-        related_styles=related_styles
-    )
+    related_styles = hairstyle_service.get_related_hairstyles(gender=gender, shape=shape, current_slug=current_slug, limit=5)
+    return render_template('recommendation.html', gender=gender, shape=shape, user_img=user_img, rec_data=rec_data, related_styles=related_styles)
 
 @app.route('/hairstyles')
 def hairstyles():
     gender = request.args.get('gender', 'all')
     shape = request.args.get('shape', 'all')
+    category = request.args.get('category', 'all')
     search = request.args.get('search', '')
-    all_styles = hairstyle_service.get_all_hairstyles(gender=gender, shape=shape, search=search)
-    return render_template('hairstyles.html', hairstyles=all_styles, selected_gender=gender, selected_shape=shape, search=search)
+    # Don't pre-fetch all styles, let the JS handle fetching with pagination
+    return render_template('hairstyles.html', selected_gender=gender, selected_shape=shape, selected_category=category, search=search)
 
 @app.route('/hairstyle-detail')
 def hairstyle_detail():
@@ -115,7 +102,7 @@ def color_analysis():
     undertone_raw = request.args.get('undertone', 'warm').lower()
 
     # Load palette from JSON file
-    palette_file = os.path.join(app.root_path, 'palettes_2.json')
+    palette_file = os.path.join(app.root_path, 'palettes.json')
     recommendations = {}
     
     key = 'warm'
@@ -147,11 +134,28 @@ def about():
 
 @app.route('/api/hairstyles', methods=['GET'])
 def api_hairstyles():
-    gender = request.args.get('gender')
-    shape = request.args.get('shape')
-    search = request.args.get('search')
-    styles = hairstyle_service.get_all_hairstyles(gender=gender, shape=shape, search=search)
-    return jsonify({"status": "success", "data": styles})
+    gender = request.args.get('gender', 'all')
+    shape = request.args.get('shape', 'all')
+    category = request.args.get('category', 'all')
+    search = request.args.get('search', '')
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 12))
+    
+    styles = hairstyle_service.get_all_hairstyles(gender=gender, shape=shape, search=search, category=category)
+    
+    total = len(styles)
+    start = (page - 1) * limit
+    end = start + limit
+    paginated_styles = styles[start:end]
+    
+    return jsonify({
+        "status": "success", 
+        "data": paginated_styles,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit
+    })
 
 @app.route('/api/recommendation', methods=['GET'])
 def api_recommendation():
@@ -159,7 +163,7 @@ def api_recommendation():
     shape = request.args.get('shape', 'oval')
     rec_data = hairstyle_service.get_recommendation(gender=gender, shape=shape)
     current_slug = rec_data.get('slug') if rec_data else None
-    related_styles = hairstyle_service.get_related_hairstyles(gender=gender, shape=shape, current_slug=current_slug, limit=6)
+    related_styles = hairstyle_service.get_related_hairstyles(gender=gender, shape=shape, current_slug=current_slug, limit=5)
     return jsonify({"status": "success", "data": rec_data, "related_styles": related_styles})
 
 @app.route('/api/analyze', methods=['POST'])

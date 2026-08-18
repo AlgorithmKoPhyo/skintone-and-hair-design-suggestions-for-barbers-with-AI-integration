@@ -1,5 +1,3 @@
-# app/services/validator.py
-
 import cv2
 import mediapipe as mp
 

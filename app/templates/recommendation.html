@@ -270,11 +270,8 @@
 
     {% if user_img %}
     <!-- Large Original Image in Rectangle with Rounded Corners -->
-    <div
-      style="position: relative; width: 100%; height: 260px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); margin-bottom: 18px; background: #f8fafc; box-shadow: var(--shadow-sm);">
-      <img id="modal-analyzed-img" src="{{ user_img }}" alt="Original Analyzed Photo"
-        style="width: 100%; height: 100%; object-fit: cover; display: block;">
-
+    <div style="position: relative; width: 100%; aspect-ratio: 1 / 1; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); margin-bottom: 18px; background: #f8fafc; box-shadow: var(--shadow-sm);">
+      <img id="modal-analyzed-img" src="{{ user_img }}" alt="Original Analyzed Photo" style="width: 100%; height: 100%; object-fit: cover; display: block;">
       <!-- Change photo badge overlay -->
       <button id="btn-modal-change-photo"
         style="position: absolute; bottom: 12px; right: 12px; background: rgba(15, 23, 42, 0.75); color: white; border: none; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 500; backdrop-filter: blur(4px); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: var(--transition);">
@@ -350,5 +347,5 @@
   window.SERVER_REC_DATA = {{ rec_data | tojson | safe if rec_data else 'null' }};
   window.SERVER_RELATED_STYLES = {{ related_styles | tojson | safe if related_styles else '[]' }};
 </script>
-<script src="{{ url_for('static', filename='js/recommendation.js') }}"></script>
+<script src="{{ url_for('static', filename='js/recommendation.js') }}?v=1.3"></script>
 {% endblock %}

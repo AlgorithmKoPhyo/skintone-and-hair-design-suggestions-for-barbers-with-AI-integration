@@ -40,69 +40,89 @@
       <!-- Soft Glowing Gradient Separator -->
       <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(124, 58, 237, 0.18) 50%, transparent 100%); width: 100%;"></div>
 
-      <!-- Bottom Row: Search Box & Single-Line Face Shape Filter Pills -->
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <!-- Bottom Row: Filters & Search in one line -->
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; width: 100%;">
         <!-- Search Box -->
-        <div style="position: relative; flex: 1; min-width: 240px;">
+        <div style="position: relative; flex: 2; min-width: 200px;">
           <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
           <input type="text" id="catalog-search-input" class="catalog-search-field" placeholder="Search hairstyles by name...">
         </div>
 
-        <!-- Face Shape Filter Pills (Single Unbroken Line) -->
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto;">
-          <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; margin-right: 2px;">
-            <i class="fa-solid fa-shapes" style="color: var(--purple-primary);"></i> Shape:
-          </span>
-          <button class="shape-filter-pill active" data-filter-shape="all">All Shapes</button>
-          <button class="shape-filter-pill" data-filter-shape="oval">Oval Face</button>
-          <button class="shape-filter-pill" data-filter-shape="round">Round Face</button>
-          <button class="shape-filter-pill" data-filter-shape="square">Square Face</button>
-          <button class="shape-filter-pill" data-filter-shape="heart">Heart Face</button>
+        <!-- Face Shape Select -->
+        <div style="position: relative; flex: 1; min-width: 160px;">
+          <select id="catalog-shape-select" class="catalog-search-field" style="padding-left: 16px; padding-right: 40px; appearance: none; background-color: var(--bg-main); width: 100%; cursor: pointer;">
+            <option value="all">All Shapes</option>
+            <option value="oval">Oval Face</option>
+            <option value="round">Round Face</option>
+            <option value="square">Square Face</option>
+            <option value="heart">Heart Face</option>
+            <option value="diamond">Diamond Face</option>
+            <option value="oblong">Oblong Face</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light); pointer-events: none;"></i>
+        </div>
+
+        <!-- Category Select -->
+        <div style="position: relative; flex: 1; min-width: 160px;">
+          <select id="catalog-category-select" class="catalog-search-field" style="padding-left: 16px; padding-right: 40px; appearance: none; background-color: var(--bg-main); width: 100%; cursor: pointer;">
+            <option value="all">All Categories</option>
+            <option value="Pixie Cut">Pixie Cut</option>
+            <option value="Bob Cut">Bob Cut</option>
+            <option value="Lob">Lob (Long Bob)</option>
+            <option value="Shoulder-Length Hair">Shoulder-Length</option>
+            <option value="Medium-Length Hair">Medium-Length</option>
+            <option value="Long Hair">Long Hair</option>
+            <option value="Layered Hair">Layered Hair</option>
+            <option value="Butterfly Cut">Butterfly Cut</option>
+            <option value="Shag Hair">Shag Hair</option>
+            <option value="Wolf Cut">Wolf Cut</option>
+            <option value="Bangs">Bangs</option>
+            <option value="Curly Hair">Curly Hair</option>
+            <option value="Wavy Hair">Wavy Hair</option>
+            <option value="Crew Cut">Crew Cut</option>
+            <option value="french crop">French Crop</option>
+            <option value="Textured Crop">Textured Crop</option>
+            <option value="Quiff">Quiff</option>
+            <option value="Textured Quiff">Textured Quiff</option>
+            <option value="Pompadour">Pompadour</option>
+            <option value="Slick Back">Slick Back</option>
+            <option value="Side Part">Side Part</option>
+            <option value="Curtains">Curtains</option>
+            <option value="Textured Fringe">Textured Fringe</option>
+            <option value="Volume Styles">Volume Styles</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light); pointer-events: none;"></i>
+        </div>
+        
+        <!-- Hairstyle Count Display (Badge) -->
+        <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(147, 51, 234, 0.03)); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 9999px; margin-left: auto; white-space: nowrap; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.06); transition: all 0.3s ease;">
+            <i class="fa-solid fa-layer-group" style="color: var(--purple-primary); font-size: 0.95rem;"></i>
+            <span id="hairstyles-count-display" style="font-weight: 700; color: var(--purple-primary); font-size: 0.88rem; letter-spacing: 0.3px;">Loading...</span>
         </div>
       </div>
 
     </div>
-
     <!-- Hairstyles Grid (12-Column System: col-4 per card) -->
     <div class="grid-12" id="hairstyles-catalog-grid" style="gap: 28px;">
-      {% if hairstyles %}
-        {% for style in hairstyles %}
-        <div class="style-catalog-card col-4 col-md-6 col-sm-12" data-gender="{{ style.gender }}" data-shape="{{ style.faceshape }}" data-title="{{ style.name }}">
-          <div class="catalog-card-inner">
-            <div class="catalog-img-wrapper" style="background: var(--bg-subtle, #f8fafc); display: flex; align-items: center; justify-content: center; height: 260px; overflow: hidden; border-radius: var(--radius-md) var(--radius-md) 0 0; position: relative;">
-              <img src="{{ style.main_img }}" alt="{{ style.name }}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.5s ease;">
-              <span style="position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.65); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px);">
-                {% if style.gender == 'female' %}<i class="fa-solid fa-venus"></i> Female{% else %}<i class="fa-solid fa-mars"></i> Male{% endif %}
-              </span>
-              <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--purple-primary), #9333EA); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-                {{ style.shape_badge or ('Ideal for ' ~ style.faceshape.capitalize() ~ ' Face') }}
-              </span>
-            </div>
-            <div style="padding: 22px; display: flex; flex-direction: column; flex-grow: 1;">
-              <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">{{ style.name }}</h3>
-              <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; flex-grow: 1; line-height: 1.5;">
-                {{ style.tagline or style.description }}
-              </p>
-              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 14px; margin-bottom: 18px;">
-                <span><i class="fa-solid fa-ruler-vertical"></i> {{ style.hair_length or 'Medium' }}</span>
-                <span style="background: rgba(245, 158, 11, 0.1); color: #D97706; padding: 3px 10px; border-radius: 9999px; font-weight: 700;">
-                  <i class="fa-solid fa-star"></i> {{ style.score_badge or '95% Match' }}
-                </span>
-              </div>
-              <a href="{{ url_for('hairstyle_detail', style=style.slug, gender=style.gender) }}" class="btn-details-pill">
-                <i class="fa-solid fa-circle-info"></i> View Details
-              </a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% else %}
-        <div style="grid-column: span 12; text-align: center; padding: 60px 20px;">
-          <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 16px;"></i>
-          <h3 style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 8px;">No Hairstyles Found</h3>
-          <p style="color: var(--text-muted);">Try adjusting your search query or face shape filters.</p>
-        </div>
-      {% endif %}
+      <!-- Cards will be populated by JavaScript -->
+    </div>
+
+    <!-- Loading State & Pagination -->
+    <div id="catalog-loading-indicator" style="text-align: center; padding: 40px 0; display: none;">
+      <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--purple-primary);"></i>
+      <p style="margin-top: 10px; color: var(--text-muted);">Loading hairstyles...</p>
+    </div>
+    
+    <div id="catalog-empty-state" style="grid-column: span 12; text-align: center; padding: 60px 20px; display: none;">
+      <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 16px;"></i>
+      <h3 style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 8px;">No Hairstyles Found</h3>
+      <p style="color: var(--text-muted);">Try adjusting your search query or face shape filters.</p>
+    </div>
+
+    <div id="load-more-container" style="text-align: center; padding-top: 40px; display: none;">
+      <button id="load-more-btn" class="btn-primary" style="padding: 12px 32px; font-weight: 600; font-size: 1rem; border-radius: 9999px;">
+        <i class="fa-solid fa-arrow-rotate-right"></i> Load More
+      </button>
     </div>
   </div>
 </section>

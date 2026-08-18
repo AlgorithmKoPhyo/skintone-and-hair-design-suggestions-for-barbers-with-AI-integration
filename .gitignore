@@ -15,6 +15,12 @@ __pycache__/
 .DS_Store
 .uploads/
 
+# Credentials & Secrets
+firebase-credentials.json
+*.env
+
+# Uploads
+app/static/uploads/
 # Face shape classification — data, tests & training scripts
 modules/face_shape_classification/data/
 modules/face_shape_classification/tests/
