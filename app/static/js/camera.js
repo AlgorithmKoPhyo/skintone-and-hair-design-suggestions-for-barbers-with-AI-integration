@@ -38,7 +38,6 @@ function initLiveCamera() {
   }
 
   // Open Gender Selection Modal when clicking "Choose Hairstyle"
-  // (validation already passed before this button is enabled)
   if (btnChooseHairstyle && genderModal) {
     btnChooseHairstyle.addEventListener('click', () => {
       const optColor = document.getElementById('opt-color-analysis');
@@ -103,13 +102,11 @@ function _injectCameraValidationBanner() {
   warnRow.style.cssText = 'display:none; align-items:flex-start; gap:10px; background:#FFF7ED; border:1.5px solid #FB923C; border-radius:12px; padding:11px 14px; margin-bottom:14px; text-align:left;';
   warnRow.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#EA580C;font-size:1rem;flex-shrink:0;margin-top:2px;"></i><div><div style="font-weight:700;font-size:0.83rem;color:#9A3412;margin-bottom:2px;">No face detected</div><div id="cam-face-validation-msg" style="font-size:0.78rem;color:#C2410C;line-height:1.4;">Please retake the photo with your face clearly visible.</div></div>';
 
-  // Insert both before the first child of the decision panel
   decisionPanel.insertBefore(warnRow, decisionPanel.firstChild);
   decisionPanel.insertBefore(scanRow, decisionPanel.firstChild);
 }
 
 // ---- Camera validation UI state ------------------------------------------
-//  state: 'scanning' | 'valid' | 'invalid'
 function setCameraValidationState(state, message) {
   const scanStatus = document.getElementById('cam-face-scan-status');
   const warnBanner = document.getElementById('cam-face-validation-banner');
@@ -118,7 +115,6 @@ function setCameraValidationState(state, message) {
   const btnColor = document.getElementById('btn-choose-color-trigger');
   const capturedTitle = document.querySelector('.captured-title p');
 
-  // Hide both indicators first
   if (scanStatus) scanStatus.style.display = 'none';
   if (warnBanner) warnBanner.style.display = 'none';
 
@@ -146,7 +142,6 @@ function setCameraValidationState(state, message) {
 async function validateCapturedFace() {
   setCameraValidationState('scanning');
   try {
-    // Convert the data URL to a Blob so we can POST it as multipart
     const blob = await fetch(capturedImageDataUrl).then(r => r.blob());
     const formData = new FormData();
     formData.append('image', blob, 'captured.jpg');
@@ -160,7 +155,6 @@ async function validateCapturedFace() {
       setCameraValidationState('invalid', data.message || 'No face detected. Please retake the photo with your face clearly visible.');
     }
   } catch (err) {
-    // Network/server error — fail open so the user isn't permanently blocked
     console.warn('[StyleMe] /validate-face (camera) failed, failing open:', err);
     setCameraValidationState('valid');
   }
@@ -216,7 +210,6 @@ function capturePhoto() {
   if (shutterBtn) shutterBtn.style.transform = 'scale(0.85)';
   setTimeout(() => { if (shutterBtn) shutterBtn.style.transform = 'scale(1)'; }, 150);
 
-  // Capture canvas snapshot
   try {
     const canvas = document.createElement('canvas');
     if (videoElem && videoElem.style.display !== 'none' && videoElem.videoWidth) {
@@ -232,7 +225,6 @@ function capturePhoto() {
     console.warn("Canvas capture exception:", e);
   }
 
-  // Freeze live stream and display captured still photo preview
   if (videoElem) {
     videoElem.pause();
   }
@@ -242,14 +234,12 @@ function capturePhoto() {
     freezeImg.style.display = 'block';
   }
 
-  // Hide face frame guides during photo decision preview
   if (guideElem) guideElem.style.display = 'none';
   if (bracketsElem) bracketsElem.style.display = 'none';
 
   if (decisionContainer) decisionContainer.classList.add('active');
   if (controls) controls.style.display = 'none';
 
-  // White camera shutter flash effect
   const viewport = document.querySelector('.camera-viewport');
   if (viewport) {
     const flash = document.createElement('div');
@@ -261,7 +251,6 @@ function capturePhoto() {
     setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 350); }, 50);
   }
 
-  // Run face validation in background — disables choice buttons until result
   validateCapturedFace();
 }
 
@@ -273,7 +262,6 @@ function resetCameraState() {
   const guideElem = document.querySelector('.face-overlay-guide');
   const bracketsElem = document.querySelector('.face-overlay-brackets');
 
-  // Unfreeze video stream and hide still photo preview
   if (freezeImg) {
     freezeImg.style.display = 'none';
     freezeImg.src = '';
@@ -283,14 +271,12 @@ function resetCameraState() {
     videoElem.play();
   }
 
-  // Restore face frame guides
   if (guideElem) guideElem.style.display = 'block';
   if (bracketsElem) bracketsElem.style.display = 'block';
 
   if (decisionContainer) decisionContainer.classList.remove('active');
   if (controls) controls.style.display = 'flex';
 
-  // Reset validation UI for next capture
   const scanStatus = document.getElementById('cam-face-scan-status');
   const warnBanner = document.getElementById('cam-face-validation-banner');
   if (scanStatus) scanStatus.style.display = 'none';
@@ -299,51 +285,49 @@ function resetCameraState() {
   if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
 }
 
+// ── Fixed Submit Function ──────────────────────────────────────────────────
 async function submitCapturedPhoto(gender, analysisType) {
   const formData = new FormData();
 
-  if (analysisType === 'color') {
-    try {
-      const resBlob = await fetch(capturedImageDataUrl).then(res => res.blob());
-      formData.append('file', resBlob, 'photo.jpg');
-      formData.append('gender', gender);
-      formData.append('analysis_type', analysisType);
-
-      const res = await fetch('/analyze', {
-        method: 'POST',
-        body: formData
-      });
-      if (!res.ok) throw new Error('Network response was not ok');
-      const html = await res.text();
-      stopCamera();
-      document.open();
-      document.write(html);
-      document.close();
-    } catch (err) {
-      console.error("Camera submit error:", err);
-      stopCamera();
-      window.location.href = `/recommendation?gender=${gender}`;
-    }
-  } else {
-    formData.append('image_base64', capturedImageDataUrl);
+  try {
+    const resBlob = await fetch(capturedImageDataUrl).then(res => res.blob());
+    formData.append('image', resBlob, 'photo.jpg');
     formData.append('gender', gender);
     formData.append('analysis_type', analysisType);
 
-    try {
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      stopCamera();
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
+    // Save the captured live camera photo to session storage
+    if (capturedImageDataUrl) {
+      sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
+    }
+
+    const res = await fetch('/analyze', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('Network response was not ok');
+
+    const data = await res.json();
+    stopCamera();
+
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
+    } else {
+      if (analysisType === 'color') {
+        window.location.href = data.color_url || '/color-analysis';
       } else {
         window.location.href = `/recommendation?gender=${gender}`;
       }
-    } catch (err) {
-      console.error("Camera submit error:", err);
-      stopCamera();
+    }
+  } catch (err) {
+    console.error("Camera submit error:", err);
+    stopCamera();
+    if (capturedImageDataUrl) {
+      sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
+    }
+    if (analysisType === 'color') {
+      window.location.href = '/color-analysis';
+    } else {
       window.location.href = `/recommendation?gender=${gender}`;
     }
   }
