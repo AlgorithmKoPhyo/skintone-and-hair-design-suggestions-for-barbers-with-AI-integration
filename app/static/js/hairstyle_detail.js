@@ -144,3 +144,4 @@ function initDetailImageSlider() {
     if (e.key === 'ArrowRight') goToIndex(currentIndex + 1);
   });
 }
+
