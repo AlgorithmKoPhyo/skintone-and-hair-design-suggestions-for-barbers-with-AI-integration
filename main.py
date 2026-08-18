@@ -294,7 +294,22 @@ from app.controllers.analyze_controller import analyze, validate_face
 app.add_url_rule('/api/analyze', view_func=analyze, methods=['POST'])
 app.add_url_rule('/validate-face', view_func=validate_face, methods=['POST'])
 
+# -------------------------------------------------------------
+# Error Handlers & Testing
+# -------------------------------------------------------------
+@app.route('/test-500')
+def test_500():
+    # This route intentionally crashes to show the 500 Error Page
+    from flask import abort
+    abort(500)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
