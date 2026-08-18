@@ -1,17 +1,21 @@
 {
   "cool": {
+    "description": "Cool undertones usually have subtle pink, red, or bluish tones beneath the skin. Colors with cool, crisp, or jewel-like qualities often complement this undertone and help create a balanced, fresh appearance.",
     "recommended_colors": [
       { "name": "Navy Blue", "hex": "#000080" },
       { "name": "Lavender", "hex": "#E6E6FA" },
       { "name": "Emerald Green", "hex": "#50C878" },
-      { "name": "Rose Pink", "hex": "#FF66CC" },
+      { "name": "Bright Rose Pink", "hex": "#FF66CC" },
       { "name": "Ice Blue", "hex": "#99FFFF" },
       { "name": "Pure White", "hex": "#FFFFFF" }
     ],
     "avoid_colors": [
       { "name": "Orange", "hex": "#FFA500" },
       { "name": "Mustard Yellow", "hex": "#D4A017" },
-      { "name": "Warm Brown", "hex": "#A52A2A" }
+      { "name": "Warm Brown", "hex": "#A52A2A" },
+      { "name": "Camel", "hex": "#C19A6B" },
+      { "name": "Rust", "hex": "#B7410E" },
+      { "name": "Golden Yellow", "hex": "#FFD700" }
     ],
     "neutral_colors_that_flatter": [
       { "name": "Navy Blue", "hex": "#000080" },
@@ -19,21 +23,306 @@
       { "name": "Pure White", "hex": "#FFFFFF" }
     ],
     "hair_colors": [
-      { "name": "Ash Brown", "image": "assets/cool/hair_ash_brown.jpg" },
-      { "name": "Cool Black", "image": "assets/cool/hair_cool_black.jpg" },
+      {
+        "name": "Ash Brown",
+        "images": {
+          "male": "assets/cool/male/hair_ash_brown.jpg",
+          "female": "assets/cool/female/hair_ash_brown.jpg"
+        }
+      },
+      {
+        "name": "Cool Black",
+        "images": {
+          "male": "assets/cool/male/hair_cool_black.jpg",
+          "female": "assets/cool/female/hair_cool_black.jpg"
+        }
+      },
       {
         "name": "Platinum Blonde",
-        "image": "assets/cool/hair_platinum_blonde.jpg"
+        "images": {
+          "male": "assets/cool/male/hair_platinum_blonde.jpg",
+          "female": "assets/cool/female/hair_platinum_blonde.jpg"
+        }
       }
     ],
     "jewelry": [
-      { "name": "Silver", "image": "assets/cool/jewelry_silver.jpg" },
-      { "name": "White Gold", "image": "assets/cool/jewelry_white_gold.jpg" },
-      { "name": "Pearl", "image": "assets/cool/jewelry_pearl.jpg" }
-    ]
+      {
+        "name": "Silver",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_silver_1.jpg",
+            "assets/jewelry/male/jewelry_silver_2.jpg",
+            "assets/jewelry/male/jewelry_silver_3.jpg",
+            "assets/jewelry/male/jewelry_silver_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_silver_1.jpg",
+            "assets/jewelry/female/jewelry_silver_2.jpg",
+            "assets/jewelry/female/jewelry_silver_3.jpg",
+            "assets/jewelry/female/jewelry_silver_4.jpg"
+          ]
+        }
+      },
+      {
+        "name": "White Gold",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_white_gold_1.jpg",
+            "assets/jewelry/male/jewelry_white_gold_2.jpg",
+            "assets/jewelry/male/jewelry_white_gold_3.jpg",
+            "assets/jewelry/male/jewelry_white_gold_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_white_gold_1.jpg",
+            "assets/jewelry/female/jewelry_white_gold_2.jpg",
+            "assets/jewelry/female/jewelry_white_gold_3.jpg",
+            "assets/jewelry/female/jewelry_white_gold_4.jpg"
+          ]
+        }
+      },
+      {
+        "name": "Pearl",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_pearl_1.jpg",
+            "assets/jewelry/male/jewelry_pearl_2.jpg",
+            "assets/jewelry/male/jewelry_pearl_3.jpg",
+            "assets/jewelry/male/jewelry_pearl_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_pearl_1.jpg",
+            "assets/jewelry/female/jewelry_pearl_2.jpg",
+            "assets/jewelry/female/jewelry_pearl_3.jpg",
+            "assets/jewelry/female/jewelry_pearl_4.jpg"
+          ]
+        }
+      }
+    ],
+    "occasion_recommendations": {
+      "office": {
+        "colors": [
+          { "name": "Navy Blue", "hex": "#000080" },
+          { "name": "Cool Gray", "hex": "#8C92AC" },
+          { "name": "Soft White", "hex": "#F8F8F0" },
+          { "name": "Dusty Blue", "hex": "#6699CC" },
+          { "name": "Burgundy", "hex": "#800020" },
+          { "name": "Slate Blue", "hex": "#6A7BA2" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Classic Professional",
+            "colors": [
+              { "name": "Navy Blue", "hex": "#000080" },
+              { "name": "Soft White", "hex": "#F8F8F0" },
+              { "name": "Cool Gray", "hex": "#8C92AC" }
+            ]
+          },
+          {
+            "name": "Modern Office",
+            "colors": [
+              { "name": "Slate Blue", "hex": "#6A7BA2" },
+              { "name": "Soft White", "hex": "#F8F8F0" },
+              { "name": "Burgundy", "hex": "#800020" }
+            ]
+          },
+          {
+            "name": "Cool Minimal",
+            "colors": [
+              { "name": "Dusty Blue", "hex": "#6699CC" },
+              { "name": "Cool Gray", "hex": "#8C92AC" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Silver",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_silver_1.jpg",
+            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+          }
+        }
+      },
+
+      "interview": {
+        "colors": [
+          { "name": "Navy Blue", "hex": "#000080" },
+          { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+          { "name": "Cool White", "hex": "#F5F5F5" },
+          { "name": "Steel Blue", "hex": "#4682B4" },
+          { "name": "Deep Teal", "hex": "#006666" },
+          { "name": "Plum", "hex": "#673147" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Professional Classic",
+            "colors": [
+              { "name": "Navy Blue", "hex": "#000080" },
+              { "name": "Cool White", "hex": "#F5F5F5" },
+              { "name": "Charcoal Gray", "hex": "#4B4B4B" }
+            ]
+          },
+          {
+            "name": "Confident Blue",
+            "colors": [
+              { "name": "Steel Blue", "hex": "#4682B4" },
+              { "name": "Navy Blue", "hex": "#000080" },
+              { "name": "Cool White", "hex": "#F5F5F5" }
+            ]
+          },
+          {
+            "name": "Elegant Professional",
+            "colors": [
+              { "name": "Deep Teal", "hex": "#006666" },
+              { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+              { "name": "Cool White", "hex": "#F5F5F5" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "White Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_white_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_white_gold_1.jpg"
+          }
+        }
+      },
+
+      "wedding_guest": {
+        "colors": [
+          { "name": "Lavender", "hex": "#E6E6FA" },
+          { "name": "Bright Rose Pink", "hex": "#FF66CC" },
+          { "name": "Emerald Green", "hex": "#50C878" },
+          { "name": "Sapphire Blue", "hex": "#0F52BA" },
+          { "name": "Blue Violet", "hex": "#8A2BE2" },
+          { "name": "Dusty Rose", "hex": "#D8A7B1" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Romantic Lavender",
+            "colors": [
+              { "name": "Lavender", "hex": "#E6E6FA" },
+              { "name": "Dusty Rose", "hex": "#D8A7B1" },
+              { "name": "Sapphire Blue", "hex": "#0F52BA" }
+            ]
+          },
+          {
+            "name": "Elegant Emerald",
+            "colors": [
+              { "name": "Emerald Green", "hex": "#50C878" },
+              { "name": "Bright Rose Pink", "hex": "#FF66CC" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Royal Blue Violet",
+            "colors": [
+              { "name": "Blue Violet", "hex": "#8A2BE2" },
+              { "name": "Lavender", "hex": "#E6E6FA" },
+              { "name": "Sapphire Blue", "hex": "#0F52BA" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Pearl",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_pearl_1.jpg",
+            "female": "assets/jewelry/female/jewelry_pearl_1.jpg"
+          }
+        }
+      },
+
+      "party": {
+        "colors": [
+          { "name": "Electric Blue", "hex": "#0066FF" },
+          { "name": "Fuchsia", "hex": "#FF00FF" },
+          { "name": "Emerald Green", "hex": "#50C878" },
+          { "name": "Royal Purple", "hex": "#7851A9" },
+          { "name": "Magenta", "hex": "#C2185B" },
+          { "name": "Cobalt Blue", "hex": "#0047AB" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Electric Glam",
+            "colors": [
+              { "name": "Electric Blue", "hex": "#0066FF" },
+              { "name": "Fuchsia", "hex": "#FF00FF" },
+              { "name": "Cobalt Blue", "hex": "#0047AB" }
+            ]
+          },
+          {
+            "name": "Royal Night",
+            "colors": [
+              { "name": "Royal Purple", "hex": "#7851A9" },
+              { "name": "Magenta", "hex": "#C2185B" },
+              { "name": "Electric Blue", "hex": "#0066FF" }
+            ]
+          },
+          {
+            "name": "Jewel Tones",
+            "colors": [
+              { "name": "Emerald Green", "hex": "#50C878" },
+              { "name": "Cobalt Blue", "hex": "#0047AB" },
+              { "name": "Royal Purple", "hex": "#7851A9" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Silver",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_silver_1.jpg",
+            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+          }
+        }
+      },
+
+      "casual": {
+        "colors": [
+          { "name": "Ice Blue", "hex": "#99FFFF" },
+          { "name": "Lavender", "hex": "#E6E6FA" },
+          { "name": "Soft Teal", "hex": "#6FA3A3" },
+          { "name": "Denim Blue", "hex": "#1560BD" },
+          { "name": "Mauve", "hex": "#E0B0FF" },
+          { "name": "Cool Pink", "hex": "#F4C2C2" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Relaxed Blue",
+            "colors": [
+              { "name": "Ice Blue", "hex": "#99FFFF" },
+              { "name": "Denim Blue", "hex": "#1560BD" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Soft Lavender",
+            "colors": [
+              { "name": "Lavender", "hex": "#E6E6FA" },
+              { "name": "Mauve", "hex": "#E0B0FF" },
+              { "name": "Denim Blue", "hex": "#1560BD" }
+            ]
+          },
+          {
+            "name": "Fresh Teal",
+            "colors": [
+              { "name": "Soft Teal", "hex": "#6FA3A3" },
+              { "name": "Ice Blue", "hex": "#99FFFF" },
+              { "name": "Cool Pink", "hex": "#F4C2C2" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "White Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_white_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_white_gold_1.jpg"
+          }
+        }
+      }
+    }
   },
 
   "warm": {
+    "description": "Warm undertones usually have subtle golden, yellow, peach, or warm beige tones beneath the skin. Earthy, golden, and rich warm colors often complement this undertone and enhance the skin's natural warmth.",
     "recommended_colors": [
       { "name": "Mustard Yellow", "hex": "#D4A017" },
       { "name": "Olive Green", "hex": "#708238" },
@@ -45,7 +334,10 @@
     "avoid_colors": [
       { "name": "Icy Blue", "hex": "#D6F5FF" },
       { "name": "Lavender", "hex": "#E6E6FA" },
-      { "name": "Pure White", "hex": "#FFFFFF" }
+      { "name": "Pure White", "hex": "#FFFFFF" },
+      { "name": "Cobalt Blue", "hex": "#0047AB" },
+      { "name": "Cool Gray", "hex": "#8C92AC" },
+      { "name": "Fuchsia", "hex": "#FF00FF" }
     ],
     "neutral_colors_that_flatter": [
       { "name": "Cream", "hex": "#FFFDD0" },
@@ -53,18 +345,306 @@
       { "name": "Warm Beige", "hex": "#D8C3A5" }
     ],
     "hair_colors": [
-      { "name": "Golden Brown", "image": "assets/warm/hair_golden_brown.jpg" },
-      { "name": "Honey Brown", "image": "assets/warm/hair_honey_brown.jpg" },
-      { "name": "Caramel Brown", "image": "assets/warm/hair_caramel_brown.jpg" }
+      {
+        "name": "Golden Brown",
+        "images": {
+          "male": "assets/warm/male/hair_golden_brown.jpg",
+          "female": "assets/warm/female/hair_golden_brown.jpg"
+        }
+      },
+      {
+        "name": "Honey Brown",
+        "images": {
+          "male": "assets/warm/male/hair_honey_brown.jpg",
+          "female": "assets/warm/female/hair_honey_brown.jpg"
+        }
+      },
+      {
+        "name": "Caramel Brown",
+        "images": {
+          "male": "assets/warm/male/hair_caramel_brown.jpg",
+          "female": "assets/warm/female/hair_caramel_brown.jpg"
+        }
+      }
     ],
     "jewelry": [
-      { "name": "Gold", "image": "assets/warm/jewelry_gold.jpg" },
-      { "name": "Rose Gold", "image": "assets/warm/jewelry_rosegold.jpg" },
-      { "name": "Copper", "image": "assets/warm/jewelry_copper.jpg" }
-    ]
+      {
+        "name": "Gold",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_gold_1.jpg",
+            "assets/jewelry/male/jewelry_gold_2.jpg",
+            "assets/jewelry/male/jewelry_gold_3.jpg",
+            "assets/jewelry/male/jewelry_gold_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_gold_1.jpg",
+            "assets/jewelry/female/jewelry_gold_2.jpg",
+            "assets/jewelry/female/jewelry_gold_3.jpg",
+            "assets/jewelry/female/jewelry_gold_4.jpg"
+          ]
+        }
+      },
+      {
+        "name": "Rose Gold",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_rose_gold_1.jpg",
+            "assets/jewelry/male/jewelry_rose_gold_2.jpg",
+            "assets/jewelry/male/jewelry_rose_gold_3.jpg",
+            "assets/jewelry/male/jewelry_rose_gold_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_rose_gold_1.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_2.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_3.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_4.jpg"
+          ]
+        }
+      },
+      {
+        "name": "Copper",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_copper_1.jpg",
+            "assets/jewelry/male/jewelry_copper_2.jpg",
+            "assets/jewelry/male/jewelry_copper_3.jpg",
+            "assets/jewelry/male/jewelry_copper_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_copper_1.jpg",
+            "assets/jewelry/female/jewelry_copper_2.jpg",
+            "assets/jewelry/female/jewelry_copper_3.jpg",
+            "assets/jewelry/female/jewelry_copper_4.jpg"
+          ]
+        }
+      }
+    ],
+    "occasion_recommendations": {
+      "office": {
+        "colors": [
+          { "name": "Camel", "hex": "#C19A6B" },
+          { "name": "Olive Green", "hex": "#708238" },
+          { "name": "Warm Beige", "hex": "#D8C3A5" },
+          { "name": "Chocolate Brown", "hex": "#7B3F00" },
+          { "name": "Terracotta", "hex": "#E2725B" },
+          { "name": "Cream", "hex": "#FFFDD0" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Warm Classic",
+            "colors": [
+              { "name": "Camel", "hex": "#C19A6B" },
+              { "name": "Cream", "hex": "#FFFDD0" },
+              { "name": "Chocolate Brown", "hex": "#7B3F00" }
+            ]
+          },
+          {
+            "name": "Earthy Professional",
+            "colors": [
+              { "name": "Olive Green", "hex": "#708238" },
+              { "name": "Warm Beige", "hex": "#D8C3A5" },
+              { "name": "Chocolate Brown", "hex": "#7B3F00" }
+            ]
+          },
+          {
+            "name": "Soft Terracotta",
+            "colors": [
+              { "name": "Terracotta", "hex": "#E2725B" },
+              { "name": "Warm Beige", "hex": "#D8C3A5" },
+              { "name": "Cream", "hex": "#FFFDD0" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_gold_1.jpg"
+          }
+        }
+      },
+
+      "interview": {
+        "colors": [
+          { "name": "Dark Brown", "hex": "#654321" },
+          { "name": "Olive Green", "hex": "#708238" },
+          { "name": "Camel", "hex": "#C19A6B" },
+          { "name": "Cream", "hex": "#FFFDD0" },
+          { "name": "Warm Deep Teal", "hex": "#006B5B" },
+          { "name": "Warm Navy", "hex": "#1F3A5F" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Classic Warm Professional",
+            "colors": [
+              { "name": "Warm Navy", "hex": "#1F3A5F" },
+              { "name": "Cream", "hex": "#FFFDD0" },
+              { "name": "Dark Brown", "hex": "#654321" }
+            ]
+          },
+          {
+            "name": "Earthy Professional",
+            "colors": [
+              { "name": "Olive Green", "hex": "#708238" },
+              { "name": "Cream", "hex": "#FFFDD0" },
+              { "name": "Dark Brown", "hex": "#654321" }
+            ]
+          },
+          {
+            "name": "Deep Teal Professional",
+            "colors": [
+              { "name": "Warm Deep Teal", "hex": "#006B5B" },
+              { "name": "Warm Beige", "hex": "#D8C3A5" },
+              { "name": "Dark Brown", "hex": "#654321" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_gold_1.jpg"
+          }
+        }
+      },
+
+      "wedding_guest": {
+        "colors": [
+          { "name": "Coral", "hex": "#FF7F50" },
+          { "name": "Peach", "hex": "#FFDAB9" },
+          { "name": "Terracotta", "hex": "#E2725B" },
+          { "name": "Golden Yellow", "hex": "#FFD700" },
+          { "name": "Warm Rose", "hex": "#C96A6A" },
+          { "name": "Moss Green", "hex": "#8A9A5B" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Warm Romance",
+            "colors": [
+              { "name": "Coral", "hex": "#FF7F50" },
+              { "name": "Peach", "hex": "#FFDAB9" },
+              { "name": "Warm Rose", "hex": "#C96A6A" }
+            ]
+          },
+          {
+            "name": "Golden Garden",
+            "colors": [
+              { "name": "Golden Yellow", "hex": "#FFD700" },
+              { "name": "Moss Green", "hex": "#8A9A5B" },
+              { "name": "Cream", "hex": "#FFFDD0" }
+            ]
+          },
+          {
+            "name": "Terracotta Elegance",
+            "colors": [
+              { "name": "Terracotta", "hex": "#E2725B" },
+              { "name": "Peach", "hex": "#FFDAB9" },
+              { "name": "Moss Green", "hex": "#8A9A5B" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Rose Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
+          }
+        }
+      },
+
+      "party": {
+        "colors": [
+          { "name": "Coral", "hex": "#FF7F50" },
+          { "name": "Burnt Orange", "hex": "#CC5500" },
+          { "name": "Golden Yellow", "hex": "#FFD700" },
+          { "name": "Turquoise", "hex": "#40E0D0" },
+          { "name": "Copper", "hex": "#B87333" },
+          { "name": "Warm Red", "hex": "#C0392B" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Tropical Warm",
+            "colors": [
+              { "name": "Coral", "hex": "#FF7F50" },
+              { "name": "Turquoise", "hex": "#40E0D0" },
+              { "name": "Golden Yellow", "hex": "#FFD700" }
+            ]
+          },
+          {
+            "name": "Copper Glow",
+            "colors": [
+              { "name": "Copper", "hex": "#B87333" },
+              { "name": "Burnt Orange", "hex": "#CC5500" },
+              { "name": "Golden Yellow", "hex": "#FFD700" }
+            ]
+          },
+          {
+            "name": "Bold Warm",
+            "colors": [
+              { "name": "Warm Red", "hex": "#C0392B" },
+              { "name": "Coral", "hex": "#FF7F50" },
+              { "name": "Golden Yellow", "hex": "#FFD700" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Copper",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_copper_1.jpg",
+            "female": "assets/jewelry/female/jewelry_copper_1.jpg"
+          }
+        }
+      },
+
+      "casual": {
+        "colors": [
+          { "name": "Olive Green", "hex": "#708238" },
+          { "name": "Peach", "hex": "#FFDAB9" },
+          { "name": "Cream", "hex": "#FFFDD0" },
+          { "name": "Camel", "hex": "#C19A6B" },
+          { "name": "Terracotta", "hex": "#E2725B" },
+          { "name": "Warm Beige", "hex": "#D8C3A5" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Earthy Casual",
+            "colors": [
+              { "name": "Olive Green", "hex": "#708238" },
+              { "name": "Warm Beige", "hex": "#D8C3A5" },
+              { "name": "Cream", "hex": "#FFFDD0" }
+            ]
+          },
+          {
+            "name": "Soft Warm",
+            "colors": [
+              { "name": "Peach", "hex": "#FFDAB9" },
+              { "name": "Cream", "hex": "#FFFDD0" },
+              { "name": "Camel", "hex": "#C19A6B" }
+            ]
+          },
+          {
+            "name": "Terracotta Casual",
+            "colors": [
+              { "name": "Terracotta", "hex": "#E2725B" },
+              { "name": "Warm Beige", "hex": "#D8C3A5" },
+              { "name": "Olive Green", "hex": "#708238" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Rose Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
+          }
+        }
+      }
+    }
   },
 
   "neutral": {
+    "description": "Neutral undertones have a balance of warm and cool tones beneath the skin. They tend to work well with a wide range of colors, including both warm and cool shades, giving you greater flexibility when choosing clothing and accessories.",
     "recommended_colors": [
       { "name": "Taupe", "hex": "#8B8589" },
       { "name": "Dusty Rose", "hex": "#D8A7B1" },
@@ -76,7 +656,10 @@
     "avoid_colors": [
       { "name": "Neon Yellow", "hex": "#FFFF33" },
       { "name": "Neon Orange", "hex": "#FF5F1F" },
-      { "name": "Neon Pink", "hex": "#FF1493" }
+      { "name": "Neon Pink", "hex": "#FF1493" },
+      { "name": "Lime Green", "hex": "#32CD32" },
+      { "name": "Ultra Violet", "hex": "#7F00FF" },
+      { "name": "Highlighter Green", "hex": "#39FF14" }
     ],
     "neutral_colors_that_flatter": [
       { "name": "Taupe", "hex": "#8B8589" },
@@ -86,18 +669,300 @@
     "hair_colors": [
       {
         "name": "Medium Brown",
-        "image": "assets/neutral/hair_medium_brown.jpg"
+        "images": {
+          "male": "assets/neutral/male/hair_medium_brown.jpg",
+          "female": "assets/neutral/female/hair_medium_brown.jpg"
+        }
       },
-      { "name": "Soft Black", "image": "assets/neutral/hair_soft_black.jpg" },
+      {
+        "name": "Soft Black",
+        "images": {
+          "male": "assets/neutral/male/hair_soft_black.jpg",
+          "female": "assets/neutral/female/hair_soft_black.jpg"
+        }
+      },
       {
         "name": "Chocolate Brown",
-        "image": "assets/neutral/hair_chocolate_brown.jpg"
+        "images": {
+          "male": "assets/neutral/male/hair_chocolate_brown.jpg",
+          "female": "assets/neutral/female/hair_chocolate_brown.jpg"
+        }
       }
     ],
     "jewelry": [
-      { "name": "Silver", "image": "assets/neutral/jewelry_silver.jpg" },
-      { "name": "Rose Gold", "image": "assets/neutral/jewelry_rose_gold.jpg" },
-      { "name": "White Gold", "image": "assets/neutral/jewelry_white_gold.jpg" }
-    ]
+      {
+        "name": "Silver",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_silver_1.jpg",
+            "assets/jewelry/male/jewelry_silver_2.jpg",
+            "assets/jewelry/male/jewelry_silver_3.jpg",
+            "assets/jewelry/male/jewelry_silver_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_silver_1.jpg",
+            "assets/jewelry/female/jewelry_silver_2.jpg",
+            "assets/jewelry/female/jewelry_silver_3.jpg",
+            "assets/jewelry/female/jewelry_silver_4.jpg"
+          ]
+        }
+      },
+      {
+        "name": "Rose Gold",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_rose_gold_1.jpg",
+            "assets/jewelry/male/jewelry_rose_gold_2.jpg",
+            "assets/jewelry/male/jewelry_rose_gold_3.jpg",
+            "assets/jewelry/male/jewelry_rose_gold_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_rose_gold_1.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_2.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_3.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_4.jpg"
+          ]
+        }
+      },
+      {
+        "name": "White Gold",
+        "images": {
+          "male": [
+            "assets/jewelry/male/jewelry_white_gold_1.jpg",
+            "assets/jewelry/male/jewelry_white_gold_2.jpg",
+            "assets/jewelry/male/jewelry_white_gold_3.jpg",
+            "assets/jewelry/male/jewelry_white_gold_4.jpg"
+          ],
+          "female": [
+            "assets/jewelry/female/jewelry_white_gold_1.jpg",
+            "assets/jewelry/female/jewelry_white_gold_2.jpg",
+            "assets/jewelry/female/jewelry_white_gold_3.jpg",
+            "assets/jewelry/female/jewelry_white_gold_4.jpg"
+          ]
+        }
+      }
+    ],
+    "occasion_recommendations": {
+      "office": {
+        "colors": [
+          { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+          { "name": "Taupe", "hex": "#8B8589" },
+          { "name": "Soft Teal", "hex": "#6FA3A3" },
+          { "name": "Beige", "hex": "#F5F5DC" },
+          { "name": "Dusty Rose", "hex": "#D8A7B1" },
+          { "name": "Soft White", "hex": "#F8F8F0" }
+        ],
+
+        "color_combinations": [
+          {
+            "name": "Neutral Professional",
+            "colors": [
+              { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+              { "name": "Soft White", "hex": "#F8F8F0" },
+              { "name": "Taupe", "hex": "#8B8589" }
+            ]
+          },
+          {
+            "name": "Soft Office",
+            "colors": [
+              { "name": "Beige", "hex": "#F5F5DC" },
+              { "name": "Soft Teal", "hex": "#6FA3A3" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Subtle Rose",
+            "colors": [
+              { "name": "Dusty Rose", "hex": "#D8A7B1" },
+              { "name": "Taupe", "hex": "#8B8589" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Silver",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_silver_1.jpg",
+            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+          }
+        }
+      },
+
+      "interview": {
+        "colors": [
+          { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+          { "name": "Navy Blue", "hex": "#000080" },
+          { "name": "Taupe", "hex": "#8B8589" },
+          { "name": "Soft White", "hex": "#F8F8F0" },
+          { "name": "Deep Teal", "hex": "#006666" },
+          { "name": "Muted Burgundy", "hex": "#704C5E" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Classic Interview",
+            "colors": [
+              { "name": "Navy Blue", "hex": "#000080" },
+              { "name": "Soft White", "hex": "#F8F8F0" },
+              { "name": "Charcoal Gray", "hex": "#4B4B4B" }
+            ]
+          },
+          {
+            "name": "Modern Neutral",
+            "colors": [
+              { "name": "Deep Teal", "hex": "#006666" },
+              { "name": "Taupe", "hex": "#8B8589" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Subtle Burgundy",
+            "colors": [
+              { "name": "Muted Burgundy", "hex": "#704C5E" },
+              { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "White Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_white_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_white_gold_1.jpg"
+          }
+        }
+      },
+
+      "wedding_guest": {
+        "colors": [
+          { "name": "Dusty Rose", "hex": "#D8A7B1" },
+          { "name": "Soft Teal", "hex": "#6FA3A3" },
+          { "name": "Mauve", "hex": "#B784A7" },
+          { "name": "Sage Green", "hex": "#9CAF88" },
+          { "name": "Soft Coral", "hex": "#E9967A" },
+          { "name": "Dusty Blue", "hex": "#6699CC" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Romantic Neutral",
+            "colors": [
+              { "name": "Dusty Rose", "hex": "#D8A7B1" },
+              { "name": "Sage Green", "hex": "#9CAF88" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Soft Teal Elegance",
+            "colors": [
+              { "name": "Soft Teal", "hex": "#6FA3A3" },
+              { "name": "Dusty Blue", "hex": "#6699CC" },
+              { "name": "Mauve", "hex": "#B784A7" }
+            ]
+          },
+          {
+            "name": "Muted Romance",
+            "colors": [
+              { "name": "Soft Coral", "hex": "#E9967A" },
+              { "name": "Dusty Rose", "hex": "#D8A7B1" },
+              { "name": "Sage Green", "hex": "#9CAF88" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Rose Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
+          }
+        }
+      },
+
+      "party": {
+        "colors": [
+          { "name": "Teal", "hex": "#008080" },
+          { "name": "Blue Violet", "hex": "#8A2BE2" },
+          { "name": "Plum", "hex": "#673147" },
+          { "name": "Coral", "hex": "#FF7F50" },
+          { "name": "Deep Teal", "hex": "#006666" },
+          { "name": "Mauve", "hex": "#B784A7" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Bold Teal",
+            "colors": [
+              { "name": "Teal", "hex": "#008080" },
+              { "name": "Mauve", "hex": "#B784A7" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Blue Violet Night",
+            "colors": [
+              { "name": "Blue Violet", "hex": "#8A2BE2" },
+              { "name": "Plum", "hex": "#673147" },
+              { "name": "Soft Coral", "hex": "#E9967A" }
+            ]
+          },
+          {
+            "name": "Modern Teal",
+            "colors": [
+              { "name": "Deep Teal", "hex": "#006666" },
+              { "name": "Coral", "hex": "#FF7F50" },
+              { "name": "Mauve", "hex": "#B784A7" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Silver",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_silver_1.jpg",
+            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+          }
+        }
+      },
+
+      "casual": {
+        "colors": [
+          { "name": "Taupe", "hex": "#8B8589" },
+          { "name": "Beige", "hex": "#F5F5DC" },
+          { "name": "Soft Teal", "hex": "#6FA3A3" },
+          { "name": "Dusty Rose", "hex": "#D8A7B1" },
+          { "name": "Soft White", "hex": "#F8F8F0" },
+          { "name": "Charcoal Gray", "hex": "#4B4B4B" }
+        ],
+        "color_combinations": [
+          {
+            "name": "Everyday Neutral",
+            "colors": [
+              { "name": "Taupe", "hex": "#8B8589" },
+              { "name": "Beige", "hex": "#F5F5DC" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Soft Teal Casual",
+            "colors": [
+              { "name": "Soft Teal", "hex": "#6FA3A3" },
+              { "name": "Dusty Rose", "hex": "#D8A7B1" },
+              { "name": "Soft White", "hex": "#F8F8F0" }
+            ]
+          },
+          {
+            "name": "Casual Contrast",
+            "colors": [
+              { "name": "Charcoal Gray", "hex": "#4B4B4B" },
+              { "name": "Soft Teal", "hex": "#6FA3A3" },
+              { "name": "Beige", "hex": "#F5F5DC" }
+            ]
+          }
+        ],
+        "jewelry": {
+          "name": "Rose Gold",
+          "images": {
+            "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
+            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
+          }
+        }
+      }
+    }
   }
 }
