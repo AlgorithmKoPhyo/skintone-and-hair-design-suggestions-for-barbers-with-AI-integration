@@ -119,11 +119,12 @@ def color_analysis():
         image_url=user_img,
         color_type=key.upper(),
         confidence_score="96%",
-        palette=recommendations.get('recommended_colors', []),
+        recommended_colors=recommendations.get('recommended_colors', []),
         avoid_colors=recommendations.get('avoid_colors', []),
         neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
         hair_colors=recommendations.get('hair_colors', []),
-        jewelry=recommendations.get('jewelry', [])
+        jewelry=recommendations.get('jewelry', []),
+        occasion_recommendations=recommendations.get('occasion_recommendations', {})
     )
 
 @app.route('/about')
@@ -312,7 +313,7 @@ def render_analyze_result():
         }
     ]
 
-    palette = recommendations.get('recommended_colors', [
+    recommended_colors = recommendations.get('recommended_colors', [
         {'name': 'Navy Blue', 'hex': '#000080'},
         {'name': 'Lavender', 'hex': '#E6E6FA'},
         {'name': 'Emerald Green', 'hex': '#50C878'},
@@ -327,11 +328,12 @@ def render_analyze_result():
             image_url=user_image_url,
             color_type=color_type,
             confidence_score=confidence_score,
-            palette=palette,
+            recommended_colors=recommended_colors,
             avoid_colors=recommendations.get('avoid_colors', []),
             neutral_colors=recommendations.get('neutral_colors_that_flatter', recommendations.get('neutral_colors', [])),
             hair_colors=recommendations.get('hair_colors', []),
-            jewelry=recommendations.get('jewelry', [])
+            jewelry=recommendations.get('jewelry', []),
+            occasion_recommendations=recommendations.get('occasion_recommendations', {})
         )
 
     return render_template(
@@ -342,7 +344,7 @@ def render_analyze_result():
         skin_tone=color_type,
         gender=gender,
         hairstyles=hairstyles,
-        palette=palette
+        # recommended_colors=recommended_colors
     )
 
 
