@@ -79,8 +79,13 @@ class VGGFaceShapeClassifier:
         # ──────────────────────────────────────────────
 
         self.mtcnn = MTCNN(
-            image_size=160, margin=20, keep_all=False, post_process=True, device=self.device
-        )
+                image_size=160,
+                margin=20,
+                keep_all=False, 
+                select_largest=True, #get the largest face
+                post_process=True, 
+                device=self.device
+            )
         self.resnet = InceptionResnetV1(pretrained='vggface2').eval().to(self.device)
 
     # ──────────────────────────────────────────────────────────

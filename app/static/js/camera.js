@@ -101,7 +101,7 @@ function _injectCameraValidationBanner() {
   const warnRow = document.createElement('div');
   warnRow.id = 'cam-face-validation-banner';
   warnRow.style.cssText = 'display:none; align-items:flex-start; gap:10px; background:#FFF7ED; border:1.5px solid #FB923C; border-radius:12px; padding:11px 14px; margin-bottom:14px; text-align:left;';
-  warnRow.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#EA580C;font-size:1rem;flex-shrink:0;margin-top:2px;"></i><div><div style="font-weight:700;font-size:0.83rem;color:#9A3412;margin-bottom:2px;">No face detected</div><div id="cam-face-validation-msg" style="font-size:0.78rem;color:#C2410C;line-height:1.4;">Please retake the photo with your face clearly visible.</div></div>';
+  warnRow.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#EA580C;font-size:1rem;flex-shrink:0;margin-top:2px;"></i><div><div id="error-type" style="font-weight:700;font-size:0.83rem;color:#9A3412;margin-bottom:2px;">No face detected</div><div id="cam-face-validation-msg" style="font-size:0.78rem;color:#C2410C;line-height:1.4;">Please retake the photo with your face clearly visible.</div></div>';
 
   // Insert both before the first child of the decision panel
   decisionPanel.insertBefore(warnRow, decisionPanel.firstChild);
@@ -110,10 +110,11 @@ function _injectCameraValidationBanner() {
 
 // ---- Camera validation UI state ------------------------------------------
 //  state: 'scanning' | 'valid' | 'invalid'
-function setCameraValidationState(state, message) {
+function setCameraValidationState(state, message, error) {
   const scanStatus = document.getElementById('cam-face-scan-status');
   const warnBanner = document.getElementById('cam-face-validation-banner');
   const msgEl = document.getElementById('cam-face-validation-msg');
+  const error_type = document.getElementById('error-type');
   const btnHairstyle = document.getElementById('btn-choose-hairstyle-trigger');
   const btnColor = document.getElementById('btn-choose-color-trigger');
   const capturedTitle = document.querySelector('.captured-title p');
@@ -133,12 +134,19 @@ function setCameraValidationState(state, message) {
     if (btnColor) btnColor.disabled = false;
     if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
 
-  } else if (state === 'invalid') {
-    if (warnBanner) warnBanner.style.display = 'flex';
+  } else if (state === 'invalid' || state === 'warning') {
     if (msgEl && message) msgEl.textContent = message;
-    if (btnHairstyle) btnHairstyle.disabled = true;
-    if (btnColor) btnColor.disabled = true;
-    if (capturedTitle) capturedTitle.textContent = 'Please retake the photo with your face clearly visible.';
+    if (error_type && error) error_type.textContent = error;
+
+    if (state === 'warning') {
+      if (btnHairstyle) btnHairstyle.disabled = false;
+      if (btnColor) btnColor.disabled = false;
+      if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
+    } else {
+      if (btnHairstyle) btnHairstyle.disabled = true;
+      if (btnColor) btnColor.disabled = true;
+      if (capturedTitle) capturedTitle.textContent = 'Please retake the photo with your face clearly visible.';
+    }
   }
 }
 
@@ -155,9 +163,13 @@ async function validateCapturedFace() {
     const data = await res.json();
 
     if (data.valid) {
-      setCameraValidationState('valid');
+      if (data.face_count > 1) {
+        setCameraValidationState('warning', data.message, 'MULTIPLE FACE DETECTED');
+      } else {
+        setCameraValidationState('valid');
+      }
     } else {
-      setCameraValidationState('invalid', data.message || 'No face detected. Please retake the photo with your face clearly visible.');
+      setCameraValidationState('invalid', data.message, data.error);
     }
   } catch (err) {
     // Network/server error — fail open so the user isn't permanently blocked
@@ -180,7 +192,7 @@ async function startCamera() {
       videoElem.srcObject = currentStream;
       videoElem.style.display = 'block';
       if (sampleImg) sampleImg.style.display = 'none';
-      
+
       // Mirror the video visually if using front camera
       if (currentFacingMode === 'user') {
         videoElem.style.transform = 'scaleX(-1)';
@@ -247,7 +259,7 @@ function capturePhoto() {
   if (freezeImg && capturedImageDataUrl) {
     freezeImg.src = capturedImageDataUrl;
     freezeImg.style.display = 'block';
-    
+
     // Mirror the freeze image visually if using front camera
     if (currentFacingMode === 'user') {
       freezeImg.style.transform = 'scaleX(-1)';

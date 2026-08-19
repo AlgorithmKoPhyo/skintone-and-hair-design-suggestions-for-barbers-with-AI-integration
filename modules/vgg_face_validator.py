@@ -71,11 +71,11 @@ class VGGFaceValidator:
 
             if face_count > 1:
                 return {
-                    "valid": False,
-                    "error": "MULTIPLE_FACES",
+                    "valid": True,
+                    "error": None,
                     "message": (
                         "Multiple faces were detected. "
-                        "Please upload a photo containing only one face."
+                        "Analyzing the largest face."
                     ),
                     "face_count": face_count
                 }
