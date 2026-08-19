@@ -45,8 +45,8 @@ class HairstyleDAO:
     def _fetch_all_from_firebase(self, force_refresh=False):
         import time
         
-        # Cache for 60 seconds
-        if not force_refresh and self._cache is not None and (time.time() - self._cache_time) < 60:
+        # Cache for 1 hour (3600 seconds) to prevent slow page loads
+        if not force_refresh and self._cache is not None and (time.time() - self._cache_time) < 3600:
             return self._cache
             
         try:

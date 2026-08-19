@@ -53,21 +53,41 @@ function initLiveCamera() {
   // Handle "Choose Color Analysis" directly from camera flow
   if (btnChooseColor) {
     btnChooseColor.addEventListener('click', async () => {
+      const originalText = btnChooseColor.innerHTML;
+      btnChooseColor.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...';
+      btnChooseColor.disabled = true;
+      if (btnChooseHairstyle) btnChooseHairstyle.disabled = true;
+
       await submitCapturedPhoto('female', 'color');
+
+      // Restore in case of error (normally it redirects)
+      btnChooseColor.innerHTML = originalText;
+      btnChooseColor.disabled = false;
+      if (btnChooseHairstyle) btnChooseHairstyle.disabled = false;
     });
   }
 
   // Handle Gender selection inside modal
   if (btnOptFemale) {
     btnOptFemale.addEventListener('click', async () => {
-      if (genderModal) genderModal.classList.remove('active');
+      // Show loading inside modal instead of closing it
+      const loading = document.getElementById('gender-modal-loading');
+      if (loading) loading.style.display = 'flex';
+      btnOptFemale.disabled = true;
+      if (btnOptMale) btnOptMale.disabled = true;
+
       await submitCapturedPhoto('female', 'hairstyle');
     });
   }
 
   if (btnOptMale) {
     btnOptMale.addEventListener('click', async () => {
-      if (genderModal) genderModal.classList.remove('active');
+      // Show loading inside modal instead of closing it
+      const loading = document.getElementById('gender-modal-loading');
+      if (loading) loading.style.display = 'flex';
+      if (btnOptFemale) btnOptFemale.disabled = true;
+      btnOptMale.disabled = true;
+
       await submitCapturedPhoto('male', 'hairstyle');
     });
   }
@@ -100,17 +120,19 @@ function _injectCameraValidationBanner() {
   const warnRow = document.createElement('div');
   warnRow.id = 'cam-face-validation-banner';
   warnRow.style.cssText = 'display:none; align-items:flex-start; gap:10px; background:#FFF7ED; border:1.5px solid #FB923C; border-radius:12px; padding:11px 14px; margin-bottom:14px; text-align:left;';
-  warnRow.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#EA580C;font-size:1rem;flex-shrink:0;margin-top:2px;"></i><div><div style="font-weight:700;font-size:0.83rem;color:#9A3412;margin-bottom:2px;">No face detected</div><div id="cam-face-validation-msg" style="font-size:0.78rem;color:#C2410C;line-height:1.4;">Please retake the photo with your face clearly visible.</div></div>';
+  warnRow.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#EA580C;font-size:1rem;flex-shrink:0;margin-top:2px;"></i><div><div id="error-type" style="font-weight:700;font-size:0.83rem;color:#9A3412;margin-bottom:2px;">No face detected</div><div id="cam-face-validation-msg" style="font-size:0.78rem;color:#C2410C;line-height:1.4;">Please retake the photo with your face clearly visible.</div></div>';
 
   decisionPanel.insertBefore(warnRow, decisionPanel.firstChild);
   decisionPanel.insertBefore(scanRow, decisionPanel.firstChild);
 }
 
 // ---- Camera validation UI state ------------------------------------------
-function setCameraValidationState(state, message) {
+//  state: 'scanning' | 'valid' | 'invalid'
+function setCameraValidationState(state, message, error) {
   const scanStatus = document.getElementById('cam-face-scan-status');
   const warnBanner = document.getElementById('cam-face-validation-banner');
   const msgEl = document.getElementById('cam-face-validation-msg');
+  const error_type = document.getElementById('error-type');
   const btnHairstyle = document.getElementById('btn-choose-hairstyle-trigger');
   const btnColor = document.getElementById('btn-choose-color-trigger');
   const capturedTitle = document.querySelector('.captured-title p');
@@ -120,21 +142,51 @@ function setCameraValidationState(state, message) {
 
   if (state === 'scanning') {
     if (scanStatus) scanStatus.style.display = 'flex';
-    if (btnHairstyle) btnHairstyle.disabled = true;
-    if (btnColor) btnColor.disabled = true;
+    if (btnHairstyle) { btnHairstyle.disabled = true; btnHairstyle.style.opacity = '0.6'; btnHairstyle.style.cursor = 'not-allowed'; }
+    if (btnColor) { btnColor.disabled = true; btnColor.style.opacity = '0.6'; btnColor.style.cursor = 'not-allowed'; }
     if (capturedTitle) capturedTitle.textContent = 'Checking your photo for a face…';
 
   } else if (state === 'valid') {
-    if (btnHairstyle) btnHairstyle.disabled = false;
-    if (btnColor) btnColor.disabled = false;
+    if (btnHairstyle) { btnHairstyle.disabled = false; btnHairstyle.style.opacity = '1'; btnHairstyle.style.cursor = 'pointer'; }
+    if (btnColor) { btnColor.disabled = false; btnColor.style.opacity = '1'; btnColor.style.cursor = 'pointer'; }
     if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
 
-  } else if (state === 'invalid') {
-    if (warnBanner) warnBanner.style.display = 'flex';
+  } else if (state === 'invalid' || state === 'warning') {
+    if (warnBanner) {
+      warnBanner.style.display = 'flex';
+      if (state === 'warning') {
+        warnBanner.style.background = '#FEF9C3';
+        warnBanner.style.borderColor = '#EAB308';
+        const icon = warnBanner.querySelector('i');
+        if (icon) { icon.style.color = '#CA8A04'; icon.className = 'fa-solid fa-circle-exclamation'; }
+        if (msgEl) msgEl.style.color = '#854D0E';
+        if (error_type) { error_type.style.color = '#A16207'; }
+      } else {
+        warnBanner.style.background = '#FFF7ED';
+        warnBanner.style.borderColor = '#FB923C';
+        const icon = warnBanner.querySelector('i');
+        if (icon) { icon.style.color = '#EA580C'; icon.className = 'fa-solid fa-triangle-exclamation'; }
+        if (msgEl) msgEl.style.color = '#C2410C';
+        if (error_type) { error_type.style.color = '#9A3412'; }
+      }
+    }
     if (msgEl && message) msgEl.textContent = message;
-    if (btnHairstyle) btnHairstyle.disabled = true;
-    if (btnColor) btnColor.disabled = true;
-    if (capturedTitle) capturedTitle.textContent = 'Please retake the photo with your face clearly visible.';
+    if (error_type && error) error_type.textContent = error;
+
+    if (state === 'warning') {
+      if (btnHairstyle) { btnHairstyle.disabled = false; btnHairstyle.style.opacity = '1'; btnHairstyle.style.cursor = 'pointer'; }
+      if (btnColor) { btnColor.disabled = false; btnColor.style.opacity = '1'; btnColor.style.cursor = 'pointer'; }
+      if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
+    } else {
+      if (btnHairstyle) { btnHairstyle.disabled = true; btnHairstyle.style.opacity = '0.6'; btnHairstyle.style.cursor = 'not-allowed'; }
+      if (error === 'UNCERTAIN FACE TYPE') {
+        if (btnColor) { btnColor.disabled = false; btnColor.style.opacity = '1'; btnColor.style.cursor = 'pointer'; }
+        if (capturedTitle) capturedTitle.textContent = 'Face shape unclear. Only Color Analysis is available.';
+      } else {
+        if (btnColor) { btnColor.disabled = true; btnColor.style.opacity = '0.6'; btnColor.style.cursor = 'not-allowed'; }
+        if (capturedTitle) capturedTitle.textContent = 'Please retake the photo with your face clearly visible.';
+      }
+    }
   }
 }
 
@@ -150,9 +202,13 @@ async function validateCapturedFace() {
     const data = await res.json();
 
     if (data.valid) {
-      setCameraValidationState('valid');
+      if (data.face_count > 1) {
+        setCameraValidationState('warning', data.message, 'MULTIPLE FACE DETECTED');
+      } else {
+        setCameraValidationState('valid');
+      }
     } else {
-      setCameraValidationState('invalid', data.message || 'No face detected. Please retake the photo with your face clearly visible.');
+      setCameraValidationState('invalid', data.message, data.error);
     }
   } catch (err) {
     console.warn('[StyleMe] /validate-face (camera) failed, failing open:', err);
@@ -174,6 +230,13 @@ async function startCamera() {
       videoElem.srcObject = currentStream;
       videoElem.style.display = 'block';
       if (sampleImg) sampleImg.style.display = 'none';
+
+      // Mirror the video visually if using front camera
+      if (currentFacingMode === 'user') {
+        videoElem.style.transform = 'scaleX(-1)';
+      } else {
+        videoElem.style.transform = 'none';
+      }
     }
   } catch (err) {
     console.warn("Camera access unavailable or denied. Using high quality sample photo mode:", err);
@@ -232,6 +295,13 @@ function capturePhoto() {
   if (freezeImg && capturedImageDataUrl) {
     freezeImg.src = capturedImageDataUrl;
     freezeImg.style.display = 'block';
+
+    // Mirror the freeze image visually if using front camera
+    if (currentFacingMode === 'user') {
+      freezeImg.style.transform = 'scaleX(-1)';
+    } else {
+      freezeImg.style.transform = 'none';
+    }
   }
 
   if (guideElem) guideElem.style.display = 'none';
@@ -240,6 +310,10 @@ function capturePhoto() {
   if (decisionContainer) decisionContainer.classList.add('active');
   if (controls) controls.style.display = 'none';
 
+  const retakeBtn = document.getElementById('btn-retake');
+  if (retakeBtn) retakeBtn.style.display = 'inline-flex';
+
+  // White camera shutter flash effect
   const viewport = document.querySelector('.camera-viewport');
   if (viewport) {
     const flash = document.createElement('div');
@@ -277,6 +351,10 @@ function resetCameraState() {
   if (decisionContainer) decisionContainer.classList.remove('active');
   if (controls) controls.style.display = 'flex';
 
+  const retakeBtn = document.getElementById('btn-retake');
+  if (retakeBtn) retakeBtn.style.display = 'none';
+
+  // Reset validation UI for next capture
   const scanStatus = document.getElementById('cam-face-scan-status');
   const warnBanner = document.getElementById('cam-face-validation-banner');
   if (scanStatus) scanStatus.style.display = 'none';
@@ -300,10 +378,24 @@ async function submitCapturedPhoto(gender, analysisType) {
       sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
     }
 
-    const res = await fetch('/analyze', {
-      method: 'POST',
-      body: formData
-    });
+    let res;
+    if (analysisType === 'color') {
+      res = await fetch('/analyze', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      const html = await res.text();
+      document.open();
+      document.write(html);
+      document.close();
+      return;
+    } else {
+      res = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData
+      });
+    }
 
     if (!res.ok) throw new Error('Network response was not ok');
 

@@ -111,18 +111,21 @@ function initAngleSwitcher() {
   }
 
   // Next / Prev button click listeners
-  if (btnPrev) {
+  // Remove existing listeners by cloning or just attach once
+  if (btnPrev && !btnPrev.dataset.hasEvent) {
     btnPrev.addEventListener('click', (e) => {
       e.stopPropagation();
       goToIndex(currentIndex - 1);
     });
+    btnPrev.dataset.hasEvent = 'true';
   }
 
-  if (btnNext) {
+  if (btnNext && !btnNext.dataset.hasEvent) {
     btnNext.addEventListener('click', (e) => {
       e.stopPropagation();
       goToIndex(currentIndex + 1);
     });
+    btnNext.dataset.hasEvent = 'true';
   }
 
   // Click on thumbnail card
@@ -132,25 +135,24 @@ function initAngleSwitcher() {
 
   // Touch Swipe Gesture & Auto-play Support
   const wrapper = mainPreviewImg.closest('.rec-preview-wrapper');
-  let autoTimer = null;
 
   function startAutoPlay() {
     stopAutoPlay();
-    autoTimer = setInterval(() => {
+    window.recAutoTimer = setInterval(() => {
       goToIndex(currentIndex + 1);
     }, 4000);
   }
 
   function stopAutoPlay() {
-    if (autoTimer) {
-      clearInterval(autoTimer);
-      autoTimer = null;
+    if (window.recAutoTimer) {
+      clearInterval(window.recAutoTimer);
+      window.recAutoTimer = null;
     }
   }
 
   startAutoPlay();
 
-  if (wrapper) {
+  if (wrapper && !wrapper.dataset.hasSwipeEvents) {
     wrapper.addEventListener('mouseenter', stopAutoPlay);
     wrapper.addEventListener('mouseleave', startAutoPlay);
 
@@ -175,6 +177,8 @@ function initAngleSwitcher() {
         else goToIndex(currentIndex - 1);          // Swipe right → Prev
       }
     }
+    
+    wrapper.dataset.hasSwipeEvents = 'true';
   }
 }
 
@@ -444,6 +448,7 @@ function updateRecommendationViewFromDB(data, relatedStyles = []) {
   const detailScore = document.getElementById('detail-score');
   const tipsListContainer = document.getElementById('rec-tips-list');
   const galleryContainer = document.getElementById('more-styles-cards-container');
+  const anglesGrid = document.querySelector('.angles-thumbnails-grid');
 
   if (titleElem && data.name) titleElem.textContent = data.name;
   if (taglineElem && data.tagline) taglineElem.textContent = data.tagline;
@@ -473,6 +478,28 @@ function updateRecommendationViewFromDB(data, relatedStyles = []) {
 
   if (tipsListContainer && data.tips && data.tips.length) {
     tipsListContainer.innerHTML = data.tips.map(t => `<li>${t}</li>`).join('');
+  }
+  
+  if (anglesGrid) {
+    if (data.angles && data.angles.length > 0) {
+      anglesGrid.innerHTML = data.angles.map((angle, idx) => `
+        <div class="angle-card col-3 col-sm-6 ${idx === 0 ? 'active' : ''}" data-img="${angle.img}">
+          <div class="angle-thumb-wrapper">
+            <img src="${angle.img}" alt="${angle.name} Angle">
+          </div>
+          <span class="angle-name">${angle.name}</span>
+        </div>
+      `).join('');
+    } else if (data.main_img) {
+      anglesGrid.innerHTML = `
+        <div class="angle-card col-3 col-sm-6 active" data-img="${data.main_img}">
+          <div class="angle-thumb-wrapper"><img src="${data.main_img}" alt="Front"></div>
+          <span class="angle-name">Front</span>
+        </div>`;
+    }
+    
+    // Re-initialize the angle switcher with the new angle cards
+    initAngleSwitcher();
   }
 
   if (galleryContainer && relatedStyles && relatedStyles.length) {
