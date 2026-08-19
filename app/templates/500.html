@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Error - Shape and Shade</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevent scrolling */
+      height: 100vh;
+      width: 100vw;
+      background: var(--bg-light, #fbfbfe);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      position: relative;
+    }
+    @keyframes pulse-float {
+      0% { transform: translateY(0px) scale(1); opacity: 0.9; }
+      50% { transform: translateY(-10px) scale(1.05); opacity: 1; }
+      100% { transform: translateY(0px) scale(1); opacity: 0.9; }
+    }
+    .floating-alert {
+      animation: pulse-float 3s ease-in-out infinite;
+      font-size: 5.5rem;
+      color: #ef4444;
+      margin-bottom: 1.5rem;
+    }
+    .error-gradient-500 {
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 6rem;
+      font-weight: 800;
+      margin: 0 0 0.5rem 0;
+    }
+    .error-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
+      padding: 4rem 3rem;
+      border-radius: 30px;
+      text-align: center;
+      max-width: 650px;
+      width: 90%;
+      position: relative;
+      z-index: 10;
+    }
+    .error-card:hover {
+      transform: translateY(-5px);
+    }
+    .bg-blob-1 {
+      position: absolute; top: -5%; left: 5%; width: 400px; height: 400px; background: rgba(239, 68, 68, 0.08); border-radius: 50%; filter: blur(70px); z-index: 0;
+    }
+    .bg-blob-2 {
+      position: absolute; bottom: -5%; right: 5%; width: 350px; height: 350px; background: rgba(249, 115, 22, 0.08); border-radius: 50%; filter: blur(60px); z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative background elements -->
+  <div class="bg-blob-1"></div>
+  <div class="bg-blob-2"></div>
+
+  <div class="error-card">
+    <div class="floating-alert">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h1 class="error-gradient-500">500</h1>
+    <h2 style="font-size: 1.8rem; font-weight: 700; color: #2D3748; margin-bottom: 1rem;">Something went wrong!</h2>
+    <p style="font-size: 1.1rem; line-height: 1.6; color: #64748b; margin-bottom: 2.5rem;">
+      Don't worry, it's not you, it's us. Our digital stylists are working hard to fix this issue. Please try again in a few moments.
+    </p>
+    <a href="/" class="btn-primary-pink" style="background: linear-gradient(135deg, #ef4444, #f97316); display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 36px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.05rem; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25); transition: all 0.3s ease; color: white; border: none;">
+      <i class="fa-solid fa-rotate-right"></i> Try Again
+    </a>
+  </div>
+</body>
+</html>
