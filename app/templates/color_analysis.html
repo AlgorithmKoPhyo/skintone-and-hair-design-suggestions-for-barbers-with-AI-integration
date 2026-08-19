@@ -1,70 +1,765 @@
 {% extends 'base.html' %}
 
-{% block title %}StyleMe - Color Analysis{% endblock %}
+{% block title %}StyleMe - Personal Color Analysis{% endblock %}
 
 {% block content %}
-<section class="page-view active">
-  <div class="container">
-    <div class="rec-header-row">
-      <div>
-        <h1>Color Analysis Recommendation <i class="fa-solid fa-palette"></i></h1>
-        <p>Discover the best hair dye colors that match your skin tone undertones</p>
-      </div>
-      <div class="face-shape-badge">
-        <div class="badge-icon">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </div>
-        <div class="badge-text">
-          <span class="badge-title">Warm Autumn</span>
-          <span class="badge-subtitle">Golden & Olive Undertone</span>
-        </div>
-      </div>
+<style>
+    .color-analysis-scope {
+        --purple-main: #7c4dff;
+        --purple-dark: #651fff;
+        --purple-light: #f3eefc;
+        --purple-border: #e2d7f8;
+        --pink-accent: #f06292;
+        --bg-body: #f8f9fd;
+        --card-bg: #ffffff;
+        --text-dark: #1e1b2e;
+        --text-muted: #757288;
+        --border-color: #f0ecf9;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --shadow-subtle: 0 4px 20px rgba(124, 77, 255, 0.08);
+        
+        background-color: var(--bg-body);
+        color: var(--text-dark);
+        padding-bottom: 60px;
+    }
+
+    .page-container {
+        max-width: 1380px;
+        margin: 24px auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: 310px 1fr;
+        gap: 24px;
+    }
+
+    /* Sidebar */
+    .sidebar-panel {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-subtle);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: fit-content;
+    }
+
+    .sidebar-title { font-size: 15px; font-weight: 700; color: var(--purple-main); }
+
+    .user-photo-container {
+        width: 100%;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        aspect-ratio: 4/5;
+    }
+
+    .user-photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .undertone-box {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        text-align: center;
+    }
+
+    .undertone-label { font-size: 13px; color: var(--text-dark); font-weight: 600; margin-bottom: 4px; }
+    .undertone-value { font-size: 26px; font-weight: 800; color: var(--purple-main); margin-bottom: 16px; text-transform: capitalize; }
+    .confidence-heading { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; }
+
+    .confidence-donut {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        margin: 0 auto;
+    }
+
+    .confidence-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .confidence-donut circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+    .confidence-donut .bg-circle { stroke: #ede7f6; }
+    .confidence-donut .progress-circle {
+        stroke: var(--purple-main);
+        stroke-dasharray: 283;
+        stroke-dashoffset: 28.3;
+        transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    .confidence-number {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    .meaning-card {
+        background: var(--purple-light);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        border: 1px solid var(--purple-border);
+    }
+
+    .meaning-card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--purple-main);
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .meaning-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+
+    /* Content Panel */
+    .content-panel { display: flex; flex-direction: column; gap: 20px; }
+
+    .overview-tabs {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 6px;
+        display: grid;
+        grid-template-columns: 1.2fr repeat(5, 1fr);
+        gap: 6px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: none;
+        padding: 10px 12px;
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+
+    .tab-btn.active { background: var(--purple-light); color: var(--purple-main); }
+
+    .summary-pill-bar {
+        background: var(--purple-light);
+        border-radius: var(--radius-lg);
+        padding: 16px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid var(--purple-border);
+    }
+
+    .pill-item { display: flex; align-items: center; gap: 12px; }
+    .pill-icon {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--purple-main);
+        font-size: 16px;
+    }
+
+    .pill-info { display: flex; align-items: baseline; gap: 6px; }
+    .pill-number { font-size: 18px; font-weight: 800; color: var(--text-dark); }
+    .pill-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .pill-divider { width: 1px; height: 24px; background: var(--purple-border); }
+
+    /* Grid Sections */
+    .section-card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+    .section-title i { color: var(--purple-main); }
+
+    .color-grid-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .swatch-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    
+    .swatch {
+        height: 60px;
+        border-radius: var(--radius-sm);
+        width: 100%;
+        transition: transform 0.2s ease;
+        border: 1px solid rgba(0,0,0,0.06);
+    }
+    .swatch:hover { transform: scale(1.05); }
+
+    .items-grid-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .sub-item-card { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .sub-item-image { width: 100%; height: 120px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 8px; background: #f4f4f8; }
+    .sub-item-image img { width: 100%; height: 100%; object-fit: cover; }
+    .sub-item-name { font-size: 12px; font-weight: 600; color: var(--text-dark); }
+
+    .category-pills { display: flex; gap: 6px; margin-bottom: 12px; }
+    .cat-pill { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: none; background: #f0f0f5; color: var(--text-muted); cursor: pointer; }
+    .cat-pill.active { background: var(--purple-main); color: white; }
+
+    .neutral-tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+    .neutral-tile { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .neutral-color-box { width: 100%; height: 75px; border-radius: var(--radius-md); margin-bottom: 6px; border: 1px solid rgba(0, 0, 0, 0.06); }
+
+    /* Occasion Based Recommendations Section */
+    .occasion-section {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .occasion-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+    }
+
+    .occasion-title i {
+        color: var(--purple-main);
+        font-size: 18px;
+    }
+
+    .occasion-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .occasion-tab {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 22px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4a5568;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+
+    .occasion-tab.active {
+        border-color: var(--purple-main);
+        color: var(--purple-main);
+        background: #fcfaff;
+        box-shadow: 0 0 0 1px var(--purple-main);
+    }
+
+    .occasion-details-grid {
+        display: grid;
+        grid-template-columns: auto 1px auto 1px auto 1fr;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .occasion-details-grid.is-hidden {
+        display: none !important;
+    }
+
+    .occ-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .detail-group-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 12px;
+    }
+
+    .swatch-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .swatch-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease;
+    }
+
+    .swatch-circle:hover { transform: scale(1.08); }
+
+    .combo-wrapper {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+    }
+
+    .combo-triplet {
+        display: flex;
+        gap: 4px;
+    }
+
+    .combo-triplet .swatch-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+    }
+
+    .occ-divider {
+        background-color: #edf2f7;
+        height: 55px;
+        width: 1px;
+    }
+
+    .jewelry-preview-card {
+        width: 58px;
+        height: 58px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .jewelry-preview-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .why-works-card {
+        background: #f7f3ff;
+        border-radius: 14px;
+        padding: 16px 20px;
+        position: relative;
+        border: 1px solid #ebdfff;
+    }
+
+    .why-works-card h5 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--purple-main);
+        margin-bottom: 6px;
+    }
+
+    .why-works-card p {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .sparkle-icon {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        color: var(--purple-main);
+        font-size: 14px;
+    }
+
+    .occasion-footer-note {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #a0aec0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .occasion-footer-note i {
+        color: #f472b6;
+        font-size: 11px;
+    }
+
+    @media (max-width: 1100px) {
+        .page-container { grid-template-columns: 1fr; }
+        .occasion-details-grid {
+            grid-template-columns: 1fr 1fr;
+            row-gap: 20px;
+        }
+        .occ-divider { display: none; }
+        .color-grid-two-col { grid-template-columns: 1fr; }
+        .items-grid-three-col { grid-template-columns: 1fr; }
+    }
+</style>
+{% set current_undertone = color_type if color_type else 'neutral' %}
+{% set recommended = recommended_colors if recommended_colors else [] %}
+{% set avoids = avoid_colors if avoid_colors else [] %}
+{% set neutrals = neutral_colors if neutral_colors else [] %}
+{% set hairs = hair_colors if hair_colors else [] %}
+{% set jewels = jewelry if jewelry else [] %}
+{% set occasions = occasion_recommendations if occasion_recommendations else {
+    'office': {
+        'colors': [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex': '#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}],
+        'color_combinations': [{'colors': [{'hex': '#0a192f'}, {'hex': '#90caf9'}, {'hex': '#ffffff'}]}, {'colors': [{'hex': '#b39ddb'}, {'hex': '#7e57c2'}, {'hex': '#f48fb1'}]}],
+        'jewelry': {'image': 'earrings.jpg', 'name': 'Silver Earrings'},
+        'why_it_works': 'These shades enhance your cool undertone and give a calm, professional and confident look.'
+    },
+    'interview': {
+        'colors': [{'hex': '#1a237e', 'name': 'Dark Blue'}, {'hex': '#455a64', 'name': 'Grey'}, {'hex': '#e0f7fa', 'name': 'Cyan Light'}],
+        'color_combinations': [{'colors': [{'hex': '#1a237e'}, {'hex': '#e0f7fa'}, {'hex': '#ffffff'}]}],
+        'jewelry': {'image': 'pendant.jpg', 'name': 'Pearl Pendant'},
+        'why_it_works': 'Creates a polished and authoritative impression without overwhelming.'
+    },
+    'wedding_guest': {
+        'colors': [{'hex': '#4a148c', 'name': 'Plum'}, {'hex': '#ce93d8', 'name': 'Lilac'}, {'hex': '#f8bbd0', 'name': 'Rose'}],
+        'color_combinations': [{'colors': [{'hex': '#4a148c'}, {'hex': '#ce93d8'}, {'hex': '#f8bbd0'}]}],
+        'jewelry': {'image': 'necklace.jpg', 'name': 'Crystal Necklace'},
+        'why_it_works': 'Elegant jewel tones that complement formal celebration settings.'
+    },
+    'party': {
+        'colors': [{'hex': '#004d40', 'name': 'Teal'}, {'hex': '#7b1fa2', 'name': 'Purple'}, {'hex': '#e1bee7', 'name': 'Light Purple'}],
+        'color_combinations': [{'colors': [{'hex': '#004d40'}, {'hex': '#7b1fa2'}, {'hex': '#ffffff'}]}],
+        'jewelry': {'image': 'dangle.jpg', 'name': 'Silver Dangles'},
+        'why_it_works': 'Vibrant cool shades that catch light gracefully in evening environments.'
+    },
+    'casual_day': {
+        'colors': [{'hex': '#37474f', 'name': 'Charcoal'}, {'hex': '#81d4fa', 'name': 'Sky Blue'}, {'hex': '#f5f5f5', 'name': 'Off White'}],
+        'color_combinations': [{'colors': [{'hex': '#37474f'}, {'hex': '#81d4fa'}, {'hex': '#f5f5f5'}]}],
+        'jewelry': {'image': 'studs.jpg', 'name': 'Simple Studs'},
+        'why_it_works': 'Relaxed yet cohesive combinations ideal for effortless daily wear.'
+    }
+} %}
+
+<div class="color-analysis-scope">
+    <div class="page-container">
+        <!-- Sidebar -->
+        <aside class="sidebar-panel">
+            <div class="sidebar-title">Your Analysis</div>
+            <div class="user-photo-container">
+                <img id="user-portrait" src="{{ image_url if image_url else (user_img if user_img else url_for('static', filename='uploads/default_user.jpg')) }}" alt="Analyzed Portrait">
+            </div>
+
+            <div class="undertone-box">
+                <div class="undertone-label">Undertone Result</div>
+                <div class="undertone-value" id="undertone-val">{{ current_undertone }}</div>
+
+                <div class="confidence-heading">Confidence</div>
+
+                <div class="confidence-donut">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="45"></circle>
+                        <circle class="progress-circle" id="confidence-circle" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <div class="confidence-number" id="confidence-num">{{ confidence_score if confidence_score else '50%' }}</div>
+                </div>
+            </div>
+
+            <div class="meaning-card">
+                <div class="meaning-card-header">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>What does it mean?</span>
+                </div>
+                <p id="undertone-desc">
+                    {% if description %}
+                        {{ description }}
+                    {% else %}
+                        Cool undertones feature subtle blue, pink, or red undertones beneath the skin. Cool blues, purples, and crisp berry shades complement your complexion.
+                    {% endif %}
+                </p>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="content-panel">
+            <div class="overview-tabs">
+                <button class="tab-btn active" data-nav="overview">Overview</button>
+                <button class="tab-btn" data-nav="best-colors">Best Colors</button>
+                <button class="tab-btn" data-nav="neutrals">Neutral Colors</button>
+                <button class="tab-btn" data-nav="hair">Hair Colors</button>
+                <button class="tab-btn" data-nav="jewelry">Jewelry</button>
+                <button class="tab-btn" data-nav="occasions">Occasion Looks</button>
+            </div>
+
+            <div class="summary-pill-bar">
+                <div class="pill-item">
+                    <div class="pill-icon"><i class="fa-solid fa-palette"></i></div>
+                    <div class="pill-info">
+                        <span class="pill-number" id="cnt-best-colors">{{ recommended | length if recommended else 6 }}</span>
+                        <span class="pill-label">Best Colors</span>
+                    </div>
+                </div>
+                <div class="pill-divider"></div>
+                <div class="pill-item">
+                    <div class="pill-icon"><i class="fa-solid fa-droplet"></i></div>
+                    <div class="pill-info">
+                        <span class="pill-number" id="cnt-neutrals">{{ neutrals | length if neutrals else 3 }}</span>
+                        <span class="pill-label">Neutral Shades</span>
+                    </div>
+                </div>
+                <div class="pill-divider"></div>
+                <div class="pill-item">
+                    <div class="pill-icon"><i class="fa-solid fa-user-gear"></i></div>
+                    <div class="pill-info">
+                        <span class="pill-number" id="cnt-hair-colors">{{ hairs | length if hairs else 3 }}</span>
+                        <span class="pill-label">Hair Colors</span>
+                    </div>
+                </div>
+                <div class="pill-divider"></div>
+                <div class="pill-item">
+                    <div class="pill-icon"><i class="fa-solid fa-gem"></i></div>
+                    <div class="pill-info">
+                        <span class="pill-number" id="cnt-jewelry">{{ jewels | length if jewels else 3 }}</span>
+                        <span class="pill-label">Jewelry Options</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="color-grid-two-col" id="section-best-colors">
+                <!-- Best Colors -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-palette"></i> Best Colors For You</div>
+                    </div>
+                    <div class="swatch-row" id="best-colors-container">
+                        {% set best_list = recommended if recommended else [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex': '#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}] %}
+                        {% for color in best_list %}
+                            {% set hex_code = color.hex if color is mapping else color %}
+                            {% set color_title = color.name if color is mapping else color %}
+                            <div class="swatch" style="--bg: {{ hex_code }}; background-color: var(--bg);" title="{{ color_title }}"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Avoid Colors -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-ban"></i> Colors To Avoid</div>
+                    </div>
+                    <div class="swatch-row" id="avoid-colors-container">
+                        {% set avoid_list = avoids if avoids else [{'hex': '#e65100', 'name': 'Orange'}, {'hex': '#fbc02d', 'name': 'Mustard'}, {'hex': '#5d4037', 'name': 'Warm Brown'}, {'hex': '#33691e', 'name': 'Olive'}, {'hex': '#ff6f00', 'name': 'Amber'}, {'hex': '#bf360c', 'name': 'Rust'}] %}
+                        {% for color in avoid_list %}
+                            {% set hex_code = color.hex if color is mapping else color %}
+                            {% set color_title = color.name if color is mapping else color %}
+                            <div class="swatch" style="--bg: {{ hex_code }}; background-color: var(--bg);" title="{{ color_title }}"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="items-grid-three-col" id="section-neutrals">
+                <!-- Neutral Colors -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-droplet"></i> Neutral Colors</div>
+                    </div>
+                    <div class="category-pills">
+                        <button class="cat-pill active">Base</button>
+                        <button class="cat-pill">Accent</button>
+                    </div>
+                    <div class="neutral-tile-grid" id="neutral-colors-container">
+                        {% set neutral_list = neutrals if neutrals else [{'hex': '#000000', 'name': 'Pure Black'}, {'hex': '#424242', 'name': 'Charcoal'}, {'hex': '#ffffff', 'name': 'Pure White'}] %}
+                        {% for item in neutral_list %}
+                            {% set hex_code = item.hex if item is mapping else item %}
+                            {% set item_name = item.name if item is mapping else item %}
+                            <div class="neutral-tile">
+                                <div class="neutral-color-box" style="--tile-bg: {{ hex_code }}; background: var(--tile-bg);"></div>
+                                <span style="font-size: 11px; font-weight: 600;">{{ item_name }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Hair Colors -->
+                <div class="section-card" id="section-hair">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-user-gear"></i> Hair Colors</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px;" id="hair-colors-container">
+                        {% set hair_list = hairs if hairs else [{'name': 'Ash Brown', 'image': 'ash_brown.jpg'}, {'name': 'Cool Brown', 'image': 'cool_brown.jpg'}, {'name': 'Burgundy', 'image': 'burgundy.jpg'}] %}
+                        {% for hair in hair_list %}
+                            <div class="sub-item-card">
+                                <div class="sub-item-image">
+                                    <img src="{{ url_for('static', filename=hair.image) if hair.image else '#' }}" alt="{{ hair.name }}" onerror="this.style.background='#dcd6f7'">
+                                </div>
+                                <span class="sub-item-name">{{ hair.name }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Jewelry -->
+                <div class="section-card" id="section-jewelry">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-gem"></i> Jewelry</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px;" id="jewelry-container">
+                        {% set jewel_list = jewels if jewels else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image': 'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
+                        {% for item in jewel_list %}
+                            <div class="sub-item-card">
+                                <div class="sub-item-image">
+                                    <img src="{{ url_for('static', filename=item.image) if item.image else '#' }}" alt="{{ item.name }}" onerror="this.style.background='#e2d7f8'">
+                                </div>
+                                <span class="sub-item-name">{{ item.name }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Occasion Based Recommendations Section -->
+            <div class="occasion-section" id="section-occasions">
+                <div class="occasion-title">
+                    <i class="fa-solid fa-shirt"></i>
+                    <span>Occasion Based Recommendations</span>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="occasion-tabs" id="occasion-tabs-container">
+                    {% for occ_key, occ_data in occasions.items() %}
+                        <button class="occasion-tab {% if loop.first %}active{% endif %}" data-target="occ-{{ occ_key }}">
+                            <i class="fa-solid {% if occ_key == 'office' %}fa-briefcase{% elif occ_key == 'interview' %}fa-user-tie{% elif occ_key == 'wedding' or occ_key == 'wedding_guest' %}fa-gift{% elif occ_key == 'party' %}fa-glass-martini-alt{% else %}fa-shirt{% endif %}"></i>
+                            <span>{{ occ_key | replace('_', ' ') | title }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+
+                <!-- Tab Contents -->
+                {% for occ_key, occ_data in occasions.items() %}
+                    <div class="occasion-details-grid occ-content {% if not loop.first %}is-hidden{% endif %}" id="occ-{{ occ_key }}">
+                        
+                        <!-- Clothing Colors -->
+                        <div class="occ-col">
+                            <div class="detail-group-title">Clothing Colors</div>
+                            <div class="swatch-group">
+                                {% for clr in occ_data.colors %}
+                                    {% set hex_code = clr.hex if clr is mapping else clr %}
+                                    {% set clr_name = clr.name if clr is mapping else clr %}
+                                    <div class="swatch-circle" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Vertical Divider -->
+                        <div class="occ-divider"></div>
+
+                        <!-- Color Combinations -->
+                        <div class="occ-col">
+                            <div class="detail-group-title">Color Combination</div>
+                            <div class="combo-wrapper">
+                                {% for combo in occ_data.color_combinations %}
+                                    <div class="combo-triplet">
+                                        {% for c_clr in combo.colors %}
+                                            {% set combo_hex = c_clr.hex if c_clr is mapping else c_clr %}
+                                            {% set combo_name = c_clr.name if c_clr is mapping else c_clr %}
+                                            <div class="swatch-circle" style="--swatch-bg: {{ combo_hex }}; background-color: var(--swatch-bg);" title="{{ combo_name }}"></div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Vertical Divider -->
+                        <div class="occ-divider"></div>
+
+                        <!-- Jewelry -->
+                        <div class="occ-col occ-jewelry-col">
+                            <div class="detail-group-title">Jewelry</div>
+                            {% if occ_data.jewelry %}
+                                <div class="jewelry-preview-card">
+                                    <img src="{{ url_for('static', filename=occ_data.jewelry.image) if occ_data.jewelry.image else '#' }}" alt="{{ occ_data.jewelry.name }}" onerror="this.style.background='#ebdfff'">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Why It Works Box -->
+                        <div class="why-works-card">
+                            <i class="fa-solid fa-sparkles sparkle-icon"></i>
+                            <h5>Why it works?</h5>
+                            <p>{{ occ_data.why_it_works if occ_data.why_it_works else "These shades enhance your undertone and give a calm, professional and confident look." }}</p>
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+                <!-- Footer Disclaimer -->
+                <div class="occasion-footer-note">
+                    <i class="fa-solid fa-heart"></i> Recommendations are AI-generated based on your undertone and facial analysis.
+                </div>
+            </div>
+        </main>
     </div>
+</div>
 
-    <div class="main-rec-card grid-12" style="grid-template-columns: 1fr;">
-      <div class="col-12">
-        <h2>Recommended Hair Color Palette</h2>
-        <p style="color: var(--text-muted); margin-bottom: 24px;">Based on AI skin tone spectrometry analysis, warm rich golden shades maximize your natural skin glow.</p>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Check if the backend passed a fresh uploaded photo URL (server-side template variable)
+        // Replace '{{ image_url if image_url else (user_img if user_img else "") }}' with your actual server variable or check if backend is rendering an upload.
+        const serverImageUrl = "{{ image_url if image_url else (user_img if user_img else '') }}";
+        
+        // If the server explicitly provided an image (meaning it was an upload, not a live camera redirect), clear any old session storage capture
+        if (serverImageUrl && serverImageUrl !== '#' && !serverImageUrl.includes('default_user.jpg')) {
+            sessionStorage.removeItem('styleme_captured_image');
+        }
 
-        <div class="grid-12">
-          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
-            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #4A2E2B; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
-            <h3>Chestnut Brown</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Rich warm brown with reddish undertones</p>
-            <div style="color: var(--purple-primary); font-weight: 700;">
-              <i class="fa-solid fa-star"></i> 96% Match
-            </div>
-          </div>
+        // 2. Load captured live camera image from session storage if available
+        const capturedImg = sessionStorage.getItem('styleme_captured_image');
+        if (capturedImg) {
+            const portraitImg = document.getElementById('user-portrait');
+            if (portraitImg) {
+                portraitImg.src = capturedImg;
+            }
+        }
 
-          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
-            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #B8860B; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
-            <h3>Warm Honey Blonde</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Golden sun-kissed accent shades</p>
-            <div style="color: var(--purple-primary); font-weight: 700;">
-              <i class="fa-solid fa-star"></i> 94% Match
-            </div>
-          </div>
+        // 3. Occasion Tab Switching Logic
+        const occTabs = document.querySelectorAll('.occasion-tab');
+        const occContents = document.querySelectorAll('.occ-content');
 
-          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
-            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #800020; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
-            <h3>Mahogany Red</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Deep auburn highlight for vibrant warmth</p>
-            <div style="color: var(--purple-primary); font-weight: 700;">
-              <i class="fa-solid fa-star"></i> 91% Match
-            </div>
-          </div>
+        occTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                occTabs.forEach(t => t.classList.remove('active'));
+                occContents.forEach(c => c.classList.add('is-hidden'));
 
-          <div class="action-card col-3 col-md-6 col-sm-12" style="text-align: left; align-items: flex-start;">
-            <div style="width: 100%; height: 120px; border-radius: var(--radius-sm); background: #2B1B17; margin-bottom: 12px; box-shadow: var(--shadow-sm);"></div>
-            <h3>Dark Mocha</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); min-height: auto; margin-bottom: 8px;">Deep chocolate espresso with glossy shine</p>
-            <div style="color: var(--purple-primary); font-weight: 700;">
-              <i class="fa-solid fa-star"></i> 89% Match
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+                this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.classList.remove('is-hidden');
+                }
+            });
+        });
+
+        // 4. Top Navigation Tabs Scroll Handler
+        const navTabs = document.querySelectorAll('.overview-tabs .tab-btn');
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                navTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                const navTarget = this.getAttribute('data-nav');
+                if (navTarget === 'best-colors') {
+                    document.getElementById('section-best-colors')?.scrollIntoView({ behavior: 'smooth' });
+                } else if (navTarget === 'neutrals') {
+                    document.getElementById('section-neutrals')?.scrollIntoView({ behavior: 'smooth' });
+                } else if (navTarget === 'hair') {
+                    document.getElementById('section-hair')?.scrollIntoView({ behavior: 'smooth' });
+                } else if (navTarget === 'jewelry') {
+                    document.getElementById('section-jewelry')?.scrollIntoView({ behavior: 'smooth' });
+                } else if (navTarget === 'occasions') {
+                    document.getElementById('section-occasions')?.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

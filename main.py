@@ -1,8 +1,7 @@
-from flask import json
 import os
 import time
 import base64
-from flask import Flask, render_template, request, jsonify, url_for
+from flask import Flask, render_template, request, jsonify, url_for, json
 from werkzeug.utils import secure_filename
 from app.services.hairstyle_service import HairstyleService
 from modules.vgg_face_shape_classifier import VGGFaceShapeClassifier
@@ -87,7 +86,6 @@ def hairstyles():
     shape = request.args.get('shape', 'all')
     category = request.args.get('category', 'all')
     search = request.args.get('search', '')
-    # Don't pre-fetch all styles, let the JS handle fetching with pagination
     return render_template('hairstyles.html', selected_gender=gender, selected_shape=shape, selected_category=category, search=search)
 
 @app.route('/hairstyle-detail')
@@ -97,37 +95,74 @@ def hairstyle_detail():
     style_data = hairstyle_service.get_hairstyle_by_slug(style_id)
     return render_template('hairstyle_detail.html', style_id=style_id, gender=gender, style_data=style_data)
 
+# @app.route('/color-analysis')
+# def color_analysis():
+#     gender = request.args.get('gender', 'female')
+#     user_img = request.args.get('user_img', '')
+#     undertone_raw = request.args.get('undertone', 'warm').lower()
+
+#     # Load palette from JSON file
+#     palette_file = os.path.join(app.root_path, 'palettes.json')
+#     recommendations = {}
+    
+#     key = 'warm'
+#     if 'cool' in undertone_raw:
+#         key = 'cool'
+#     elif 'neutral' in undertone_raw:
+#         key = 'neutral'
+
+#     if os.path.exists(palette_file):
+#         with open(palette_file, 'r') as f:
+#             all_palettes = json.load(f)
+#             recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
+
+#     return render_template(
+#         'color_analysis.html',
+#         image_url=user_img,
+#         color_type=key.upper(),
+#         confidence_score="96%",
+#         recommended_colors=recommendations.get('recommended_colors', []),
+#         avoid_colors=recommendations.get('avoid_colors', []),
+#         neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
+#         hair_colors=recommendations.get('hair_colors', []),
+#         jewelry=recommendations.get('jewelry', []),
+#         occasion_recommendations=recommendations.get('occasion_recommendations', {})
+#     )
 @app.route('/color-analysis')
 def color_analysis():
     gender = request.args.get('gender', 'female')
     user_img = request.args.get('user_img', '')
     undertone_raw = request.args.get('undertone', 'warm').lower()
 
-    # Load palette from JSON file
-    palette_file = os.path.join(app.root_path, 'palettes.json')
-    recommendations = {}
+    # Get dynamic confidence if available, fallback to 0.96
+    confidence_val = request.args.get('confidence', '0.96')
     
-    key = 'warm'
-    if 'cool' in undertone_raw:
-        key = 'cool'
-    elif 'neutral' in undertone_raw:
-        key = 'neutral'
+    if not str(confidence_val).endswith('%'):
+        try:
+            c_float = float(confidence_val)
+            # If it's a decimal (e.g., 0.96), multiply by 100. If it's already a whole number (e.g., 96), leave it.
+            if c_float <= 1.0:
+                confidence_val = f"{int(c_float * 100)}%"
+            else:
+                confidence_val = f"{int(c_float)}%"
+        except ValueError:
+            confidence_val = "96%"
 
-    if os.path.exists(palette_file):
-        with open(palette_file, 'r') as f:
-            all_palettes = json.load(f)
-            recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
+    # Use your recommender service to properly format the data and gender images
+    rec_data = get_recommendations(undertone_raw, gender)
 
     return render_template(
-        'color_result.html',
+        'color_analysis.html',
         image_url=user_img,
-        color_type=key.upper(),
-        confidence_score="96%",
-        palette=recommendations.get('recommended_colors', []),
-        avoid_colors=recommendations.get('avoid_colors', []),
-        neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
-        hair_colors=recommendations.get('hair_colors', []),
-        jewelry=recommendations.get('jewelry', [])
+        color_type=rec_data.get('undertone', 'warm').upper(),
+        confidence_score=confidence_val,
+        description=rec_data.get('description', ''),
+        recommended_colors=rec_data.get('recommended_colors', []),
+        avoid_colors=rec_data.get('avoid_colors', []),
+        neutral_colors=rec_data.get('neutral_colors', []),
+        hair_colors=rec_data.get('hair_colors', []),
+        jewelry=rec_data.get('jewelry', []),
+        occasion_recommendations=rec_data.get('occasion_recommendations', {})
     )
 
 @app.route('/about')
@@ -174,119 +209,98 @@ def api_recommendation():
 @app.route('/analyze', methods=['POST'])
 def render_analyze_result():
     """Handle image uploads, process AI analysis, and render results page."""
-    if 'file' not in request.files:
+    file = request.files.get('file') or request.files.get('image')
+    if not file or file.filename == '':
         return jsonify({'error': 'No file uploaded'}), 400
 
-    file = request.files['file']
     gender = request.form.get('gender', 'Female')
-    analysis_type = request.form.get('analysis_type', 'color')  # 'color' သို့မဟုတ် 'hairstyle' ရယူခြင်း
+    analysis_type = request.form.get('analysis_type', 'color')
 
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
 
-    if file:
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+    # Generate web-accessible URL for the uploaded photo
+    user_image_url = url_for('static', filename=f'uploads/{filename}')
 
-        # Generate web-accessible URL for the uploaded photo
-        user_image_url = url_for('static', filename=f'uploads/{filename}')
+    undertone = 'warm'
+    confidence_val = 0.90
+    recommendations = {}
 
-        # -------------------------------------------------------------
-        # Connect to your team's AI backend modules here
-        # -------------------------------------------------------------
-        # 1. Detect Skin Regions (Cheek, Forehead, Chin)
-        # regions = skin_detector.extract_skin_regions(filepath) if skin_detector else None
+    if skin_tone_service:
+        analysis_res = skin_tone_service.analyze_image(filepath)
+        if analysis_res.get("status") == "success":
+            undertone = analysis_res.get("undertone", "warm")
+            confidence_val = analysis_res.get("confidence", 0.90)
+            recommendations = analysis_res.get("recommendations", {})
+        elif get_recommendations:
+            recommendations = get_recommendations(undertone)
 
-        # 2. Classify Face Shape & Skin Tone
-        # face_shape = shape_classifier.classify_face_shape(filepath) if shape_classifier else 'Round'
-        # skin_tone = tone_classifier.classify_skin_tone(regions) if tone_classifier else 'Cool'
+    color_type = undertone.upper()
+    confidence_score = f"{int(confidence_val * 100)}%"
+    
+    face_shape = "oval"
+    face_shape_confidence = 0.0
 
-        # 3. Get Recommendations
-        # hairstyles = hair_recommender.recommend_hairstyles(face_shape, gender) if hair_recommender else []
-        # palette = color_recommender.recommend_color_palette(skin_tone) if color_recommender else []
-        # -------------------------------------------------------------
-        undertone = 'warm'
-        confidence_val = 0.90
-        recommendations = {}
-
-        if skin_tone_service:
-            analysis_res = skin_tone_service.analyze_image(filepath)
-            if analysis_res.get("status") == "success":
-                undertone = analysis_res.get("undertone", "warm")
-                confidence_val = analysis_res.get("confidence", 0.90)
-                recommendations = analysis_res.get("recommendations", {})
-            elif get_recommendations:
-                recommendations = get_recommendations(undertone)
-
-        color_type = undertone.upper()
-        confidence_score = f"{int(confidence_val * 100)}%"
-        # Dynamic sample data formatted for result templates
-        face_shape = "oval"
-        face_shape_confidence = 0.0
-
-        if face_shape_classifier and os.path.exists(filepath):
-            shape_result = face_shape_classifier.classify(filepath)
-
-        if "error" in shape_result:
+    if face_shape_classifier and os.path.exists(filepath):
+        shape_result = face_shape_classifier.classify(filepath)
+        if shape_result and "error" in shape_result:
             print(f"[FaceShapeClassifier] {shape_result['error']}")
-        else:
-            face_shape = shape_result["face_shape"].lower()
-            face_shape_confidence = shape_result["confidence"]
-        # color_type = 'COOL'
-        # confidence_score = '92%'
-        hairstyles = [
-            {
-                'name': 'Long Layered Cut',
-                'match': '95% Match',
-                'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Long+Layered+Cut'
-            },
-            {
-                'name': 'Soft Side Waves',
-                'match': '91% Match',
-                'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Soft+Side+Waves'
-            },
-            {
-                'name': 'Textured Side Bangs',
-                'match': '89% Match',
-                'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Textured+Side+Bangs'
-            }
-        ]
+        elif shape_result:
+            face_shape = shape_result.get("face_shape", "oval").lower()
+            face_shape_confidence = shape_result.get("confidence", 0.0)
 
-        palette = recommendations.get('recommended_colors', [
-            {'name': 'Navy Blue', 'hex': '#000080'},
-            {'name': 'Lavender', 'hex': '#E6E6FA'},
-            {'name': 'Emerald Green', 'hex': '#50C878'},
-            {'name': 'Rose Pink', 'hex': '#FF66CC'},
-            {'name': 'Ice Blue', 'hex': '#99FFFF'},
-            {'name': 'White', 'hex': '#FFFFFF'}
-        ])
+    hairstyles = [
+        {
+            'name': 'Long Layered Cut',
+            'match': '95% Match',
+            'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Long+Layered+Cut'
+        },
+        {
+            'name': 'Soft Side Waves',
+            'match': '91% Match',
+            'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Soft+Side+Waves'
+        },
+        {
+            'name': 'Textured Side Bangs',
+            'match': '89% Match',
+            'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Textured+Side+Bangs'
+        }
+    ]
 
-        # Choose Color Analysis ခလုတ်မှ လာပါက color_result.html ကို ပြသခြင်း
-        if analysis_type == 'color':
-            return render_template(
-                'color_result.html',
-                image_url=user_image_url,
-                color_type=color_type,
-                confidence_score=confidence_score,
-                palette=palette,
-                avoid_colors=recommendations.get('avoid_colors', []),
-                neutral_colors=recommendations.get('neutral_colors', []),
-                hair_colors=recommendations.get('hair_colors', []),
-                jewelry=recommendations.get('jewelry', [])
-        )
+    recommended_colors = recommendations.get('recommended_colors', [
+        {'name': 'Navy Blue', 'hex': '#000080'},
+        {'name': 'Lavender', 'hex': '#E6E6FA'},
+        {'name': 'Emerald Green', 'hex': '#50C878'},
+        {'name': 'Rose Pink', 'hex': '#FF66CC'},
+        {'name': 'Ice Blue', 'hex': '#99FFFF'},
+        {'name': 'White', 'hex': '#FFFFFF'}
+    ])
 
-        # Hairstyle Analysis ခလုတ်မှ လာပါက result.html ကို ပြသခြင်း
+    if analysis_type == 'color':
         return render_template(
-            'result.html',
-            user_image=user_image_url,
-            face_shape=face_shape,
-            face_shape_confidence=face_shape_confidence,
-            skin_tone=color_type,
-            gender=gender,
-            hairstyles=hairstyles,
-            palette=palette
+            'color_analysis.html',
+            image_url=user_image_url,
+            color_type=color_type,
+            confidence_score=confidence_score,
+            recommended_colors=recommended_colors,
+            avoid_colors=recommendations.get('avoid_colors', []),
+            neutral_colors=recommendations.get('neutral_colors_that_flatter', recommendations.get('neutral_colors', [])),
+            hair_colors=recommendations.get('hair_colors', []),
+            jewelry=recommendations.get('jewelry', []),
+            occasion_recommendations=recommendations.get('occasion_recommendations', {})
         )
+
+    return render_template(
+        'result.html',
+        user_image=user_image_url,
+        face_shape=face_shape,
+        face_shape_confidence=face_shape_confidence,
+        skin_tone=color_type,
+        gender=gender,
+        hairstyles=hairstyles,
+        # recommended_colors=recommended_colors
+    )
 
 
 from app.controllers.analyze_controller import analyze, validate_face
