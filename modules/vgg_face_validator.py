@@ -45,7 +45,7 @@ class VGGFaceValidator:
             if image is None:
                 return {
                     "valid": False,
-                    "error": "INVALID_IMAGE",
+                    "error": "INVALID IMAGE",
                     "message": "The uploaded image could not be read.",
                     "face_count": 0
                 }
@@ -59,7 +59,7 @@ class VGGFaceValidator:
             if boxes is None or len(boxes) == 0:
                 return {
                     "valid": False,
-                    "error": "NO_FACE_DETECTED",
+                    "error": "NO FACE DETECTED",
                     "message": (
                         "No face was detected in the uploaded image. "
                         "Please upload a clear photo showing your face."
@@ -90,7 +90,7 @@ class VGGFaceValidator:
         except Exception as e:
             return {
                 "valid": False,
-                "error": "PROCESS_ERROR",
+                "error": "PROCESS ERROR",
                 "message": f"Could not process the image: {str(e)}",
                 "face_count": 0
             }

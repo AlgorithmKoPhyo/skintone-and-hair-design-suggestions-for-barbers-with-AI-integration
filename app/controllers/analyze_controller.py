@@ -12,7 +12,7 @@ def validate_face():
         vggface_shape_classifier
     )
     # THREAD_HOLD is the minimum confidence score required to pass the face validation
-    THREADHOLD = 0.5
+    THRESHOLD = 0.4
     """
     Pre-analysis face check using FaceValidator.
     Accepts a multipart image, saves it to a temp file, runs validation,
@@ -43,9 +43,9 @@ def validate_face():
             shape_result = vggface_shape_classifier.classify(tmp_filepath)
             if "error" not in shape_result:
                 confidence = shape_result.get("confidence", 0.0)
-                if confidence < THREADHOLD:
+                if confidence < THRESHOLD:
                     result['valid'] = False
-                    result['error'] = "THREADHOLD ERROR"
+                    result['error'] = "UNCERTAIN FACE TYPE"
                     # Update message so the frontend warning banner shows this specific issue
                     result['message'] = f"Face is unclear (Confidence: {int(confidence * 100)}%). Please look straight into the camera and ensure good lighting."
 

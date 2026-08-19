@@ -79,11 +79,12 @@
   }
 
   // ---- Face validation UI state -------------------------------------------
-  //  state: 'scanning' | 'valid' | 'invalid'
-  function setValidationState(state, message) {
+  //  state: 'scanning' | 'valid' | 'invalid' | 'warning'
+  function setValidationState(state, message, error) {
     const scanStatus = $('face-scan-status');
     const warning = $('face-validation-warning');
     const msgEl = $('face-validation-msg');
+    const error_type = $('error-type');
     const btnF = getBtnFemale();
     const btnM = getBtnMale();
     const btnC = $('opt-color-analysis');
@@ -120,18 +121,62 @@
       }
       if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
 
-    } else if (state === 'invalid') {
-      // No face — red cross, keep buttons disabled, show warning
-      if (statusIcon) {
-        statusIcon.className = 'fa-solid fa-circle-xmark';
-        statusIcon.style.color = '#EF4444';
+    } else if (state === 'invalid' || state === 'warning') {
+      if (warning) {
+        warning.style.display = 'flex';
+        if (state === 'warning') {
+          warning.style.background = '#FEF9C3';
+          warning.style.borderColor = '#EAB308';
+          const icon = warning.querySelector('i');
+          if (icon) { icon.style.color = '#CA8A04'; icon.className = 'fa-solid fa-circle-exclamation'; }
+          if (msgEl) msgEl.style.color = '#854D0E';
+          if (error_type) { error_type.style.color = '#A16207'; error_type.textContent = error || 'MULTIPLE FACE DETECTED'; }
+        } else {
+          warning.style.background = '#FFF7ED';
+          warning.style.borderColor = '#FB923C';
+          const icon = warning.querySelector('i');
+          if (icon) { icon.style.color = '#EA580C'; icon.className = 'fa-solid fa-triangle-exclamation'; }
+          if (msgEl) msgEl.style.color = '#C2410C';
+          if (error_type) { error_type.style.color = '#9A3412'; error_type.textContent = error || 'No face detected'; }
+        }
       }
-      if (warning) warning.style.display = 'flex';
       if (msgEl && message) msgEl.textContent = message;
-      if (btnF) btnF.disabled = true;
-      if (btnM) btnM.disabled = true;
-      if (btnC) btnC.disabled = true;
-      if (subtitle) subtitle.textContent = 'Please upload a clear photo showing your face to continue.';
+      
+      if (state === 'warning') {
+        if (statusIcon) {
+          statusIcon.className = 'fa-solid fa-circle-check';
+          statusIcon.style.color = '#22C55E';
+        }
+        if (btnF) btnF.disabled = false;
+        if (btnM) btnM.disabled = false;
+        if (btnC) {
+          btnC.disabled = false;
+          btnC.style.display = 'flex';
+        }
+        if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
+      } else {
+        if (btnF) btnF.disabled = true;
+        if (btnM) btnM.disabled = true;
+        
+        if (error === 'UNCERTAIN FACE TYPE') {
+          if (statusIcon) {
+            statusIcon.className = 'fa-solid fa-circle-exclamation';
+            statusIcon.style.color = '#EAB308';
+          }
+          if (btnC) {
+            btnC.disabled = false;
+            btnC.style.display = 'flex';
+          }
+          if (subtitle) subtitle.textContent = 'Face shape unclear. Only Color Analysis is available.';
+        } else {
+          if (statusIcon) {
+            statusIcon.className = 'fa-solid fa-circle-xmark';
+            statusIcon.style.color = '#EF4444';
+          }
+          if (btnC) btnC.disabled = true;
+          if (subtitle) subtitle.textContent = 'Please upload a clear photo showing your face to continue.';
+        }
+      }
     }
   }
 
@@ -144,9 +189,13 @@
       const res = await fetch('/validate-face', { method: 'POST', body: formData });
       const data = await res.json();
       if (data.valid) {
-        setValidationState('valid');
+        if (data.face_count > 1) {
+          setValidationState('warning', data.message, 'MULTIPLE FACE DETECTED');
+        } else {
+          setValidationState('valid');
+        }
       } else {
-        setValidationState('invalid', data.message || 'No face detected. Please upload a clear photo showing your face.');
+        setValidationState('invalid', data.message || 'No face detected. Please upload a clear photo showing your face.', data.error);
       }
     } catch (err) {
       // Network/server error — fail open so the user isn't permanently blocked

@@ -54,21 +54,41 @@ function initLiveCamera() {
   // Handle "Choose Color Analysis" directly from camera flow
   if (btnChooseColor) {
     btnChooseColor.addEventListener('click', async () => {
+      const originalText = btnChooseColor.innerHTML;
+      btnChooseColor.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...';
+      btnChooseColor.disabled = true;
+      if (btnChooseHairstyle) btnChooseHairstyle.disabled = true;
+
       await submitCapturedPhoto('female', 'color');
+      
+      // Restore in case of error (normally it redirects)
+      btnChooseColor.innerHTML = originalText;
+      btnChooseColor.disabled = false;
+      if (btnChooseHairstyle) btnChooseHairstyle.disabled = false;
     });
   }
 
   // Handle Gender selection inside modal
   if (btnOptFemale) {
     btnOptFemale.addEventListener('click', async () => {
-      if (genderModal) genderModal.classList.remove('active');
+      // Show loading inside modal instead of closing it
+      const loading = document.getElementById('gender-modal-loading');
+      if (loading) loading.style.display = 'flex';
+      btnOptFemale.disabled = true;
+      if (btnOptMale) btnOptMale.disabled = true;
+
       await submitCapturedPhoto('female', 'hairstyle');
     });
   }
 
   if (btnOptMale) {
     btnOptMale.addEventListener('click', async () => {
-      if (genderModal) genderModal.classList.remove('active');
+      // Show loading inside modal instead of closing it
+      const loading = document.getElementById('gender-modal-loading');
+      if (loading) loading.style.display = 'flex';
+      if (btnOptFemale) btnOptFemale.disabled = true;
+      btnOptMale.disabled = true;
+
       await submitCapturedPhoto('male', 'hairstyle');
     });
   }
@@ -125,27 +145,50 @@ function setCameraValidationState(state, message, error) {
 
   if (state === 'scanning') {
     if (scanStatus) scanStatus.style.display = 'flex';
-    if (btnHairstyle) btnHairstyle.disabled = true;
-    if (btnColor) btnColor.disabled = true;
+    if (btnHairstyle) { btnHairstyle.disabled = true; btnHairstyle.style.opacity = '0.6'; btnHairstyle.style.cursor = 'not-allowed'; }
+    if (btnColor) { btnColor.disabled = true; btnColor.style.opacity = '0.6'; btnColor.style.cursor = 'not-allowed'; }
     if (capturedTitle) capturedTitle.textContent = 'Checking your photo for a face…';
 
   } else if (state === 'valid') {
-    if (btnHairstyle) btnHairstyle.disabled = false;
-    if (btnColor) btnColor.disabled = false;
+    if (btnHairstyle) { btnHairstyle.disabled = false; btnHairstyle.style.opacity = '1'; btnHairstyle.style.cursor = 'pointer'; }
+    if (btnColor) { btnColor.disabled = false; btnColor.style.opacity = '1'; btnColor.style.cursor = 'pointer'; }
     if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
 
   } else if (state === 'invalid' || state === 'warning') {
+    if (warnBanner) {
+      warnBanner.style.display = 'flex';
+      if (state === 'warning') {
+        warnBanner.style.background = '#FEF9C3';
+        warnBanner.style.borderColor = '#EAB308';
+        const icon = warnBanner.querySelector('i');
+        if (icon) { icon.style.color = '#CA8A04'; icon.className = 'fa-solid fa-circle-exclamation'; }
+        if (msgEl) msgEl.style.color = '#854D0E';
+        if (error_type) { error_type.style.color = '#A16207'; }
+      } else {
+        warnBanner.style.background = '#FFF7ED';
+        warnBanner.style.borderColor = '#FB923C';
+        const icon = warnBanner.querySelector('i');
+        if (icon) { icon.style.color = '#EA580C'; icon.className = 'fa-solid fa-triangle-exclamation'; }
+        if (msgEl) msgEl.style.color = '#C2410C';
+        if (error_type) { error_type.style.color = '#9A3412'; }
+      }
+    }
     if (msgEl && message) msgEl.textContent = message;
     if (error_type && error) error_type.textContent = error;
 
     if (state === 'warning') {
-      if (btnHairstyle) btnHairstyle.disabled = false;
-      if (btnColor) btnColor.disabled = false;
+      if (btnHairstyle) { btnHairstyle.disabled = false; btnHairstyle.style.opacity = '1'; btnHairstyle.style.cursor = 'pointer'; }
+      if (btnColor) { btnColor.disabled = false; btnColor.style.opacity = '1'; btnColor.style.cursor = 'pointer'; }
       if (capturedTitle) capturedTitle.textContent = 'What would you like to get recommendation for?';
     } else {
-      if (btnHairstyle) btnHairstyle.disabled = true;
-      if (btnColor) btnColor.disabled = true;
-      if (capturedTitle) capturedTitle.textContent = 'Please retake the photo with your face clearly visible.';
+      if (btnHairstyle) { btnHairstyle.disabled = true; btnHairstyle.style.opacity = '0.6'; btnHairstyle.style.cursor = 'not-allowed'; }
+      if (error === 'UNCERTAIN FACE TYPE') {
+        if (btnColor) { btnColor.disabled = false; btnColor.style.opacity = '1'; btnColor.style.cursor = 'pointer'; }
+        if (capturedTitle) capturedTitle.textContent = 'Face shape unclear. Only Color Analysis is available.';
+      } else {
+        if (btnColor) { btnColor.disabled = true; btnColor.style.opacity = '0.6'; btnColor.style.cursor = 'not-allowed'; }
+        if (capturedTitle) capturedTitle.textContent = 'Please retake the photo with your face clearly visible.';
+      }
     }
   }
 }
