@@ -1,8 +1,7 @@
-from flask import json
 import os
 import time
 import base64
-from flask import Flask, render_template, request, jsonify, url_for
+from flask import Flask, render_template, request, jsonify, url_for, json
 from werkzeug.utils import secure_filename
 from app.services.hairstyle_service import HairstyleService
 
@@ -85,7 +84,6 @@ def hairstyles():
     shape = request.args.get('shape', 'all')
     category = request.args.get('category', 'all')
     search = request.args.get('search', '')
-    # Don't pre-fetch all styles, let the JS handle fetching with pagination
     return render_template('hairstyles.html', selected_gender=gender, selected_shape=shape, selected_category=category, search=search)
 
 @app.route('/hairstyle-detail')
@@ -117,7 +115,7 @@ def color_analysis():
             recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
 
     return render_template(
-        'color_result.html',
+        'color_analysis.html',
         image_url=user_img,
         color_type=key.upper(),
         confidence_score="96%",
@@ -177,8 +175,10 @@ def analyze():
     filepath  = os.path.join(UPLOAD_FOLDER, filename)
     saved_url = f"/static/uploads/{filename}"
 
-    if 'image' in request.files and request.files['image'].filename != '':
-        request.files['image'].save(filepath)
+    file_obj = request.files.get('image') or request.files.get('file')
+
+    if file_obj and file_obj.filename != '':
+        file_obj.save(filepath)
     elif 'image_base64' in request.form and request.form['image_base64'].strip():
         base64_data = request.form['image_base64']
         if ',' in base64_data:
@@ -208,11 +208,8 @@ def analyze():
             print(f"  Confidence : {confidence * 100:.1f}%")
             print(f"{'='*40}\n")
 
-    # ── AI Skin Tone Detection (STUB — replace with real model) ────────────
-    # TODO: Replace with skin_tone_classifier module.
-    # from modules.skin_tone_classifier import SkinToneClassifier
-    # undertone = SkinToneClassifier().predict(filepath)
-    undertone = "Warm Autumn"  # ← stub
+    # ── AI Skin Tone Detection ──────────────────────────────────────────────
+    undertone = "warm"
     if skin_tone_service and os.path.exists(filepath):
         analysis_res = skin_tone_service.analyze_image(filepath)
         if analysis_res.get("status") == "success":
@@ -233,7 +230,6 @@ def analyze():
             f"/recommendation?user_img={saved_url}"
             f"&shape={detected_shape}&gender={gender}"
             f"&confidence={confidence}"
-            f"&gender={gender}"
         )
     else:
         redirect_url = (
@@ -257,135 +253,106 @@ def analyze():
 @app.route('/analyze', methods=['POST'])
 def render_analyze_result():
     """Handle image uploads, process AI analysis, and render results page."""
-    if 'file' not in request.files:
+    file = request.files.get('file') or request.files.get('image')
+    if not file or file.filename == '':
         return jsonify({'error': 'No file uploaded'}), 400
 
-    file = request.files['file']
     gender = request.form.get('gender', 'Female')
-    analysis_type = request.form.get('analysis_type', 'color')  # 'color' သို့မဟုတ် 'hairstyle' ရယူခြင်း
+    analysis_type = request.form.get('analysis_type', 'color')
 
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
 
-    if file:
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+    # Generate web-accessible URL for the uploaded photo
+    user_image_url = url_for('static', filename=f'uploads/{filename}')
 
-        # Generate web-accessible URL for the uploaded photo
-        user_image_url = url_for('static', filename=f'uploads/{filename}')
+    undertone = 'warm'
+    confidence_val = 0.90
+    recommendations = {}
 
-        # -------------------------------------------------------------
-        # Connect to your team's AI backend modules here
-        # -------------------------------------------------------------
-        # 1. Detect Skin Regions (Cheek, Forehead, Chin)
-        # regions = skin_detector.extract_skin_regions(filepath) if skin_detector else None
+    if skin_tone_service:
+        analysis_res = skin_tone_service.analyze_image(filepath)
+        if analysis_res.get("status") == "success":
+            undertone = analysis_res.get("undertone", "warm")
+            confidence_val = analysis_res.get("confidence", 0.90)
+            recommendations = analysis_res.get("recommendations", {})
+        elif get_recommendations:
+            recommendations = get_recommendations(undertone)
 
-        # 2. Classify Face Shape & Skin Tone
-        # face_shape = shape_classifier.classify_face_shape(filepath) if shape_classifier else 'Round'
-        # skin_tone = tone_classifier.classify_skin_tone(regions) if tone_classifier else 'Cool'
+    color_type = undertone.upper()
+    confidence_score = f"{int(confidence_val * 100)}%"
+    
+    face_shape = "oval"
+    face_shape_confidence = 0.0
 
-        # 3. Get Recommendations
-        # hairstyles = hair_recommender.recommend_hairstyles(face_shape, gender) if hair_recommender else []
-        # palette = color_recommender.recommend_color_palette(skin_tone) if color_recommender else []
-        # -------------------------------------------------------------
-        undertone = 'warm'
-        confidence_val = 0.90
-        recommendations = {}
-
-        if skin_tone_service:
-            analysis_res = skin_tone_service.analyze_image(filepath)
-            if analysis_res.get("status") == "success":
-                undertone = analysis_res.get("undertone", "warm")
-                confidence_val = analysis_res.get("confidence", 0.90)
-                recommendations = analysis_res.get("recommendations", {})
-            elif get_recommendations:
-                recommendations = get_recommendations(undertone)
-
-        color_type = undertone.upper()
-        confidence_score = f"{int(confidence_val * 100)}%"
-        # Dynamic sample data formatted for result templates
-        face_shape = "oval"
-        face_shape_confidence = 0.0
-
-        if face_shape_classifier and os.path.exists(filepath):
-            shape_result = face_shape_classifier.classify(filepath)
-
-        if "error" in shape_result:
+    if face_shape_classifier and os.path.exists(filepath):
+        shape_result = face_shape_classifier.classify(filepath)
+        if shape_result and "error" in shape_result:
             print(f"[FaceShapeClassifier] {shape_result['error']}")
-        else:
-            face_shape = shape_result["face_shape"].lower()
-            face_shape_confidence = shape_result["confidence"]
-        # color_type = 'COOL'
-        # confidence_score = '92%'
-        hairstyles = [
-            {
-                'name': 'Long Layered Cut',
-                'match': '95% Match',
-                'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Long+Layered+Cut'
-            },
-            {
-                'name': 'Soft Side Waves',
-                'match': '91% Match',
-                'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Soft+Side+Waves'
-            },
-            {
-                'name': 'Textured Side Bangs',
-                'match': '89% Match',
-                'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Textured+Side+Bangs'
-            }
-        ]
+        elif shape_result:
+            face_shape = shape_result.get("face_shape", "oval").lower()
+            face_shape_confidence = shape_result.get("confidence", 0.0)
 
-        palette = recommendations.get('recommended_colors', [
-            {'name': 'Navy Blue', 'hex': '#000080'},
-            {'name': 'Lavender', 'hex': '#E6E6FA'},
-            {'name': 'Emerald Green', 'hex': '#50C878'},
-            {'name': 'Rose Pink', 'hex': '#FF66CC'},
-            {'name': 'Ice Blue', 'hex': '#99FFFF'},
-            {'name': 'White', 'hex': '#FFFFFF'}
-        ])
+    hairstyles = [
+        {
+            'name': 'Long Layered Cut',
+            'match': '95% Match',
+            'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Long+Layered+Cut'
+        },
+        {
+            'name': 'Soft Side Waves',
+            'match': '91% Match',
+            'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Soft+Side+Waves'
+        },
+        {
+            'name': 'Textured Side Bangs',
+            'match': '89% Match',
+            'image_url': 'https://placehold.co/300x400/e0e0e0/333333?text=Textured+Side+Bangs'
+        }
+    ]
 
-        # Choose Color Analysis ခလုတ်မှ လာပါက color_result.html ကို ပြသခြင်း
-        if analysis_type == 'color':
-            return render_template(
-                'color_result.html',
-                image_url=user_image_url,
-                color_type=color_type,
-                confidence_score=confidence_score,
-                palette=palette,
-                avoid_colors=recommendations.get('avoid_colors', []),
-                neutral_colors=recommendations.get('neutral_colors', []),
-                hair_colors=recommendations.get('hair_colors', []),
-                jewelry=recommendations.get('jewelry', [])
-        )
+    palette = recommendations.get('recommended_colors', [
+        {'name': 'Navy Blue', 'hex': '#000080'},
+        {'name': 'Lavender', 'hex': '#E6E6FA'},
+        {'name': 'Emerald Green', 'hex': '#50C878'},
+        {'name': 'Rose Pink', 'hex': '#FF66CC'},
+        {'name': 'Ice Blue', 'hex': '#99FFFF'},
+        {'name': 'White', 'hex': '#FFFFFF'}
+    ])
 
-        # Hairstyle Analysis ခလုတ်မှ လာပါက result.html ကို ပြသခြင်း
+    if analysis_type == 'color':
         return render_template(
-            'result.html',
-            user_image=user_image_url,
-            face_shape=face_shape,
-            face_shape_confidence=face_shape_confidence,
-            skin_tone=color_type,
-            gender=gender,
-            hairstyles=hairstyles,
-            palette=palette
+            'color_analysis.html',
+            image_url=user_image_url,
+            color_type=color_type,
+            confidence_score=confidence_score,
+            palette=palette,
+            avoid_colors=recommendations.get('avoid_colors', []),
+            neutral_colors=recommendations.get('neutral_colors_that_flatter', recommendations.get('neutral_colors', [])),
+            hair_colors=recommendations.get('hair_colors', []),
+            jewelry=recommendations.get('jewelry', [])
         )
+
+    return render_template(
+        'result.html',
+        user_image=user_image_url,
+        face_shape=face_shape,
+        face_shape_confidence=face_shape_confidence,
+        skin_tone=color_type,
+        gender=gender,
+        hairstyles=hairstyles,
+        palette=palette
+    )
 
 
 @app.route('/validate-face', methods=['POST'])
 def validate_face():
-    """
-    Pre-analysis face check using FaceValidator (MediaPipe FaceDetection).
-    Accepts a multipart image, saves it to a temp file, runs validation,
-    then deletes the temp file.
-    Returns: {"valid": bool, "message": str, "face_count": int, "error": str|None}
-    """
-    if 'image' not in request.files or request.files['image'].filename == '':
+    """Pre-analysis face check using FaceValidator (MediaPipe FaceDetection)."""
+    file = request.files.get('image') or request.files.get('file')
+    if not file or file.filename == '':
         return jsonify({'valid': False, 'message': 'No image provided.'}), 400
 
-    file = request.files['image']
-
-    # Save to a temp path so FaceValidator can read it from disk
     timestamp = int(time.time() * 1000)
     tmp_filename = f"_face_check_{timestamp}.jpg"
     tmp_filepath = os.path.join(UPLOAD_FOLDER, tmp_filename)
@@ -394,7 +361,6 @@ def validate_face():
         file.save(tmp_filepath)
 
         if face_validator is None:
-            # Validator unavailable — fail open so UX isn't blocked
             return jsonify({'valid': True, 'message': 'Validation skipped (validator unavailable).'})
 
         result = face_validator.validate(tmp_filepath)
@@ -411,13 +377,11 @@ def validate_face():
         return jsonify({'valid': False, 'message': 'Could not process the image. Please try another photo.'}), 500
 
     finally:
-        # Always clean up the temp file
         if os.path.exists(tmp_filepath):
             try:
                 os.remove(tmp_filepath)
             except OSError:
                 pass
-
 
 
 if __name__ == '__main__':
