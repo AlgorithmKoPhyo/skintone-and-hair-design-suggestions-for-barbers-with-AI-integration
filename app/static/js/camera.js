@@ -378,10 +378,24 @@ async function submitCapturedPhoto(gender, analysisType) {
       sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
     }
 
-    const res = await fetch('/analyze', {
-      method: 'POST',
-      body: formData
-    });
+    let res;
+    if (analysisType === 'color') {
+      res = await fetch('/analyze', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      const html = await res.text();
+      document.open();
+      document.write(html);
+      document.close();
+      return;
+    } else {
+      res = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData
+      });
+    }
 
     if (!res.ok) throw new Error('Network response was not ok');
 
