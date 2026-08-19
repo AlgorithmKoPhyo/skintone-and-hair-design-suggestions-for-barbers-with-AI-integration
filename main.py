@@ -93,37 +93,74 @@ def hairstyle_detail():
     style_data = hairstyle_service.get_hairstyle_by_slug(style_id)
     return render_template('hairstyle_detail.html', style_id=style_id, gender=gender, style_data=style_data)
 
+# @app.route('/color-analysis')
+# def color_analysis():
+#     gender = request.args.get('gender', 'female')
+#     user_img = request.args.get('user_img', '')
+#     undertone_raw = request.args.get('undertone', 'warm').lower()
+
+#     # Load palette from JSON file
+#     palette_file = os.path.join(app.root_path, 'palettes.json')
+#     recommendations = {}
+    
+#     key = 'warm'
+#     if 'cool' in undertone_raw:
+#         key = 'cool'
+#     elif 'neutral' in undertone_raw:
+#         key = 'neutral'
+
+#     if os.path.exists(palette_file):
+#         with open(palette_file, 'r') as f:
+#             all_palettes = json.load(f)
+#             recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
+
+#     return render_template(
+#         'color_analysis.html',
+#         image_url=user_img,
+#         color_type=key.upper(),
+#         confidence_score="96%",
+#         recommended_colors=recommendations.get('recommended_colors', []),
+#         avoid_colors=recommendations.get('avoid_colors', []),
+#         neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
+#         hair_colors=recommendations.get('hair_colors', []),
+#         jewelry=recommendations.get('jewelry', []),
+#         occasion_recommendations=recommendations.get('occasion_recommendations', {})
+#     )
 @app.route('/color-analysis')
 def color_analysis():
     gender = request.args.get('gender', 'female')
     user_img = request.args.get('user_img', '')
     undertone_raw = request.args.get('undertone', 'warm').lower()
 
-    # Load palette from JSON file
-    palette_file = os.path.join(app.root_path, 'palettes.json')
-    recommendations = {}
+    # Get dynamic confidence if available, fallback to 0.96
+    confidence_val = request.args.get('confidence', '0.96')
     
-    key = 'warm'
-    if 'cool' in undertone_raw:
-        key = 'cool'
-    elif 'neutral' in undertone_raw:
-        key = 'neutral'
+    if not str(confidence_val).endswith('%'):
+        try:
+            c_float = float(confidence_val)
+            # If it's a decimal (e.g., 0.96), multiply by 100. If it's already a whole number (e.g., 96), leave it.
+            if c_float <= 1.0:
+                confidence_val = f"{int(c_float * 100)}%"
+            else:
+                confidence_val = f"{int(c_float)}%"
+        except ValueError:
+            confidence_val = "96%"
 
-    if os.path.exists(palette_file):
-        with open(palette_file, 'r') as f:
-            all_palettes = json.load(f)
-            recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
+    # Use your recommender service to properly format the data and gender images
+    rec_data = get_recommendations(undertone_raw, gender)
 
     return render_template(
         'color_analysis.html',
         image_url=user_img,
-        color_type=key.upper(),
-        confidence_score="96%",
-        palette=recommendations.get('recommended_colors', []),
-        avoid_colors=recommendations.get('avoid_colors', []),
-        neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
-        hair_colors=recommendations.get('hair_colors', []),
-        jewelry=recommendations.get('jewelry', [])
+        color_type=rec_data.get('undertone', 'warm').upper(),
+        confidence_score=confidence_val,
+        description=rec_data.get('description', ''),
+        recommended_colors=rec_data.get('recommended_colors', []),
+        avoid_colors=rec_data.get('avoid_colors', []),
+        neutral_colors=rec_data.get('neutral_colors', []),
+        hair_colors=rec_data.get('hair_colors', []),
+        jewelry=rec_data.get('jewelry', []),
+        occasion_recommendations=rec_data.get('occasion_recommendations', {})
     )
 
 @app.route('/about')
@@ -312,7 +349,7 @@ def render_analyze_result():
         }
     ]
 
-    palette = recommendations.get('recommended_colors', [
+    recommended_colors = recommendations.get('recommended_colors', [
         {'name': 'Navy Blue', 'hex': '#000080'},
         {'name': 'Lavender', 'hex': '#E6E6FA'},
         {'name': 'Emerald Green', 'hex': '#50C878'},
@@ -327,11 +364,12 @@ def render_analyze_result():
             image_url=user_image_url,
             color_type=color_type,
             confidence_score=confidence_score,
-            palette=palette,
+            recommended_colors=recommended_colors,
             avoid_colors=recommendations.get('avoid_colors', []),
             neutral_colors=recommendations.get('neutral_colors_that_flatter', recommendations.get('neutral_colors', [])),
             hair_colors=recommendations.get('hair_colors', []),
-            jewelry=recommendations.get('jewelry', [])
+            jewelry=recommendations.get('jewelry', []),
+            occasion_recommendations=recommendations.get('occasion_recommendations', {})
         )
 
     return render_template(
@@ -342,7 +380,7 @@ def render_analyze_result():
         skin_tone=color_type,
         gender=gender,
         hairstyles=hairstyles,
-        palette=palette
+        # recommended_colors=recommended_colors
     )
 
 

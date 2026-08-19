@@ -402,8 +402,7 @@
         .items-grid-three-col { grid-template-columns: 1fr; }
     }
 </style>
-
-{% set current_undertone = undertone if undertone else 'cool' %}
+{% set current_undertone = color_type if color_type else 'neutral' %}
 {% set recommended = recommended_colors if recommended_colors else [] %}
 {% set avoids = avoid_colors if avoid_colors else [] %}
 {% set neutrals = neutral_colors if neutral_colors else [] %}
@@ -462,7 +461,7 @@
                         <circle class="bg-circle" cx="50" cy="50" r="45"></circle>
                         <circle class="progress-circle" id="confidence-circle" cx="50" cy="50" r="45"></circle>
                     </svg>
-                    <div class="confidence-number" id="confidence-num">90%</div>
+                    <div class="confidence-number" id="confidence-num">{{ confidence_score if confidence_score else '50%' }}</div>
                 </div>
             </div>
 
