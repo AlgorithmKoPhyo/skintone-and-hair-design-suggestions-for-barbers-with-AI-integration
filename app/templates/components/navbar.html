@@ -33,6 +33,10 @@
         <i class="fa-solid fa-bell"></i>
         <span class="notification-dot"></span>
       </button>
+      <!-- Export PDF button (visible across pages, active on Color Analysis) -->
+      <button id="export-pdf-btn" class="icon-btn" title="Export page to PDF" aria-label="Export PDF">
+        <i class="fa-solid fa-file-pdf"></i>
+      </button>
       <div class="user-avatar" title="User Profile">
         <img src="{{ url_for('static', filename='images/hero_model.jpg') }}" alt="User Profile">
       </div>

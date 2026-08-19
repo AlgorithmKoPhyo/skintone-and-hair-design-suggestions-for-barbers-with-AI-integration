@@ -184,8 +184,8 @@
         box-shadow: var(--shadow-subtle);
     }
 
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .section-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+    .section-header { display: flex; align-items: center; justify-content: space-between;margin-bottom: -20px; }
+    .section-title { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; }
     .section-title i { color: var(--purple-main); }
 
     .color-grid-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -212,7 +212,7 @@
 
     .neutral-tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
     .neutral-tile { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .neutral-color-box { width: 100%; height: 75px; border-radius: var(--radius-md); margin-bottom: 6px; border: 1px solid rgba(0, 0, 0, 0.06); }
+    .neutral-color-box { width: 100%; height: 120px; border-radius: var(--radius-md); margin-bottom: 6px; border: 1px solid rgba(0, 0, 0, 0.06); }
 
     /* Occasion Based Recommendations Section */
     .occasion-section {
@@ -227,7 +227,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        font-size: 16px;
+        font-size: 21px;
         font-weight: 700;
         color: var(--text-dark);
         margin-bottom: 20px;
@@ -510,7 +510,7 @@
                 </div>
                 <div class="pill-divider"></div>
                 <div class="pill-item">
-                    <div class="pill-icon"><i class="fa-solid fa-user-gear"></i></div>
+                    <div class="pill-icon"><i class="fa-solid fa-user"></i></div>
                     <div class="pill-info">
                         <span class="pill-number" id="cnt-hair-colors">{{ hairs | length if hairs else 3 }}</span>
                         <span class="pill-label">Hair Colors</span>
@@ -564,10 +564,10 @@
                     <div class="section-header">
                         <div class="section-title"><i class="fa-solid fa-droplet"></i> Neutral Colors</div>
                     </div>
-                    <div class="category-pills">
+                    <!-- <div class="category-pills">
                         <button class="cat-pill active">Base</button>
                         <button class="cat-pill">Accent</button>
-                    </div>
+                    </div> -->
                     <div class="neutral-tile-grid" id="neutral-colors-container">
                         {% set neutral_list = neutrals if neutrals else [{'hex': '#000000', 'name': 'Pure Black'}, {'hex': '#424242', 'name': 'Charcoal'}, {'hex': '#ffffff', 'name': 'Pure White'}] %}
                         {% for item in neutral_list %}
@@ -584,9 +584,9 @@
                 <!-- Hair Colors -->
                 <div class="section-card" id="section-hair">
                     <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-user-gear"></i> Hair Colors</div>
+                        <div class="section-title"><i class="fa-solid fa-user"></i> Hair Colors</div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px;" id="hair-colors-container">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;" id="hair-colors-container">
                         {% set hair_list = hairs if hairs else [{'name': 'Ash Brown', 'image': 'ash_brown.jpg'}, {'name': 'Cool Brown', 'image': 'cool_brown.jpg'}, {'name': 'Burgundy', 'image': 'burgundy.jpg'}] %}
                         {% for hair in hair_list %}
                             <div class="sub-item-card">
@@ -604,7 +604,7 @@
                     <div class="section-header">
                         <div class="section-title"><i class="fa-solid fa-gem"></i> Jewelry</div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px;" id="jewelry-container">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;" id="jewelry-container">
                         {% set jewel_list = jewels if jewels else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image': 'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
                         {% for item in jewel_list %}
                             <div class="sub-item-card">
@@ -675,13 +675,13 @@
 
                         <!-- Jewelry -->
                         <div class="occ-col occ-jewelry-col">
-                            <div class="detail-group-title">Jewelry</div>
-                            {% if occ_data.jewelry %}
-                                <div class="jewelry-preview-card">
-                                    <img src="{{ url_for('static', filename=occ_data.jewelry.image) if occ_data.jewelry.image else '#' }}" alt="{{ occ_data.jewelry.name }}" onerror="this.style.background='#ebdfff'">
-                                </div>
-                            {% endif %}
-                        </div>
+    <div class="detail-group-title">Jewelry</div>
+    {% if jewelry %}
+        <div class="jewelry-preview-card">
+            <img src="{{ url_for('static', filename=jewelry[0].image) if jewelry[0].image else '#' }}" alt="{{ jewelry[0].name }}" onerror="this.style.background='#ebdfff'">
+        </div>
+    {% endif %}
+</div>
 
                         <!-- Why It Works Box -->
                         <div class="why-works-card">
@@ -763,4 +763,8 @@
         });
     });
 </script>
+<!-- PDF export: include required libs and page-specific script (no integrity to avoid browser blocking) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/export_pdf.js') }}"></script>
 {% endblock %}
