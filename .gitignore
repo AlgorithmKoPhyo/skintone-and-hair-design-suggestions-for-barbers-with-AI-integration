@@ -20,7 +20,7 @@ __pycache__/
 # Credentials & Secrets
 firebase-credentials.json
 *.env
-CODE_STRUCTURE.md
+
 # Uploads
 app/static/uploads/
 # Face shape classification — data, tests & training scripts
