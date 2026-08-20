@@ -5,6 +5,7 @@ import random
 from flask import Flask, render_template, request, jsonify, url_for, json, Response
 from werkzeug.utils import secure_filename
 from app.services.hairstyle_service import HairstyleService
+from modules.vgg_face_shape_classifier import VGGFaceShapeClassifier
 
 # Import modules as whole packages to avoid specific function name errors
 try:
@@ -14,7 +15,7 @@ try:
     from modules.skin_tone_service import SkinToneService
     from modules.color_analysis_recommender import get_recommendations
     from modules.face_shape_classifier import FaceShapeClassifier
-    from modules.face_shape_classification.src.validation.facevalidator import FaceValidator
+    from modules.vgg_face_validator import VGGFaceValidator as FaceValidator
 except ImportError:
     # Graceful fallback if module files aren't in place yet
     skin_detector = None
@@ -47,7 +48,7 @@ hairstyle_service = HairstyleService()
 skin_tone_service = SkinToneService() if SkinToneService else None
 face_shape_classifier = FaceShapeClassifier() if FaceShapeClassifier else None
 face_validator = FaceValidator() if FaceValidator else None
-
+vggface_shape_classifier = VGGFaceShapeClassifier() if VGGFaceShapeClassifier else None
 
 # ── Helper Functions for Asset Selection (Robust Path Handling) ────────────
 def select_hair_colors(hair_colors, gender):
@@ -97,17 +98,14 @@ def select_jewelry_images(jewelry, gender):
     return selected_jewelry
 # ───────────────────────────────────────────────────────────────────────────
 
-
 @app.route('/')
 def index():
     """Render the main UI page."""
     return render_template('index.html')
 
-
 @app.route('/camera')
 def camera():
     return render_template('camera.html')
-
 
 @app.route('/recommendation')
 def recommendation():
@@ -129,8 +127,7 @@ def recommendation():
 
     current_slug = rec_data.get('slug') if rec_data else None
     related_styles = hairstyle_service.get_related_hairstyles(gender=gender, shape=shape, current_slug=current_slug, limit=5)
-    return render_template('recommendation.html', gender=gender, shape=shape, user_img=user_img, rec_data=rec_data, related_styles=related_styles)
-
+    return render_template('recommendation.html', gender=gender, shape=shape, user_img=user_img, rec_data=rec_data, related_styles=related_styles, confidence=confidence)
 
 @app.route('/hairstyles')
 def hairstyles():
@@ -140,7 +137,6 @@ def hairstyles():
     search = request.args.get('search', '')
     return render_template('hairstyles.html', selected_gender=gender, selected_shape=shape, selected_category=category, search=search)
 
-
 @app.route('/hairstyle-detail')
 def hairstyle_detail():
     style_id = request.args.get('style', 'classic_bob')
@@ -148,7 +144,39 @@ def hairstyle_detail():
     style_data = hairstyle_service.get_hairstyle_by_slug(style_id)
     return render_template('hairstyle_detail.html', style_id=style_id, gender=gender, style_data=style_data)
 
+# @app.route('/color-analysis')
+# def color_analysis():
+#     gender = request.args.get('gender', 'female')
+#     user_img = request.args.get('user_img', '')
+#     undertone_raw = request.args.get('undertone', 'warm').lower()
 
+#     # Load palette from JSON file
+#     palette_file = os.path.join(app.root_path, 'palettes.json')
+#     recommendations = {}
+    
+#     key = 'warm'
+#     if 'cool' in undertone_raw:
+#         key = 'cool'
+#     elif 'neutral' in undertone_raw:
+#         key = 'neutral'
+
+#     if os.path.exists(palette_file):
+#         with open(palette_file, 'r') as f:
+#             all_palettes = json.load(f)
+#             recommendations = all_palettes.get(key, all_palettes.get('warm', {}))
+
+#     return render_template(
+#         'color_analysis.html',
+#         image_url=user_img,
+#         color_type=key.upper(),
+#         confidence_score="96%",
+#         recommended_colors=recommendations.get('recommended_colors', []),
+#         avoid_colors=recommendations.get('avoid_colors', []),
+#         neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
+#         hair_colors=recommendations.get('hair_colors', []),
+#         jewelry=recommendations.get('jewelry', []),
+#         occasion_recommendations=recommendations.get('occasion_recommendations', {})
+#     )
 @app.route('/color-analysis')
 def color_analysis():
     gender = request.args.get('gender', 'female').lower()
@@ -192,7 +220,6 @@ def color_analysis():
 def about():
     return render_template('about.html')
 
-
 @app.route('/api/hairstyles', methods=['GET'])
 def api_hairstyles():
     gender = request.args.get('gender', 'all')
@@ -218,7 +245,6 @@ def api_hairstyles():
         "total_pages": (total + limit - 1) // limit
     })
 
-
 @app.route('/api/recommendation', methods=['GET'])
 def api_recommendation():
     gender = request.args.get('gender', 'female')
@@ -229,81 +255,6 @@ def api_recommendation():
     return jsonify({"status": "success", "data": rec_data, "related_styles": related_styles})
 
 
-@app.route('/api/analyze', methods=['POST'])
-def analyze():
-    gender        = request.form.get('gender', 'female')
-    analysis_type = request.form.get('analysis_type', 'hairstyle')
-
-    timestamp = int(time.time())
-    filename  = f"user_photo_{timestamp}.jpg"
-    filepath  = os.path.join(UPLOAD_FOLDER, filename)
-    saved_url = f"/static/uploads/{filename}"
-
-    file_obj = request.files.get('image') or request.files.get('file')
-
-    if file_obj and file_obj.filename != '':
-        file_obj.save(filepath)
-    elif 'image_base64' in request.form and request.form['image_base64'].strip():
-        base64_data = request.form['image_base64']
-        if ',' in base64_data:
-            base64_data = base64_data.split(',')[1]
-        try:
-            with open(filepath, 'wb') as f:
-                f.write(base64.b64decode(base64_data))
-        except Exception as e:
-            print("Error decoding base64 image:", e)
-            saved_url = ''
-    else:
-        saved_url = ''
-
-    detected_shape = "oval"
-    confidence     = 0.0
-
-    if face_shape_classifier and os.path.exists(filepath):
-        shape_result = face_shape_classifier.classify(filepath)
-        if "error" in shape_result:
-            print(f"[FaceShapeClassifier] {shape_result['error']}")
-        else:
-            detected_shape = shape_result["face_shape"].lower()
-            confidence     = shape_result["confidence"]
-
-    undertone = "warm"
-    if skin_tone_service and os.path.exists(filepath):
-        analysis_res = skin_tone_service.analyze_image(filepath)
-        if analysis_res.get("status") == "success":
-            undertone = analysis_res.get("undertone", "warm")
-
-    hairstyle_service.log_user_analysis(
-        user_image_url=saved_url,
-        detected_shape=detected_shape,
-        gender=gender,
-        analysis_type=analysis_type,
-        confidence=confidence
-    )
-
-    if analysis_type == 'hairstyle':
-        redirect_url = (
-            f"/recommendation?user_img={saved_url}"
-            f"&shape={detected_shape}&gender={gender}"
-            f"&confidence={confidence}"
-        )
-    else:
-        redirect_url = (
-            f"/color-analysis?user_img={saved_url}"
-            f"&undertone={undertone}&gender={gender}"
-        )
-
-    return jsonify({
-        "status":              "success",
-        "detected_face_shape": detected_shape,
-        "face_shape_title":    detected_shape.capitalize() + " Face",
-        "undertone":           undertone,
-        "confidence":          confidence,
-        "user_image_url":      saved_url,
-        "gender":              gender,
-        "analysis_type":       analysis_type,
-        "redirect_url":        redirect_url
-    })
 
 
 @app.route('/analyze', methods=['POST'])
@@ -338,6 +289,8 @@ def render_analyze_result():
         key = 'cool'
     elif 'neutral' in undertone.lower():
         key = 'neutral'
+
+    json_recommendations = {}
 
     if os.path.exists(palette_file):
         with open(palette_file, 'r') as f:
@@ -387,8 +340,8 @@ def render_analyze_result():
     ]
 
     palette = recommendations.get('recommended_colors', [])
-    raw_hair_colors = recommendations.get('hair_colors', [])
-    raw_jewelry = recommendations.get('jewelry', [])
+    raw_hair_colors = json_recommendations.get('hair_colors', []) if json_recommendations else recommendations.get('hair_colors', [])
+    raw_jewelry = json_recommendations.get('jewelry', []) if json_recommendations else recommendations.get('jewelry', [])
 
     hair_colors = select_hair_colors(raw_hair_colors, gender.lower())
     jewelry = select_jewelry_images(raw_jewelry, gender.lower())
@@ -418,46 +371,29 @@ def render_analyze_result():
     )
 
 
-@app.route('/validate-face', methods=['POST'])
-def validate_face():
-    file = request.files.get('image') or request.files.get('file')
-    if not file or file.filename == '':
-        return jsonify({'valid': False, 'message': 'No image provided.'}), 400
-
-    timestamp = int(time.time() * 1000)
-    tmp_filename = f"_face_check_{timestamp}.jpg"
-    tmp_filepath = os.path.join(UPLOAD_FOLDER, tmp_filename)
-
-    try:
-        file.save(tmp_filepath)
-
-        if face_validator is None:
-            return jsonify({'valid': True, 'message': 'Validation skipped (validator unavailable).'})
-
-        result = face_validator.validate(tmp_filepath)
-
-        return jsonify({
-            'valid':      result['valid'],
-            'message':    result['message'],
-            'face_count': result.get('face_count', 0),
-            'error':      result.get('error')
-        })
-
-    except Exception as e:
-        print(f"[validate-face] Error: {e}")
-        return jsonify({'valid': False, 'message': 'Could not process the image. Please try another photo.'}), 500
-
-    finally:
-        if os.path.exists(tmp_filepath):
-            try:
-                os.remove(tmp_filepath)
-            except OSError:
-                pass
 
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+from app.controllers.analyze_controller import analyze, validate_face
 
+app.add_url_rule('/api/analyze', view_func=analyze, methods=['POST'])
+app.add_url_rule('/validate-face', view_func=validate_face, methods=['POST'])
+
+# -------------------------------------------------------------
+# Error Handlers & Testing
+# -------------------------------------------------------------
+@app.route('/test-500')
+def test_500():
+    # This route intentionally crashes to show the 500 Error Page
+    from flask import abort
+    abort(500)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 @app.route('/export-pdf', methods=['GET'])
 def export_pdf():
@@ -497,3 +433,6 @@ def export_pdf():
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
