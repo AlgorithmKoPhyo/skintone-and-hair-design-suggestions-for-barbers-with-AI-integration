@@ -1,4 +1,4 @@
-"""Color analysis recommendation module placeholder."""
+# [cite: 3]"""Color analysis recommendation module placeholder."""
 
 import json
 import random
@@ -83,10 +83,11 @@ def select_occasion_jewelry(occasion_jewelry, gender):
         return {}
 
     images = occasion_jewelry.get("images", {})
+    gender_image = images.get(gender, "")
 
     return {
         "name": occasion_jewelry.get("name", ""),
-        "image": images.get(gender, "")
+        "image": gender_image
     }
 
 def get_recommendations(undertone,gender="female"):
@@ -180,3 +181,4 @@ def get_recommendations(undertone,gender="female"):
 
 #     import json
 #     print(json.dumps(result, indent=4))
+# ```[cite: 3]
