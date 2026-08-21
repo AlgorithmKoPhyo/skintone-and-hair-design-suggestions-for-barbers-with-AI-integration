@@ -4,15 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}StyleMe - AI-Powered Beauty & Hairstyle Recommendation{% endblock %}</title>
+  <title>{% block title %}Shape & Shade - AI-Powered Beauty & Hairstyle Recommendation{% endblock %}</title>
   <meta name="description"
     content="Get personalized AI-powered hairstyle and color recommendations based on your unique face shape and skin tone features.">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo_icon.png') }}">
+
   <!-- Font Awesome 6 Icon Package -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Cursive Font for Logo -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
   <!-- HTML2Canvas for PNG Image Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Swiper JS & CSS for Slider -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <!-- Application CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">

@@ -101,7 +101,9 @@ def select_jewelry_images(jewelry, gender):
 @app.route('/')
 def index():
     """Render the main UI page."""
-    return render_template('index.html')
+    all_styles = hairstyle_service.get_all_hairstyles()
+    featured_hairstyles = random.sample(all_styles, min(6, len(all_styles))) if all_styles else []
+    return render_template('index.html', featured_hairstyles=featured_hairstyles)
 
 @app.route('/camera')
 def camera():
