@@ -26,22 +26,22 @@
       {
         "name": "Ash Brown",
         "images": {
-          "male": "assets/cool/male/hair_ash_brown.jpg",
-          "female": "assets/cool/female/hair_ash_brown.jpg"
+          "male": "assets/cool/male/hair_ash_brown.png",
+          "female": "assets/cool/female/hair_ash_brown.png"
         }
       },
       {
         "name": "Cool Black",
         "images": {
-          "male": "assets/cool/male/hair_cool_black.jpg",
-          "female": "assets/cool/female/hair_cool_black.jpg"
+          "male": "assets/cool/male/hair_cool_black.png",
+          "female": "assets/cool/female/hair_cool_black.png"
         }
       },
       {
         "name": "Platinum Blonde",
         "images": {
-          "male": "assets/cool/male/hair_platinum_blonde.jpg",
-          "female": "assets/cool/female/hair_platinum_blonde.jpg"
+          "male": "assets/cool/male/hair_platinum_blonde.png",
+          "female": "assets/cool/female/hair_platinum_blonde.png"
         }
       }
     ],
@@ -56,10 +56,10 @@
             "assets/jewelry/male/jewelry_silver_4.jpg"
           ],
           "female": [
-            "assets/jewelry/female/jewelry_silver_1.jpg",
+            "assets/jewelry/female/jewelry_silver_1.png",
             "assets/jewelry/female/jewelry_silver_2.jpg",
             "assets/jewelry/female/jewelry_silver_3.jpg",
-            "assets/jewelry/female/jewelry_silver_4.jpg"
+            "assets/jewelry/female/jewelry_silver_4.png"
           ]
         }
       },
@@ -74,9 +74,9 @@
           ],
           "female": [
             "assets/jewelry/female/jewelry_white_gold_1.jpg",
-            "assets/jewelry/female/jewelry_white_gold_2.jpg",
-            "assets/jewelry/female/jewelry_white_gold_3.jpg",
-            "assets/jewelry/female/jewelry_white_gold_4.jpg"
+            "assets/jewelry/female/jewelry_white_gold_2.png",
+            "assets/jewelry/female/jewelry_white_gold_3.png",
+            "assets/jewelry/female/jewelry_white_gold_4.png"
           ]
         }
       },
@@ -187,49 +187,7 @@
         }
       },
 
-      "wedding_guest": {
-        "colors": [
-          { "name": "Lavender", "hex": "#E6E6FA" },
-          { "name": "Bright Rose Pink", "hex": "#FF66CC" },
-          { "name": "Emerald Green", "hex": "#50C878" },
-          { "name": "Sapphire Blue", "hex": "#0F52BA" },
-          { "name": "Blue Violet", "hex": "#8A2BE2" },
-          { "name": "Dusty Rose", "hex": "#D8A7B1" }
-        ],
-        "color_combinations": [
-          {
-            "name": "Romantic Lavender",
-            "colors": [
-              { "name": "Lavender", "hex": "#E6E6FA" },
-              { "name": "Dusty Rose", "hex": "#D8A7B1" },
-              { "name": "Sapphire Blue", "hex": "#0F52BA" }
-            ]
-          },
-          {
-            "name": "Elegant Emerald",
-            "colors": [
-              { "name": "Emerald Green", "hex": "#50C878" },
-              { "name": "Bright Rose Pink", "hex": "#FF66CC" },
-              { "name": "Soft White", "hex": "#F8F8F0" }
-            ]
-          },
-          {
-            "name": "Royal Blue Violet",
-            "colors": [
-              { "name": "Blue Violet", "hex": "#8A2BE2" },
-              { "name": "Lavender", "hex": "#E6E6FA" },
-              { "name": "Sapphire Blue", "hex": "#0F52BA" }
-            ]
-          }
-        ],
-        "jewelry": {
-          "name": "Pearl",
-          "images": {
-            "male": "assets/jewelry/male/jewelry_pearl_1.jpg",
-            "female": "assets/jewelry/female/jewelry_pearl_1.jpg"
-          }
-        }
-      },
+      
 
       "party": {
         "colors": [
@@ -270,7 +228,7 @@
           "name": "Silver",
           "images": {
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
-            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+            "female": "assets/jewelry/female/jewelry_silver_1.png"
           }
         }
       },
@@ -348,22 +306,22 @@
       {
         "name": "Golden Brown",
         "images": {
-          "male": "assets/warm/male/hair_golden_brown.jpg",
-          "female": "assets/warm/female/hair_golden_brown.jpg"
+          "male": "assets/warm/male/hair_golden_brown.png",
+          "female": "assets/warm/female/hair_golden_brown.png"
         }
       },
       {
         "name": "Honey Brown",
         "images": {
-          "male": "assets/warm/male/hair_honey_brown.jpg",
-          "female": "assets/warm/female/hair_honey_brown.jpg"
+          "male": "assets/warm/male/hair_honey_brown.png",
+          "female": "assets/warm/female/hair_honey_brown.png"
         }
       },
       {
         "name": "Caramel Brown",
         "images": {
-          "male": "assets/warm/male/hair_caramel_brown.jpg",
-          "female": "assets/warm/female/hair_caramel_brown.jpg"
+          "male": "assets/warm/male/hair_caramel_brown.png",
+          "female": "assets/warm/female/hair_caramel_brown.png"
         }
       }
     ],
@@ -380,7 +338,7 @@
           "female": [
             "assets/jewelry/female/jewelry_gold_1.jpg",
             "assets/jewelry/female/jewelry_gold_2.jpg",
-            "assets/jewelry/female/jewelry_gold_3.jpg",
+            "assets/jewelry/female/jewelry_gold_3.jpeg",
             "assets/jewelry/female/jewelry_gold_4.jpg"
           ]
         }
@@ -395,10 +353,10 @@
             "assets/jewelry/male/jewelry_rose_gold_4.jpg"
           ],
           "female": [
-            "assets/jewelry/female/jewelry_rose_gold_1.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_1.png",
             "assets/jewelry/female/jewelry_rose_gold_2.jpg",
-            "assets/jewelry/female/jewelry_rose_gold_3.jpg",
-            "assets/jewelry/female/jewelry_rose_gold_4.jpg"
+            "assets/jewelry/female/jewelry_rose_gold_3.png",
+            "assets/jewelry/female/jewelry_rose_gold_4.png"
           ]
         }
       },
@@ -415,7 +373,7 @@
             "assets/jewelry/female/jewelry_copper_1.jpg",
             "assets/jewelry/female/jewelry_copper_2.jpg",
             "assets/jewelry/female/jewelry_copper_3.jpg",
-            "assets/jewelry/female/jewelry_copper_4.jpg"
+            "assets/jewelry/female/jewelry_copper_4.jpeg"
           ]
         }
       }
@@ -509,49 +467,7 @@
         }
       },
 
-      "wedding_guest": {
-        "colors": [
-          { "name": "Coral", "hex": "#FF7F50" },
-          { "name": "Peach", "hex": "#FFDAB9" },
-          { "name": "Terracotta", "hex": "#E2725B" },
-          { "name": "Golden Yellow", "hex": "#FFD700" },
-          { "name": "Warm Rose", "hex": "#C96A6A" },
-          { "name": "Moss Green", "hex": "#8A9A5B" }
-        ],
-        "color_combinations": [
-          {
-            "name": "Warm Romance",
-            "colors": [
-              { "name": "Coral", "hex": "#FF7F50" },
-              { "name": "Peach", "hex": "#FFDAB9" },
-              { "name": "Warm Rose", "hex": "#C96A6A" }
-            ]
-          },
-          {
-            "name": "Golden Garden",
-            "colors": [
-              { "name": "Golden Yellow", "hex": "#FFD700" },
-              { "name": "Moss Green", "hex": "#8A9A5B" },
-              { "name": "Cream", "hex": "#FFFDD0" }
-            ]
-          },
-          {
-            "name": "Terracotta Elegance",
-            "colors": [
-              { "name": "Terracotta", "hex": "#E2725B" },
-              { "name": "Peach", "hex": "#FFDAB9" },
-              { "name": "Moss Green", "hex": "#8A9A5B" }
-            ]
-          }
-        ],
-        "jewelry": {
-          "name": "Rose Gold",
-          "images": {
-            "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
-            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
-          }
-        }
-      },
+      
 
       "party": {
         "colors": [
@@ -636,7 +552,7 @@
           "name": "Rose Gold",
           "images": {
             "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
-            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
+            "female": "assets/jewelry/female/jewelry_rose_gold_1.png"
           }
         }
       }
@@ -670,22 +586,22 @@
       {
         "name": "Medium Brown",
         "images": {
-          "male": "assets/neutral/male/hair_medium_brown.jpg",
-          "female": "assets/neutral/female/hair_medium_brown.jpg"
+          "male": "assets/neutral/male/hair_medium_brown.png",
+          "female": "assets/neutral/female/hair_medium_brown.png"
         }
       },
       {
         "name": "Soft Black",
         "images": {
-          "male": "assets/neutral/male/hair_soft_black.jpg",
-          "female": "assets/neutral/female/hair_soft_black.jpg"
+          "male": "assets/neutral/male/hair_soft_black.png",
+          "female": "assets/neutral/female/hair_soft_black.png"
         }
       },
       {
         "name": "Chocolate Brown",
         "images": {
-          "male": "assets/neutral/male/hair_chocolate_brown.jpg",
-          "female": "assets/neutral/female/hair_chocolate_brown.jpg"
+          "male": "assets/neutral/male/hair_chocolate_brown.png",
+          "female": "assets/neutral/female/hair_chocolate_brown.png"
         }
       }
     ],
@@ -700,10 +616,10 @@
             "assets/jewelry/male/jewelry_silver_4.jpg"
           ],
           "female": [
-            "assets/jewelry/female/jewelry_silver_1.jpg",
+            "assets/jewelry/female/jewelry_silver_1.png",
             "assets/jewelry/female/jewelry_silver_2.jpg",
             "assets/jewelry/female/jewelry_silver_3.jpg",
-            "assets/jewelry/female/jewelry_silver_4.jpg"
+            "assets/jewelry/female/jewelry_silver_4.png"
           ]
         }
       },
@@ -717,10 +633,10 @@
             "assets/jewelry/male/jewelry_rose_gold_4.jpg"
           ],
           "female": [
-            "assets/jewelry/female/jewelry_rose_gold_1.jpg",
+            "assets/jewelry/female/jewelry_rose_gold_1.png",
             "assets/jewelry/female/jewelry_rose_gold_2.jpg",
-            "assets/jewelry/female/jewelry_rose_gold_3.jpg",
-            "assets/jewelry/female/jewelry_rose_gold_4.jpg"
+            "assets/jewelry/female/jewelry_rose_gold_3.png",
+            "assets/jewelry/female/jewelry_rose_gold_4.png"
           ]
         }
       },
@@ -735,9 +651,9 @@
           ],
           "female": [
             "assets/jewelry/female/jewelry_white_gold_1.jpg",
-            "assets/jewelry/female/jewelry_white_gold_2.jpg",
-            "assets/jewelry/female/jewelry_white_gold_3.jpg",
-            "assets/jewelry/female/jewelry_white_gold_4.jpg"
+            "assets/jewelry/female/jewelry_white_gold_2.png",
+            "assets/jewelry/female/jewelry_white_gold_3.png",
+            "assets/jewelry/female/jewelry_white_gold_4.png"
           ]
         }
       }
@@ -783,7 +699,7 @@
           "name": "Silver",
           "images": {
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
-            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+            "female": "assets/jewelry/female/jewelry_silver_1.png"
           }
         }
       },
@@ -832,49 +748,7 @@
         }
       },
 
-      "wedding_guest": {
-        "colors": [
-          { "name": "Dusty Rose", "hex": "#D8A7B1" },
-          { "name": "Soft Teal", "hex": "#6FA3A3" },
-          { "name": "Mauve", "hex": "#B784A7" },
-          { "name": "Sage Green", "hex": "#9CAF88" },
-          { "name": "Soft Coral", "hex": "#E9967A" },
-          { "name": "Dusty Blue", "hex": "#6699CC" }
-        ],
-        "color_combinations": [
-          {
-            "name": "Romantic Neutral",
-            "colors": [
-              { "name": "Dusty Rose", "hex": "#D8A7B1" },
-              { "name": "Sage Green", "hex": "#9CAF88" },
-              { "name": "Soft White", "hex": "#F8F8F0" }
-            ]
-          },
-          {
-            "name": "Soft Teal Elegance",
-            "colors": [
-              { "name": "Soft Teal", "hex": "#6FA3A3" },
-              { "name": "Dusty Blue", "hex": "#6699CC" },
-              { "name": "Mauve", "hex": "#B784A7" }
-            ]
-          },
-          {
-            "name": "Muted Romance",
-            "colors": [
-              { "name": "Soft Coral", "hex": "#E9967A" },
-              { "name": "Dusty Rose", "hex": "#D8A7B1" },
-              { "name": "Sage Green", "hex": "#9CAF88" }
-            ]
-          }
-        ],
-        "jewelry": {
-          "name": "Rose Gold",
-          "images": {
-            "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
-            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
-          }
-        }
-      },
+      
 
       "party": {
         "colors": [
@@ -915,7 +789,7 @@
           "name": "Silver",
           "images": {
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
-            "female": "assets/jewelry/female/jewelry_silver_1.jpg"
+            "female": "assets/jewelry/female/jewelry_silver_1.png"
           }
         }
       },
@@ -959,7 +833,7 @@
           "name": "Rose Gold",
           "images": {
             "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
-            "female": "assets/jewelry/female/jewelry_rose_gold_1.jpg"
+            "female": "assets/jewelry/female/jewelry_rose_gold_1.png"
           }
         }
       }
