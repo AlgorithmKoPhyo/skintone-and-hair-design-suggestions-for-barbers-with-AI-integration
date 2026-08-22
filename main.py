@@ -360,7 +360,8 @@ def render_analyze_result():
             neutral_colors=recommendations.get('neutral_colors_that_flatter', recommendations.get('neutral_colors', [])),
             hair_colors=hair_colors,
             jewelry=jewelry,
-            occasion_recommendations=recommendations.get('occasion_recommendations', {})
+            occasion_recommendations=json_recommendations.get('occasion_recommendations', {})
+        
         )
 
     return render_template(

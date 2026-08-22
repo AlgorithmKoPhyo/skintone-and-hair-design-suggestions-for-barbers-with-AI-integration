@@ -551,7 +551,56 @@
         .occasion-list { grid-template-columns: 1fr; }
     }
 
-    
+    .re-analysis-btn {
+        margin-left: auto; 
+        align-self: center;
+        margin-right: 12px; 
+        background: var(--paper);
+        border: 1px solid var(--border);
+        color: var(--accent);
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .re-analysis-btn:hover {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+        transform: translateY(-2px);
+    }
+
+   
+    .clear-btn {
+        align-self: center;
+        margin-right: 20px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .clear-btn:hover {
+        color: #d9534f;
+        border-color: #d9534f;
+        background: #fffafa;
+        transform: translateY(-2px);
+    }
 </style>
 
 {% set current_undertone = color_type if color_type else 'neutral' %}
@@ -614,7 +663,7 @@
 
         <!-- Dynamic Button: Start Analysis for samples, Download PDF for real results -->
         {% if not image_url or image_url == '#' or 'default_user.jpg' in image_url %}
-            <a href="{{ url_for('camera') }}" class="btn-primary" style="display: block; text-align: center; text-decoration: none; box-sizing: border-box;">
+            <a href="{{ url_for('recommendation') }}" class="btn-primary" style="display: block; text-align: center; text-decoration: none; box-sizing: border-box;">
                 Start Your Analyse
             </a>
         {% else %}
@@ -628,11 +677,27 @@
     <!-- RIGHT PANE -->
     <main class="lookbook-content">
         
-        <nav class="lookbook-nav">
+        <!-- <nav class="lookbook-nav">
             <button class="nav-tab active" data-target="tab-colors">Color Palette</button>
             <button class="nav-tab" data-target="tab-beauty">Hair & Jewelry</button>
             <button class="nav-tab" data-target="tab-occasions">Occasion Guide</button>
             <a href="{{ url_for('camera') }}" class="re-analysis-btn">Re-Analysis</a>
+        </nav> -->
+        <nav class="lookbook-nav">
+            <button class="nav-tab active" data-target="tab-colors">Color Palette</button>
+            <button class="nav-tab" data-target="tab-beauty">Hair & Jewelry</button>
+            <button class="nav-tab" data-target="tab-occasions">Occasion Guide</button>
+            
+            <a href="{{ url_for('camera') }}" class="re-analysis-btn">Re-Analysis</a>
+            
+            <!-- Conditional Clear Button: Only shows if it's a real analysis -->
+            <!-- Conditional Clear Button: Only shows if it's a real analysis -->
+            {% if image_url and image_url != '#' and 'default_user.jpg' not in image_url %}
+            <button id="clear-analysis-btn" class="clear-btn" title="Clear and return to sample">
+                <!-- Replace 'clear.png' with your actual icon file name -->
+                <img src="{{ url_for('static', filename='assets/icon/brush.png') }}" alt="Clear" style="width: 20px; height: 20px; object-fit: contain;">
+            </button>
+            {% endif %}
         </nav>
 
         <div class="panels-container">
@@ -752,7 +817,7 @@
 <!-- Tab Switching Script & Camera Logic -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. TAB & CAMERA LOGIC ---
+        // --- 1. TAB LOGIC ---
         const tabs = document.querySelectorAll('.nav-tab');
         const panels = document.querySelectorAll('.tab-panel');
 
@@ -767,26 +832,68 @@
             });
         });
 
-        // Image loading logic
-        const serverImageUrl = "{{ image_url if image_url else (user_img if user_img else '') }}";
-        if (serverImageUrl && serverImageUrl !== '#' && !serverImageUrl.includes('default_user.jpg')) {
-            sessionStorage.removeItem('styleme_captured_image');
-        }
+        // --- 2. PERSIST ANALYSIS STATE UNTIL PAGE REFRESH ---
+        // --- 2. PERSIST ANALYSIS STATE & IMAGE LOGIC ---
+        const serverImg = "{{ image_url if image_url else '' }}";
+        const currentUndertone = "{{ color_type if color_type else 'neutral' }}".toLowerCase();
+        const portraitImg = document.getElementById('user-portrait');
 
-        const capturedImg = sessionStorage.getItem('styleme_captured_image');
-        if (capturedImg) {
-            const portraitImg = document.getElementById('user-portrait');
-            if (portraitImg) {
-                portraitImg.src = capturedImg;
+        // SCENARIO A: File Upload (Backend provided a real image path)
+        if (serverImg && serverImg !== '#' && !serverImg.includes('default_user.jpg')) {
+            // 1. Wipe the lingering camera image so it doesn't override the file upload
+            sessionStorage.removeItem('styleme_captured_image');
+            
+            // 2. Save the state so navigating away and back works
+            const stateQuery = `?undertone=${currentUndertone}&user_img=${encodeURIComponent(serverImg)}`;
+            sessionStorage.setItem("styleme_analysis_state", stateQuery);
+        } 
+        // SCENARIO B: Camera Analysis or Page Reload
+        else {
+            const capturedImg = sessionStorage.getItem('styleme_captured_image');
+            
+            // If there is a camera image saved, force it onto the portrait and save the state
+            if (capturedImg) {
+                if (portraitImg) portraitImg.src = capturedImg;
+                
+                const stateQuery = `?undertone=${currentUndertone}`;
+                sessionStorage.setItem("styleme_analysis_state", stateQuery);
+            } 
+            // SCENARIO C: Default Sample View
+            else {
+                const savedState = sessionStorage.getItem("styleme_analysis_state");
+                if (savedState && !window.location.search && performance.navigation.type !== 1) {
+                    window.location.href = "/color-analysis" + savedState;
+                    return;
+                }
             }
         }
 
-        // Clear session storage if the user clicks the "Re-Analysis" button
+        // --- 3. IMAGE LOADING LOGIC ---
+        // Restore the camera image from session storage if the user took a live photo
+      
+
+        // const reAnalysisBtn = document.querySelector(".re-analysis-btn");
+        // if (reAnalysisBtn) {
+        //     reAnalysisBtn.addEventListener("click", () => {
+        //         sessionStorage.removeItem("styleme_analysis_state");
+        //         sessionStorage.removeItem("styleme_captured_image");
+        //     });
+        // }
+
         const reAnalysisBtn = document.querySelector(".re-analysis-btn");
         if (reAnalysisBtn) {
             reAnalysisBtn.addEventListener("click", () => {
                 sessionStorage.removeItem("styleme_analysis_state");
                 sessionStorage.removeItem("styleme_captured_image");
+            });
+        }
+
+        const clearBtn = document.getElementById("clear-analysis-btn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+                sessionStorage.removeItem("styleme_analysis_state");
+                sessionStorage.removeItem("styleme_captured_image");
+                window.location.href = "{{ url_for('color_analysis') }}"; 
             });
         }
 
@@ -859,26 +966,33 @@
                 pdf.rect(0, 0, 210, 297, "F");
 
                 // ==========================================
+                // Y-AXIS OFFSET (VERTICAL CENTERING)
+                // ==========================================
+                const offsetY = 10; // Pushes the entire layout down to center it vertically on A4
+
+                // ==========================================
                 // TOP SECTION
                 // ==========================================
+                // Center point for left column is X = 50
                 const portrait = document.getElementById("user-portrait");
                 if (portrait) {
                     const b64 = getBase64Image(portrait, 45, 45);
-                    if (b64) pdf.addImage(b64, "JPEG", 15, 15, 45, 45); 
+                    // Added offsetY to the Y coordinate
+                    if (b64) pdf.addImage(b64, "JPEG", 27.5, 15 + offsetY, 45, 45); 
                 }
 
                 const undertone = document.querySelector(".undertone-box .result")?.textContent.trim() || "UNKNOWN";
                 pdf.setFont("times", "normal");
                 pdf.setFontSize(22);
                 pdf.setTextColor(...accentCol);
-                pdf.text(undertone.toUpperCase(), 15, 70);
+                pdf.text(undertone.toUpperCase(), 50, 70 + offsetY, { align: "center" });
 
                 const desc = document.querySelector(".analysis-desc")?.textContent.trim() || "";
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(8);
                 pdf.setTextColor(...mutedCol);
                 const splitDesc = pdf.splitTextToSize(desc, 70); 
-                pdf.text(splitDesc, 15, 78);
+                pdf.text(splitDesc, 15, 78 + offsetY);
 
                 // -- Right Side: Palettes --
                 const rightX = 90; 
@@ -886,7 +1000,7 @@
                 pdf.setFont("times", "italic");
                 pdf.setFontSize(24);
                 pdf.setTextColor(...textCol);
-                pdf.text("Your Color Story", rightX, 22);
+                pdf.text("Your Color Story", rightX, 22 + offsetY);
 
                 const drawRowPalette = (selector, title, startY, limit) => {
                     pdf.setFont("helvetica", "bold");
@@ -909,14 +1023,15 @@
                     });
                 };
 
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 35, 6);
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 55, 4);
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 75, 6);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 35 + offsetY, 6);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 55 + offsetY, 4);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 75 + offsetY, 6);
 
                 // ==========================================
                 // DIVIDER & MIDDLE SECTION
                 // ==========================================
-                const dividerY = 105;
+                const dividerY = 105 + offsetY; // This automatically pushes the Hair/Jewelry and Occasions down!
+                
                 pdf.setDrawColor(...accentCol);
                 pdf.setLineWidth(0.5);
                 pdf.line(15, dividerY, 195, dividerY);
@@ -946,7 +1061,7 @@
                 };
 
                 drawMiddleGallery("#tab-beauty .image-grid:nth-of-type(1)", "Hair Color", 15);
-                pdf.line(105, dividerY, 105, dividerY + 60);
+                // pdf.line(105, dividerY, 105, dividerY + 60);
                 drawMiddleGallery("#tab-beauty .image-grid:nth-of-type(2)", "Jewelry", 110);
 
                 const bottomDividerY = dividerY + 60; 
