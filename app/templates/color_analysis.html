@@ -841,6 +841,7 @@
         // --- 2. PERSIST ANALYSIS STATE & IMAGE LOGIC ---
         const serverImg = "{{ image_url if image_url else '' }}";
         const currentUndertone = "{{ color_type if color_type else 'neutral' }}".toLowerCase();
+        const currentGender = "{{ gender if gender else 'female' }}".toLowerCase();
         const portraitImg = document.getElementById('user-portrait');
 
         // SCENARIO A: File Upload (Backend provided a real image path)
@@ -849,7 +850,7 @@
             sessionStorage.removeItem('styleme_captured_image');
             
             // 2. Save the state so navigating away and back works
-            const stateQuery = `?undertone=${currentUndertone}&user_img=${encodeURIComponent(serverImg)}`;
+            const stateQuery = `?undertone=${currentUndertone}&gender=${currentGender}&user_img=${encodeURIComponent(serverImg)}`;
             sessionStorage.setItem("styleme_analysis_state", stateQuery);
         } 
         // SCENARIO B: Camera Analysis or Page Reload
@@ -860,7 +861,7 @@
             if (capturedImg) {
                 if (portraitImg) portraitImg.src = capturedImg;
                 
-                const stateQuery = `?undertone=${currentUndertone}`;
+                const stateQuery = `?undertone=${currentUndertone}&gender=${currentGender}`;
                 sessionStorage.setItem("styleme_analysis_state", stateQuery);
             } 
             // SCENARIO C: Default Sample View

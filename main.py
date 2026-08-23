@@ -103,7 +103,27 @@ def index():
     """Render the main UI page."""
     all_styles = hairstyle_service.get_all_hairstyles()
     featured_hairstyles = random.sample(all_styles, min(6, len(all_styles))) if all_styles else []
-    return render_template('index.html', featured_hairstyles=featured_hairstyles)
+
+    featured_colors = []
+    palette_file = os.path.join(app.root_path, 'modules', 'palettes.json')
+    if os.path.exists(palette_file):
+        with open(palette_file, 'r') as f:
+            all_palettes = json.load(f)
+            
+            # Combine recommended colors from all palettes
+            all_recommended_colors = []
+            for palette_key, palette_data in all_palettes.items():
+                if 'recommended_colors' in palette_data:
+                    all_recommended_colors.extend(palette_data['recommended_colors'])
+            
+            # Remove duplicates based on hex if any, and shuffle
+            unique_colors = {c['hex']: c for c in all_recommended_colors}.values()
+            
+            if unique_colors:
+                # Randomly sample up to 5 colors
+                featured_colors = random.sample(list(unique_colors), min(5, len(unique_colors)))
+
+    return render_template('index.html', featured_hairstyles=featured_hairstyles, featured_colors=featured_colors)
 
 @app.route('/camera')
 def camera():
@@ -215,7 +235,8 @@ def color_analysis():
         neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
         hair_colors=hair_colors,
         jewelry=jewelry,
-        occasion_recommendations=recommendations.get('occasion_recommendations', {})
+        occasion_recommendations=recommendations.get('occasion_recommendations', {}),
+        gender=gender
     )
 
 
