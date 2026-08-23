@@ -611,19 +611,24 @@
 {% set jewels = jewelry if jewelry else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image': 'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
 {% set occasions = occasion_recommendations if occasion_recommendations else {
     'office': { 
-        'colors': [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#ffffff', 'name': 'White'}], 
-        'why_it_works': 'These shades enhance your cool undertone and give a calm, professional look.',
-        'jewelry': {'image': 'jewelry/female/jewelry_gold_1.jpg'}
+        'colors': [{'hex': '#000080', 'name': 'Navy Blue'}, {'hex': '#8C92AC', 'name': 'Cool Gray'}, {'hex': '#F8F8F0', 'name': 'Soft White'}], 
+        'why_it_works': 'These refined tones create a polished and professional look for the workplace.',
+        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_silver_1.jpg'}}
     },
-    'wedding_guest': { 
-        'colors': [{'hex': '#4a148c', 'name': 'Plum'}, {'hex': '#ce93d8', 'name': 'Lilac'}, {'hex': '#f8bbd0', 'name': 'Rose'}], 
-        'why_it_works': 'Elegant jewel tones that complement formal celebration settings.',
-        'jewelry': {'image': 'jewelry/female/jewelry_pearl_1.jpg'}
+    'interview': { 
+        'colors': [{'hex': '#000080', 'name': 'Navy Blue'}, {'hex': '#F5F5F5', 'name': 'Cool White'}, {'hex': '#4B4B4B', 'name': 'Charcoal Gray'}], 
+        'why_it_works': 'These balanced tones create a confident, composed, and professional interview look.',
+        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_white_gold_1.jpg'}}
     },
-    'casual_day': { 
-        'colors': [{'hex': '#37474f', 'name': 'Charcoal'}, {'hex': '#81d4fa', 'name': 'Sky Blue'}, {'hex': '#f5f5f5', 'name': 'Off White'}], 
-        'why_it_works': 'Relaxed yet cohesive combinations ideal for effortless daily wear.',
-        'jewelry': {'image': 'jewelry/female/jewelry_white_gold_1.jpg'}
+    'party': { 
+        'colors': [{'hex': '#0066FF', 'name': 'Electric Blue'}, {'hex': '#FF00FF', 'name': 'Fuchsia'}, {'hex': '#0047AB', 'name': 'Cobalt Blue'}], 
+        'why_it_works': 'These vibrant tones create a bold, glamorous, and eye-catching party look.',
+        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_silver_1.png'}}
+    },
+    'casual': { 
+        'colors': [{'hex': '#99FFFF', 'name': 'Ice Blue'}, {'hex': '#1560BD', 'name': 'Denim Blue'}, {'hex': '#F8F8F0', 'name': 'Soft White'}], 
+        'why_it_works': 'These soft tones create a fresh, relaxed, and effortlessly stylish casual look.',
+        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_white_gold_1.jpg'}}
     }
 } %}
 

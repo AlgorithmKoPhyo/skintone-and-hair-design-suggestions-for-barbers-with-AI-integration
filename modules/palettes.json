@@ -140,7 +140,8 @@
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
             "female": "assets/jewelry/female/jewelry_silver_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These refined tones create a polished and professional look for the workplace."
       },
 
       "interview": {
@@ -184,7 +185,8 @@
             "male": "assets/jewelry/male/jewelry_white_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_white_gold_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These balanced tones create a confident, composed, and professional interview look."
       },
 
       
@@ -230,7 +232,8 @@
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
             "female": "assets/jewelry/female/jewelry_silver_1.png"
           }
-        }
+        },
+        "why_it_works":"These vibrant tones create a bold, glamorous, and eye-catching party look."
       },
 
       "casual": {
@@ -274,7 +277,8 @@
             "male": "assets/jewelry/male/jewelry_white_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_white_gold_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These soft tones create a fresh, relaxed, and effortlessly stylish casual look."
       }
     }
   },
@@ -420,7 +424,8 @@
             "male": "assets/jewelry/male/jewelry_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_gold_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These warm tones create a polished, professional, and naturally sophisticated look for the workplace."
       },
 
       "interview": {
@@ -464,7 +469,8 @@
             "male": "assets/jewelry/male/jewelry_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_gold_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These warm tones create a confident, composed, and professional interview look."
       },
 
       
@@ -510,7 +516,8 @@
             "male": "assets/jewelry/male/jewelry_copper_1.jpg",
             "female": "assets/jewelry/female/jewelry_copper_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These vibrant warm tones create a bold, energetic, and glamorous party look."
       },
 
       "casual": {
@@ -554,7 +561,8 @@
             "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_rose_gold_1.png"
           }
-        }
+        },
+        "why_it_works":"These earthy warm tones create a relaxed, comfortable, and effortlessly stylish casual look."
       }
     }
   },
@@ -701,7 +709,8 @@
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
             "female": "assets/jewelry/female/jewelry_silver_1.png"
           }
-        }
+        },
+        "why_it_works":"These versatile tones create a polished, balanced, and sophisticated look that works naturally in professional settings."
       },
 
       "interview": {
@@ -745,7 +754,8 @@
             "male": "assets/jewelry/male/jewelry_white_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_white_gold_1.jpg"
           }
-        }
+        },
+        "why_it_works":"These balanced tones create a confident, composed, and professional interview look."
       },
 
       
@@ -791,7 +801,8 @@
             "male": "assets/jewelry/male/jewelry_silver_1.jpg",
             "female": "assets/jewelry/female/jewelry_silver_1.png"
           }
-        }
+        },
+        "why_it_works": "These expressive tones create a stylish, balanced, and eye-catching party look."
       },
 
       "casual": {
@@ -835,7 +846,8 @@
             "male": "assets/jewelry/male/jewelry_rose_gold_1.jpg",
             "female": "assets/jewelry/female/jewelry_rose_gold_1.png"
           }
-        }
+        },
+        "why_it_works":"These versatile tones create a relaxed, comfortable, and effortlessly stylish everyday look."
       }
     }
   }
