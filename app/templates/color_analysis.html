@@ -662,7 +662,7 @@
             {% if description %}
                 {{ description }}
             {% else %}
-                Cool undertones feature subtle blue, pink, or red undertones beneath the skin. Cool blues, purples, and crisp berry shades complement your complexion beautifully. Let these curated palettes guide your wardrobe and beauty choices.
+                Warm undertones usually have subtle golden, yellow, peach, or warm beige tones beneath the skin. Earthy, golden, and rich warm colors often complement this undertone and enhance the skin's natural warmth.
             {% endif %}
         </div>
 
@@ -795,14 +795,17 @@
                         <div class="occ-image-wrap">
                             <span>Jewelry</span>
                             
-                            <!-- Smart extraction: Checks for both flat fallback and nested JSON structures -->
+                            <!-- Smart extraction: Dynamically checks for male or female -->
                             {% set j_img = '' %}
-                            {% set fallback_jewelry_img = url_for('static', filename='assets/jewelry/female/jewelry_gold_1.jpg') %}
+                            {% set user_gender = gender if gender else 'female' %}
+                            {% set fallback_jewelry_img = url_for('static', filename='assets/jewelry/' ~ user_gender ~ '/jewelry_gold_1.jpg') %}
+                            
                             {% if occ_data.jewelry %}
                                 {% if occ_data.jewelry.image %}
                                     {% set j_img = occ_data.jewelry.image %}
                                 {% elif occ_data.jewelry.images %}
-                                    {% set j_img = occ_data.jewelry.images.female %}
+                                    <!-- Use bracket notation to insert the dynamic variable -->
+                                    {% set j_img = occ_data.jewelry.images[user_gender] %}
                                 {% endif %}
                             {% endif %}
                             
@@ -839,29 +842,34 @@
 
         // --- 2. PERSIST ANALYSIS STATE UNTIL PAGE REFRESH ---
         // --- 2. PERSIST ANALYSIS STATE & IMAGE LOGIC ---
+        // --- 2. PERSIST ANALYSIS STATE & IMAGE LOGIC ---
+        // --- 2. PERSIST ANALYSIS STATE & IMAGE LOGIC ---
         const serverImg = "{{ image_url if image_url else '' }}";
         const currentUndertone = "{{ color_type if color_type else 'neutral' }}".toLowerCase();
-        const currentGender = "{{ gender if gender else 'female' }}".toLowerCase();
+        const currentConfidence = "{{ confidence_score if confidence_score else '90%' }}"; // Pull the score
+        
+        // NEW: Grab the current gender so we don't lose it on refresh!
+        const currentGender = "{{ gender if gender else 'female' }}".toLowerCase(); 
+        
         const portraitImg = document.getElementById('user-portrait');
 
         // SCENARIO A: File Upload (Backend provided a real image path)
         if (serverImg && serverImg !== '#' && !serverImg.includes('default_user.jpg')) {
-            // 1. Wipe the lingering camera image so it doesn't override the file upload
             sessionStorage.removeItem('styleme_captured_image');
             
-            // 2. Save the state so navigating away and back works
-            const stateQuery = `?undertone=${currentUndertone}&gender=${currentGender}&user_img=${encodeURIComponent(serverImg)}`;
+            // Added &gender= to the query string
+            const stateQuery = `?undertone=${currentUndertone}&confidence=${encodeURIComponent(currentConfidence)}&gender=${encodeURIComponent(currentGender)}&user_img=${encodeURIComponent(serverImg)}`;
             sessionStorage.setItem("styleme_analysis_state", stateQuery);
         } 
         // SCENARIO B: Camera Analysis or Page Reload
         else {
             const capturedImg = sessionStorage.getItem('styleme_captured_image');
             
-            // If there is a camera image saved, force it onto the portrait and save the state
             if (capturedImg) {
                 if (portraitImg) portraitImg.src = capturedImg;
                 
-                const stateQuery = `?undertone=${currentUndertone}&gender=${currentGender}`;
+                // Added &gender= to the query string
+                const stateQuery = `?undertone=${currentUndertone}&confidence=${encodeURIComponent(currentConfidence)}&gender=${encodeURIComponent(currentGender)}`;
                 sessionStorage.setItem("styleme_analysis_state", stateQuery);
             } 
             // SCENARIO C: Default Sample View
@@ -975,7 +983,22 @@
                 // Y-AXIS OFFSET (VERTICAL CENTERING)
                 // ==========================================
                 const offsetY = 10; // Pushes the entire layout down to center it vertically on A4
+                
+                const logoImg = document.querySelector(".brand-logo img") || document.querySelector("img[alt*='Logo']");
+                const brandLogoY = 6 + (offsetY > 5 ? offsetY * 0.4 : 2);
 
+                if (logoImg && logoImg.complete && logoImg.naturalWidth !== 0) {
+                    const logoB64 = getBase64Image(logoImg, 10, 10);
+                    if (logoB64) {
+                        pdf.addImage(logoB64, "PNG", 15, brandLogoY, 10, 10);
+                    }
+                }
+
+                // Brand Name Text next to logo icon
+                pdf.setFont("times", "italic");
+                pdf.setFontSize(14);
+                pdf.setTextColor(...accentCol);
+                pdf.text("Shape & Shade", 27, brandLogoY + 7);
                 // ==========================================
                 // TOP SECTION
                 // ==========================================
