@@ -4,765 +4,1151 @@
 
 {% block content %}
 <style>
-    .color-analysis-scope {
-        --purple-main: #7c4dff;
-        --purple-dark: #651fff;
-        --purple-light: #f3eefc;
-        --purple-border: #e2d7f8;
-        --pink-accent: #f06292;
-        --bg-body: #f8f9fd;
-        --card-bg: #ffffff;
-        --text-dark: #1e1b2e;
-        --text-muted: #757288;
-        --border-color: #f0ecf9;
-        --radius-lg: 16px;
-        --radius-md: 12px;
-        --radius-sm: 8px;
-        --shadow-subtle: 0 4px 20px rgba(124, 77, 255, 0.08);
-        
-        background-color: var(--bg-body);
-        color: var(--text-dark);
-        padding-bottom: 60px;
+    /* 
+     * NO-SCROLL EDITORIAL LOOKBOOK THEME
+     * Matches index.html styling
+     */
+    :root {
+        --accent: #7b5b5c;
+        --accent-light: #f3ece7;
+        --cream: #f8f4ee;
+        --paper: #ffffff;
+        --text: #1d1d1d;
+        --muted: #777;
+        --border: #ece4dc;
+        --shadow: 0 10px 35px rgba(0,0,0,.06);
     }
 
-    .page-container {
-        max-width: 1380px;
-        margin: 24px auto;
-        padding: 0 24px;
-        display: grid;
-        grid-template-columns: 310px 1fr;
-        gap: 24px;
+    /* Allow the body to scroll normally so the footer is accessible */
+    body {
+        margin: 0;
+        background: var(--cream);
     }
 
-    /* Sidebar */
-    .sidebar-panel {
-        background: var(--card-bg);
-        border-radius: var(--radius-lg);
-        padding: 20px;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-subtle);
+    /* Lock ONLY this specific section to fit perfectly in the viewport */
+    .lookbook-wrapper {
+        /* Calculates 100% of the screen height minus the header and margin */
+        height: calc(102vh - 120px); 
+        min-height: 700px; /* Prevents the box from collapsing on extremely tiny screens */
+        max-width: 1600px;
+        margin: 40px auto 60px auto; /* Top and bottom spacing */
+        padding: 0 20px;
+        display: flex;
+        align-items: stretch; /* Forces left and right panes to match heights perfectly */
+        gap: 30px;
+        box-sizing: border-box;
+    }
+
+    /* LEFT PANE: Fixed Hero & Results */
+    .lookbook-sidebar {
+        flex: 0 0 420px;
+        background: var(--paper);
+        border-radius: 24px;
+        padding: 30px;
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        height: fit-content;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow-y: auto; /* Allows smooth internal scrolling if viewed on a small laptop */
     }
 
-    .sidebar-title { font-size: 15px; font-weight: 700; color: var(--purple-main); }
+    /* Hide scrollbar on sidebar for clean look */
+    .lookbook-sidebar::-webkit-scrollbar { display: none; }
 
-    .user-photo-container {
+    /* RIGHT PANE: Tabbed Content */
+    .lookbook-content {
+        flex: 1;
+        background: var(--paper);
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* Keeps the right side strictly contained within the box */
+    }
+
+    /* Tab Panels Container */
+    .panels-container {
+        flex: 1;
+        padding: 20px 40px; 
+        display: grid; /* Stacks the tabs to enforce identical height */
+        overflow-y: hidden; /* Internal scroll just in case, scrollbar hidden below */
+    }
+
+    .panels-container::-webkit-scrollbar { display: none; }
+
+    .tab-panel {
+        /* Forces ALL tabs into the exact same grid space to freeze the height */
+        grid-area: 1 / 1; 
+        
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none; 
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        transform: translateY(10px);
+        padding-bottom: 20px;
+    }
+
+    .tab-panel.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+        z-index: 1;
+    }
+    
+    .hero-image {
         width: 100%;
-        border-radius: var(--radius-md);
+        height: 45%;
+        border-radius: 16px;
         overflow: hidden;
-        aspect-ratio: 4/5;
+        margin-bottom: 24px;
+        flex-shrink: 0;
     }
 
-    .user-photo-container img {
+    .hero-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .undertone-box {
-        background: #ffffff;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-md);
-        padding: 20px;
-        text-align: center;
-    }
-
-    .undertone-label { font-size: 13px; color: var(--text-dark); font-weight: 600; margin-bottom: 4px; }
-    .undertone-value { font-size: 26px; font-weight: 800; color: var(--purple-main); margin-bottom: 16px; text-transform: capitalize; }
-    .confidence-heading { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 12px; }
-
-    .confidence-donut {
-        position: relative;
-        width: 110px;
-        height: 110px;
-        margin: 0 auto;
-    }
-
-    .confidence-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .confidence-donut circle { fill: none; stroke-width: 10; stroke-linecap: round; }
-    .confidence-donut .bg-circle { stroke: #ede7f6; }
-    .confidence-donut .progress-circle {
-        stroke: var(--purple-main);
-        stroke-dasharray: 283;
-        stroke-dashoffset: 28.3;
-        transition: stroke-dashoffset 1s ease-in-out;
-    }
-
-    .confidence-number {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 20px;
-        font-weight: 800;
-        color: var(--text-dark);
-    }
-
-    .meaning-card {
-        background: var(--purple-light);
-        border-radius: var(--radius-md);
-        padding: 16px;
-        border: 1px solid var(--purple-border);
-    }
-
-    .meaning-card-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--purple-main);
-        font-size: 14px;
+    .section-badge {
+        letter-spacing: 2px;
+        font-size: 11px;
+        color: var(--accent);
         font-weight: 700;
+        text-transform: uppercase;
+        display: block;
         margin-bottom: 8px;
     }
 
-    .meaning-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
-
-    /* Content Panel */
-    .content-panel { display: flex; flex-direction: column; gap: 20px; }
-
-    .overview-tabs {
-        background: var(--card-bg);
-        border-radius: var(--radius-lg);
-        padding: 6px;
-        display: grid;
-        grid-template-columns: 1.2fr repeat(5, 1fr);
-        gap: 6px;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-subtle);
+    .analysis-title {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin: 0 0 20px 0;
+        color: var(--text);
     }
 
-    .tab-btn {
-        background: transparent;
+    .undertone-box {
+        background: var(--cream);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        border: 1px solid var(--border);
+    }
+
+    .undertone-box h4 {
+        margin: 0 0 5px 0;
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .undertone-box .result {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        color: var(--accent);
+        text-transform: capitalize;
+        margin: 0 0 10px 0;
+    }
+
+    .undertone-box .confidence {
+        font-size: 13px;
+        color: var(--text);
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+    }
+
+    .analysis-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--muted);
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding-right: 10px;
+    }
+
+    /* Hide scrollbar for clean look */
+    .analysis-desc::-webkit-scrollbar { display: none; }
+
+    .btn-primary {
+        width: 100%;
         border: none;
-        padding: 10px 12px;
-        border-radius: var(--radius-md);
+        padding: 16px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: opacity 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-primary:hover { opacity: 0.9; }
+
+    /* RIGHT PANE: Tabbed Content */
+    /* .lookbook-content {
+        flex: 1;
+        background: var(--paper);
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    } */
+
+    /* Navigation Tabs */
+    .lookbook-nav {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        background: var(--cream);
+        padding: 0 20px;
+    }
+
+    .nav-tab {
+        padding: 24px 30px;
+        background: none;
+        border: none;
+        font-family: inherit;
         font-size: 13px;
         font-weight: 600;
-        color: var(--text-muted);
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
         cursor: pointer;
-        text-align: center;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .nav-tab.active {
+        color: var(--accent);
+        border-bottom: 2px solid var(--accent);
+    }
+
+    /* Re-Analysis Button Styling */
+    .re-analysis-btn {
+        margin-left: auto; /* Pushes the button all the way to the far right */
+        align-self: center;
+        margin-right: 20px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        color: var(--accent);
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
         transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
-    .tab-btn.active { background: var(--purple-light); color: var(--purple-main); }
-
-    .summary-pill-bar {
-        background: var(--purple-light);
-        border-radius: var(--radius-lg);
-        padding: 16px 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border: 1px solid var(--purple-border);
+    .re-analysis-btn:hover {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+        transform: translateY(-2px);
     }
 
-    .pill-item { display: flex; align-items: center; gap: 12px; }
-    .pill-icon {
-        width: 38px; height: 38px;
-        border-radius: 50%;
-        background: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--purple-main);
-        font-size: 16px;
-    }
-
-    .pill-info { display: flex; align-items: baseline; gap: 6px; }
-    .pill-number { font-size: 18px; font-weight: 800; color: var(--text-dark); }
-    .pill-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-    .pill-divider { width: 1px; height: 24px; background: var(--purple-border); }
-
-    /* Grid Sections */
-    .section-card {
-        background: var(--card-bg);
-        border-radius: var(--radius-lg);
-        padding: 20px;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-subtle);
-    }
-
-    .section-header { display: flex; align-items: center; justify-content: space-between;margin-bottom: -20px; }
-    .section-title { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; }
-    .section-title i { color: var(--purple-main); }
-
-    .color-grid-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .swatch-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    /* Tab Panels Container */
+    /*  */
     
-    .swatch {
-        height: 60px;
-        border-radius: var(--radius-sm);
-        width: 100%;
-        transition: transform 0.2s ease;
-        border: 1px solid rgba(0,0,0,0.06);
-    }
-    .swatch:hover { transform: scale(1.05); }
+    /* You can delete the old @keyframes fadeIn block entirely, 
+       as the transition is now handled natively above! */
 
-    .items-grid-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-    .sub-item-card { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .sub-item-image { width: 100%; height: 120px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 8px; background: #f4f4f8; }
-    .sub-item-image img { width: 100%; height: 100%; object-fit: cover; }
-    .sub-item-name { font-size: 12px; font-weight: 600; color: var(--text-dark); }
-
-    .category-pills { display: flex; gap: 6px; margin-bottom: 12px; }
-    .cat-pill { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: none; background: #f0f0f5; color: var(--text-muted); cursor: pointer; }
-    .cat-pill.active { background: var(--purple-main); color: white; }
-
-    .neutral-tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-    .neutral-tile { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .neutral-color-box { width: 100%; height: 120px; border-radius: var(--radius-md); margin-bottom: 6px; border: 1px solid rgba(0, 0, 0, 0.06); }
-
-    /* Occasion Based Recommendations Section */
-    .occasion-section {
-        background: var(--card-bg);
-        border-radius: var(--radius-lg);
-        padding: 24px;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-subtle);
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .occasion-title {
+    .panel-section-title {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        margin: 0 0 16px 0; /* Reduced bottom margin */
+        color: var(--text);
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 21px;
+        gap: 15px;
+    }
+
+    .panel-section-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    .compact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .compact-card {
+        text-align: center;
+        cursor: pointer; /* Changes the cursor to a pointer on hover */
+        transition: transform 0.3s ease; /* Smoothly animates the lift */
+    }
+
+    /* Lifts the entire card up slightly when hovered */
+    .compact-card:hover {
+        transform: translateY(-5px); 
+    }
+
+    .compact-swatch {
+        height: 80px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smoothly animates the shadow */
+    }
+
+    /* Adds a beautiful, soft outer drop-shadow to the color block when hovered */
+    .compact-card:hover .compact-swatch {
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02), 0 10px 25px rgba(0,0,0,0.08);
+        border-color: rgba(0,0,0,0.08);
+    }
+
+    .compact-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        transition: color 0.3s ease;
+    }
+    
+    /* Slightly darkens the text on hover for a crisp finish */
+    .compact-card:hover .compact-name {
+        color: var(--accent); 
+    }
+    
+    .compact-card.muted .compact-name { color: var(--muted); }
+
+    /* .compact-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px; 
+        margin-bottom: 50px;
+    }
+
+    .compact-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 85px; 
+        transition: transform 0.3s ease;
+    }
+
+    .compact-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .compact-swatch {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%; 
+        margin-bottom: 16px;
+        background-color: var(--swatch-bg);
+        
+        border: 4px solid var(--paper); 
+        box-shadow: 0 0 0 1px var(--border), 0 8px 20px rgba(0,0,0,0.06); 
+        
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .compact-card:hover .compact-swatch {
+        box-shadow: 0 0 0 1px var(--border), 0 12px 25px rgba(0,0,0,0.1);
+    }
+
+    .compact-name {
+        font-size: 10px;
         font-weight: 700;
-        color: var(--text-dark);
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--text);
+        text-align: center;
+        line-height: 1.4;
+    }
+    
+    .compact-card.muted .compact-name { 
+        color: var(--muted); 
+    }
+    .compact-card.muted .compact-swatch {
+        opacity: 0.85; 
+    } */
+
+
+    /* --- UPDATED HAIR & JEWELRY SECTION --- */
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px; 
+        margin-bottom: 24px; /* Tighter bottom margin to prevent scrolling */
+    }
+
+    .image-card {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: var(--paper);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); 
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--cream);
+    }
+
+    .image-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    .image-card img {
+        width: 100%;
+        height: 240px; 
+        object-fit: contain; /* Keeps the full image visible */
+        object-position: bottom center; /* Anchors the image to the very bottom */
+        background-color: var(--cream); 
+        padding: 20px 20px 0 20px; /* Top: 20px, Sides: 20px, Bottom: 0px */
+        box-sizing: border-box;
+        display: block; /* Removes any default invisible spacing below HTML images */
+    }
+
+    .jewelry-card img {
+        width: auto; /* Stops the image from stretching to the edges */
+        height: 220px; /* Set a fixed height */
+        aspect-ratio: 4 / 5; /* Forces the perfect rectangle shape (flip to 5/4 for landscape) */
+        margin: 0 auto; /* Centers the image horizontally inside the cream card */
+        padding: 20px 0 0 0; /* 20px gap at the top, perfectly flush at the bottom */
+        object-fit: cover; /* Ensures the photo cleanly fills the 4:5 box */
+        background-color: transparent;
+        background-color: var(--cream); /* Lets the cream card background show on the sides */
+    }
+
+    .image-card-title {
+        padding: 16px 12px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: var(--text);
+        border-top: 1px solid var(--border);
+        background: var(--paper);
+    }
+
+    /* Occasion List layout */
+    /* --- LUXURY OCCASION CARDS --- */
+    .occasion-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
         margin-bottom: 20px;
     }
 
-    .occasion-title i {
-        color: var(--purple-main);
-        font-size: 18px;
-    }
-
-    .occasion-tabs {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 24px;
-        overflow-x: auto;
-        padding-bottom: 4px;
-    }
-
-    .occasion-tab {
+    .occ-card {
+        background: var(--cream);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 28px 24px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 22px;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
-        font-size: 13px;
-        font-weight: 600;
-        color: #4a5568;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.2s ease;
-    }
-
-    .occasion-tab.active {
-        border-color: var(--purple-main);
-        color: var(--purple-main);
-        background: #fcfaff;
-        box-shadow: 0 0 0 1px var(--purple-main);
-    }
-
-    .occasion-details-grid {
-        display: grid;
-        grid-template-columns: auto 1px auto 1px auto 1fr;
+        justify-content: space-between;
         gap: 20px;
-        align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .occasion-details-grid.is-hidden {
-        display: none !important;
+    .occ-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
     }
 
-    .occ-col {
+    .occ-info {
+        flex: 1;
+    }
+
+    .occ-card h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        margin: 0 0 16px 0;
+        color: var(--text);
+    }
+
+    /* Obvious, overlapping luxury swatches */
+    .occ-mini-palette {
+        display: flex;
+        margin-bottom: 18px;
+        padding-left: 4px; /* Room for shadow */
+    }
+
+    .occ-mini-swatch {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid var(--cream); /* Creates a cut-out overlap effect */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-left: -14px; /* The overlap amount */
+        position: relative;
+        transition: transform 0.2s ease, z-index 0.2s;
+    }
+
+    .occ-mini-swatch:first-child {
+        margin-left: 0;
+    }
+
+    .occ-mini-swatch:hover {
+        transform: translateY(-4px) scale(1.05);
+        z-index: 10;
+    }
+
+    .occ-card p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    /* Jewelry Image Styling */
+    .occ-image-wrap {
+        width: 90px;
+        flex-shrink: 0;
         display: flex;
         flex-direction: column;
+        align-items: center;
+        gap: 12px;
     }
 
-    .detail-group-title {
-        font-size: 13px;
+    .occ-image-wrap span {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--muted);
         font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 12px;
+        text-align: center;
     }
 
-    .swatch-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .swatch-circle {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        transition: transform 0.2s ease;
-    }
-
-    .swatch-circle:hover { transform: scale(1.08); }
-
-    .combo-wrapper {
-        display: flex;
-        gap: 14px;
-        align-items: center;
-    }
-
-    .combo-triplet {
-        display: flex;
-        gap: 4px;
-    }
-
-    .combo-triplet .swatch-circle {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-    }
-
-    .occ-divider {
-        background-color: #edf2f7;
-        height: 55px;
-        width: 1px;
-    }
-
-    .jewelry-preview-card {
-        width: 58px;
-        height: 58px;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #f7fafc;
-        border: 1px solid #e2e8f0;
-    }
-
-    .jewelry-preview-card img {
-        width: 100%;
-        height: 100%;
+    .occ-image-wrap img {
+        width: 85px;
+        height: 85px;
+        border-radius: 50%; /* Circular portrait for jewelry */
         object-fit: cover;
+        border: 1px solid var(--border);
+        background: var(--paper);
+        padding: 4px; /* Inner gallery ring */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
 
-    .why-works-card {
-        background: #f7f3ff;
-        border-radius: 14px;
-        padding: 16px 20px;
-        position: relative;
-        border: 1px solid #ebdfff;
+    @media (max-width: 1200px) {
+        .occasion-list { grid-template-columns: 1fr; }
     }
 
-    .why-works-card h5 {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--purple-main);
-        margin-bottom: 6px;
-    }
-
-    .why-works-card p {
+    .re-analysis-btn {
+        margin-left: auto; 
+        align-self: center;
+        margin-right: 12px; 
+        background: var(--paper);
+        border: 1px solid var(--border);
+        color: var(--accent);
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-family: inherit;
         font-size: 12px;
-        color: #64748b;
-        line-height: 1.5;
-        margin: 0;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
-    .sparkle-icon {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        color: var(--purple-main);
-        font-size: 14px;
+    .re-analysis-btn:hover {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+        transform: translateY(-2px);
     }
 
-    .occasion-footer-note {
-        margin-top: 20px;
-        font-size: 12px;
-        color: #a0aec0;
+   
+    .clear-btn {
+        align-self: center;
+        margin-right: 20px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
         display: flex;
         align-items: center;
-        gap: 6px;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
-    .occasion-footer-note i {
-        color: #f472b6;
-        font-size: 11px;
-    }
-
-    @media (max-width: 1100px) {
-        .page-container { grid-template-columns: 1fr; }
-        .occasion-details-grid {
-            grid-template-columns: 1fr 1fr;
-            row-gap: 20px;
-        }
-        .occ-divider { display: none; }
-        .color-grid-two-col { grid-template-columns: 1fr; }
-        .items-grid-three-col { grid-template-columns: 1fr; }
+    .clear-btn:hover {
+        color: #d9534f;
+        border-color: #d9534f;
+        background: #fffafa;
+        transform: translateY(-2px);
     }
 </style>
+
 {% set current_undertone = color_type if color_type else 'neutral' %}
-{% set recommended = recommended_colors if recommended_colors else [] %}
-{% set avoids = avoid_colors if avoid_colors else [] %}
-{% set neutrals = neutral_colors if neutral_colors else [] %}
-{% set hairs = hair_colors if hair_colors else [] %}
-{% set jewels = jewelry if jewelry else [] %}
+{% set recommended = recommended_colors if recommended_colors else [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex': '#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}] %}
+{% set avoids = avoid_colors if avoid_colors else [{'hex': '#e65100', 'name': 'Orange'}, {'hex': '#fbc02d', 'name': 'Mustard'}, {'hex': '#5d4037', 'name': 'Warm Brown'}, {'hex': '#33691e', 'name': 'Olive'}, {'hex': '#ff6f00', 'name': 'Amber'}, {'hex': '#bf360c', 'name': 'Rust'}] %}
+{% set neutrals = neutral_colors if neutral_colors else [{'hex': '#000000', 'name': 'Pure Black'}, {'hex': '#424242', 'name': 'Charcoal'}, {'hex': '#ffffff', 'name': 'Pure White'}] %}
+{% set hairs = hair_colors if hair_colors else [{'name': 'Ash Brown', 'image': 'ash_brown.jpg'}, {'name': 'Cool Brown', 'image': 'cool_brown.jpg'}, {'name': 'Burgundy', 'image': 'burgundy.jpg'}] %}
+{% set jewels = jewelry if jewelry else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image': 'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
 {% set occasions = occasion_recommendations if occasion_recommendations else {
-    'office': {
-        'colors': [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex': '#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}],
-        'color_combinations': [{'colors': [{'hex': '#0a192f'}, {'hex': '#90caf9'}, {'hex': '#ffffff'}]}, {'colors': [{'hex': '#b39ddb'}, {'hex': '#7e57c2'}, {'hex': '#f48fb1'}]}],
-        'jewelry': {'image': 'earrings.jpg', 'name': 'Silver Earrings'},
-        'why_it_works': 'These shades enhance your cool undertone and give a calm, professional and confident look.'
+    'office': { 
+        'colors': [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#ffffff', 'name': 'White'}], 
+        'why_it_works': 'These shades enhance your cool undertone and give a calm, professional look.',
+        'jewelry': {'image': 'jewelry/female/jewelry_gold_1.jpg'}
     },
-    'interview': {
-        'colors': [{'hex': '#1a237e', 'name': 'Dark Blue'}, {'hex': '#455a64', 'name': 'Grey'}, {'hex': '#e0f7fa', 'name': 'Cyan Light'}],
-        'color_combinations': [{'colors': [{'hex': '#1a237e'}, {'hex': '#e0f7fa'}, {'hex': '#ffffff'}]}],
-        'jewelry': {'image': 'pendant.jpg', 'name': 'Pearl Pendant'},
-        'why_it_works': 'Creates a polished and authoritative impression without overwhelming.'
+    'wedding_guest': { 
+        'colors': [{'hex': '#4a148c', 'name': 'Plum'}, {'hex': '#ce93d8', 'name': 'Lilac'}, {'hex': '#f8bbd0', 'name': 'Rose'}], 
+        'why_it_works': 'Elegant jewel tones that complement formal celebration settings.',
+        'jewelry': {'image': 'jewelry/female/jewelry_pearl_1.jpg'}
     },
-    'wedding_guest': {
-        'colors': [{'hex': '#4a148c', 'name': 'Plum'}, {'hex': '#ce93d8', 'name': 'Lilac'}, {'hex': '#f8bbd0', 'name': 'Rose'}],
-        'color_combinations': [{'colors': [{'hex': '#4a148c'}, {'hex': '#ce93d8'}, {'hex': '#f8bbd0'}]}],
-        'jewelry': {'image': 'necklace.jpg', 'name': 'Crystal Necklace'},
-        'why_it_works': 'Elegant jewel tones that complement formal celebration settings.'
-    },
-    'party': {
-        'colors': [{'hex': '#004d40', 'name': 'Teal'}, {'hex': '#7b1fa2', 'name': 'Purple'}, {'hex': '#e1bee7', 'name': 'Light Purple'}],
-        'color_combinations': [{'colors': [{'hex': '#004d40'}, {'hex': '#7b1fa2'}, {'hex': '#ffffff'}]}],
-        'jewelry': {'image': 'dangle.jpg', 'name': 'Silver Dangles'},
-        'why_it_works': 'Vibrant cool shades that catch light gracefully in evening environments.'
-    },
-    'casual_day': {
-        'colors': [{'hex': '#37474f', 'name': 'Charcoal'}, {'hex': '#81d4fa', 'name': 'Sky Blue'}, {'hex': '#f5f5f5', 'name': 'Off White'}],
-        'color_combinations': [{'colors': [{'hex': '#37474f'}, {'hex': '#81d4fa'}, {'hex': '#f5f5f5'}]}],
-        'jewelry': {'image': 'studs.jpg', 'name': 'Simple Studs'},
-        'why_it_works': 'Relaxed yet cohesive combinations ideal for effortless daily wear.'
+    'casual_day': { 
+        'colors': [{'hex': '#37474f', 'name': 'Charcoal'}, {'hex': '#81d4fa', 'name': 'Sky Blue'}, {'hex': '#f5f5f5', 'name': 'Off White'}], 
+        'why_it_works': 'Relaxed yet cohesive combinations ideal for effortless daily wear.',
+        'jewelry': {'image': 'jewelry/female/jewelry_white_gold_1.jpg'}
     }
 } %}
 
-<div class="color-analysis-scope">
-    <div class="page-container">
-        <!-- Sidebar -->
-        <aside class="sidebar-panel">
-            <div class="sidebar-title">Your Analysis</div>
-            <div class="user-photo-container">
-                <img id="user-portrait" src="{{ image_url if image_url else (user_img if user_img else url_for('static', filename='uploads/default_user.jpg')) }}" alt="Analyzed Portrait">
+<div class="lookbook-wrapper">
+
+    <!-- LEFT PANE -->
+    <aside class="lookbook-sidebar">
+        <div class="hero-image">
+            {% set default_img = url_for('static', filename='images/slider_1.jpg') %}
+            <img id="user-portrait" src="{{ image_url if image_url and image_url != '#' else default_img }}" alt="Portrait" onerror="this.src='{{ default_img }}'">
+        </div>
+        
+        <!-- Conditional "For Sample" badge if no active analysis image was uploaded -->
+        {% if not image_url or image_url == '#' or 'default_user.jpg' in image_url %}
+        <span class="section-badge" style="color: #b8860b; background: #fdf5e6; padding: 2px 8px; border-radius: 4px; display: inline-block; width: fit-content; margin-bottom: 6px;">For Sample</span>
+        {% endif %}
+
+        <span class="section-badge">AI Color Analysis</span>
+        <h1 class="analysis-title">Your Color Story</h1>
+        
+        <div class="undertone-box">
+            <h4>Undertone Result</h4>
+            <div class="result">{{ current_undertone }}</div>
+            <div class="confidence">
+                <span>Confidence Score</span>
+                <span>{{ confidence_score if confidence_score else '92%' }}</span>
             </div>
+        </div>
 
-            <div class="undertone-box">
-                <div class="undertone-label">Undertone Result</div>
-                <div class="undertone-value" id="undertone-val">{{ current_undertone }}</div>
+        <div class="analysis-desc">
+            {% if description %}
+                {{ description }}
+            {% else %}
+                Cool undertones feature subtle blue, pink, or red undertones beneath the skin. Cool blues, purples, and crisp berry shades complement your complexion beautifully. Let these curated palettes guide your wardrobe and beauty choices.
+            {% endif %}
+        </div>
 
-                <div class="confidence-heading">Confidence</div>
+        <!-- Dynamic Button: Start Analysis for samples, Download PDF for real results -->
+        {% if not image_url or image_url == '#' or 'default_user.jpg' in image_url %}
+            <a href="{{ url_for('recommendation') }}" class="btn-primary" style="display: block; text-align: center; text-decoration: none; box-sizing: border-box;">
+                Start Your Analyse
+            </a>
+        {% else %}
+            <button class="btn-primary" id="download-report-btn">
+                Download Result(PDF)
+            </button>
+        {% endif %}
+    </aside>
+    </aside>
 
-                <div class="confidence-donut">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="45"></circle>
-                        <circle class="progress-circle" id="confidence-circle" cx="50" cy="50" r="45"></circle>
-                    </svg>
-                    <div class="confidence-number" id="confidence-num">{{ confidence_score if confidence_score else '50%' }}</div>
-                </div>
-            </div>
+    <!-- RIGHT PANE -->
+    <main class="lookbook-content">
+        
+        <!-- <nav class="lookbook-nav">
+            <button class="nav-tab active" data-target="tab-colors">Color Palette</button>
+            <button class="nav-tab" data-target="tab-beauty">Hair & Jewelry</button>
+            <button class="nav-tab" data-target="tab-occasions">Occasion Guide</button>
+            <a href="{{ url_for('camera') }}" class="re-analysis-btn">Re-Analysis</a>
+        </nav> -->
+        <nav class="lookbook-nav">
+            <button class="nav-tab active" data-target="tab-colors">Color Palette</button>
+            <button class="nav-tab" data-target="tab-beauty">Hair & Jewelry</button>
+            <button class="nav-tab" data-target="tab-occasions">Occasion Guide</button>
+            
+            <a href="{{ url_for('camera') }}" class="re-analysis-btn">Re-Analysis</a>
+            
+            <!-- Conditional Clear Button: Only shows if it's a real analysis -->
+            <!-- Conditional Clear Button: Only shows if it's a real analysis -->
+            {% if image_url and image_url != '#' and 'default_user.jpg' not in image_url %}
+            <button id="clear-analysis-btn" class="clear-btn" title="Clear and return to sample">
+                <!-- Replace 'clear.png' with your actual icon file name -->
+                <img src="{{ url_for('static', filename='assets/icon/brush.png') }}" alt="Clear" style="width: 20px; height: 20px; object-fit: contain;">
+            </button>
+            {% endif %}
+        </nav>
 
-            <div class="meaning-card">
-                <div class="meaning-card-header">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span>What does it mean?</span>
-                </div>
-                <p id="undertone-desc">
-                    {% if description %}
-                        {{ description }}
-                    {% else %}
-                        Cool undertones feature subtle blue, pink, or red undertones beneath the skin. Cool blues, purples, and crisp berry shades complement your complexion.
-                    {% endif %}
-                </p>
-            </div>
-        </aside>
-
-        <!-- Main Content Panel -->
-        <main class="content-panel">
-            <div class="overview-tabs">
-                <button class="tab-btn active" data-nav="overview">Overview</button>
-                <button class="tab-btn" data-nav="best-colors">Best Colors</button>
-                <button class="tab-btn" data-nav="neutrals">Neutral Colors</button>
-                <button class="tab-btn" data-nav="hair">Hair Colors</button>
-                <button class="tab-btn" data-nav="jewelry">Jewelry</button>
-                <button class="tab-btn" data-nav="occasions">Occasion Looks</button>
-            </div>
-
-            <div class="summary-pill-bar">
-                <div class="pill-item">
-                    <div class="pill-icon"><i class="fa-solid fa-palette"></i></div>
-                    <div class="pill-info">
-                        <span class="pill-number" id="cnt-best-colors">{{ recommended | length if recommended else 6 }}</span>
-                        <span class="pill-label">Best Colors</span>
+        <div class="panels-container">
+            
+            <!-- TAB 1: COLORS -->
+            <div class="tab-panel active" id="tab-colors">
+                <h2 class="panel-section-title">Best Colors</h2>
+                <div class="compact-grid">
+                    {% for color in recommended %}
+                    {% set hex_code = color.hex if color is mapping else color %}
+                    {% set clr_name = color.name if color is mapping else color %}
+                    <div class="compact-card">
+                        <div class="compact-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                        <div class="compact-name">{{ clr_name }}</div>
                     </div>
-                </div>
-                <div class="pill-divider"></div>
-                <div class="pill-item">
-                    <div class="pill-icon"><i class="fa-solid fa-droplet"></i></div>
-                    <div class="pill-info">
-                        <span class="pill-number" id="cnt-neutrals">{{ neutrals | length if neutrals else 3 }}</span>
-                        <span class="pill-label">Neutral Shades</span>
-                    </div>
-                </div>
-                <div class="pill-divider"></div>
-                <div class="pill-item">
-                    <div class="pill-icon"><i class="fa-solid fa-user"></i></div>
-                    <div class="pill-info">
-                        <span class="pill-number" id="cnt-hair-colors">{{ hairs | length if hairs else 3 }}</span>
-                        <span class="pill-label">Hair Colors</span>
-                    </div>
-                </div>
-                <div class="pill-divider"></div>
-                <div class="pill-item">
-                    <div class="pill-icon"><i class="fa-solid fa-gem"></i></div>
-                    <div class="pill-info">
-                        <span class="pill-number" id="cnt-jewelry">{{ jewels | length if jewels else 3 }}</span>
-                        <span class="pill-label">Jewelry Options</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="color-grid-two-col" id="section-best-colors">
-                <!-- Best Colors -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-palette"></i> Best Colors For You</div>
-                    </div>
-                    <div class="swatch-row" id="best-colors-container">
-                        {% set best_list = recommended if recommended else [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex': '#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}] %}
-                        {% for color in best_list %}
-                            {% set hex_code = color.hex if color is mapping else color %}
-                            {% set color_title = color.name if color is mapping else color %}
-                            <div class="swatch" style="--bg: {{ hex_code }}; background-color: var(--bg);" title="{{ color_title }}"></div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Avoid Colors -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-ban"></i> Colors To Avoid</div>
-                    </div>
-                    <div class="swatch-row" id="avoid-colors-container">
-                        {% set avoid_list = avoids if avoids else [{'hex': '#e65100', 'name': 'Orange'}, {'hex': '#fbc02d', 'name': 'Mustard'}, {'hex': '#5d4037', 'name': 'Warm Brown'}, {'hex': '#33691e', 'name': 'Olive'}, {'hex': '#ff6f00', 'name': 'Amber'}, {'hex': '#bf360c', 'name': 'Rust'}] %}
-                        {% for color in avoid_list %}
-                            {% set hex_code = color.hex if color is mapping else color %}
-                            {% set color_title = color.name if color is mapping else color %}
-                            <div class="swatch" style="--bg: {{ hex_code }}; background-color: var(--bg);" title="{{ color_title }}"></div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="items-grid-three-col" id="section-neutrals">
-                <!-- Neutral Colors -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-droplet"></i> Neutral Colors</div>
-                    </div>
-                    <!-- <div class="category-pills">
-                        <button class="cat-pill active">Base</button>
-                        <button class="cat-pill">Accent</button>
-                    </div> -->
-                    <div class="neutral-tile-grid" id="neutral-colors-container">
-                        {% set neutral_list = neutrals if neutrals else [{'hex': '#000000', 'name': 'Pure Black'}, {'hex': '#424242', 'name': 'Charcoal'}, {'hex': '#ffffff', 'name': 'Pure White'}] %}
-                        {% for item in neutral_list %}
-                            {% set hex_code = item.hex if item is mapping else item %}
-                            {% set item_name = item.name if item is mapping else item %}
-                            <div class="neutral-tile">
-                                <div class="neutral-color-box" style="--tile-bg: {{ hex_code }}; background: var(--tile-bg);"></div>
-                                <span style="font-size: 11px; font-weight: 600;">{{ item_name }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Hair Colors -->
-                <div class="section-card" id="section-hair">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-user"></i> Hair Colors</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;" id="hair-colors-container">
-                        {% set hair_list = hairs if hairs else [{'name': 'Ash Brown', 'image': 'ash_brown.jpg'}, {'name': 'Cool Brown', 'image': 'cool_brown.jpg'}, {'name': 'Burgundy', 'image': 'burgundy.jpg'}] %}
-                        {% for hair in hair_list %}
-                            <div class="sub-item-card">
-                                <div class="sub-item-image">
-                                    <img src="{{ url_for('static', filename=hair.image) if hair.image else '#' }}" alt="{{ hair.name }}" onerror="this.style.background='#dcd6f7'">
-                                </div>
-                                <span class="sub-item-name">{{ hair.name }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Jewelry -->
-                <div class="section-card" id="section-jewelry">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-gem"></i> Jewelry</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;" id="jewelry-container">
-                        {% set jewel_list = jewels if jewels else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image': 'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
-                        {% for item in jewel_list %}
-                            <div class="sub-item-card">
-                                <div class="sub-item-image">
-                                    <img src="{{ url_for('static', filename=item.image) if item.image else '#' }}" alt="{{ item.name }}" onerror="this.style.background='#e2d7f8'">
-                                </div>
-                                <span class="sub-item-name">{{ item.name }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Occasion Based Recommendations Section -->
-            <div class="occasion-section" id="section-occasions">
-                <div class="occasion-title">
-                    <i class="fa-solid fa-shirt"></i>
-                    <span>Occasion Based Recommendations</span>
-                </div>
-
-                <!-- Navigation Tabs -->
-                <div class="occasion-tabs" id="occasion-tabs-container">
-                    {% for occ_key, occ_data in occasions.items() %}
-                        <button class="occasion-tab {% if loop.first %}active{% endif %}" data-target="occ-{{ occ_key }}">
-                            <i class="fa-solid {% if occ_key == 'office' %}fa-briefcase{% elif occ_key == 'interview' %}fa-user-tie{% elif occ_key == 'wedding' or occ_key == 'wedding_guest' %}fa-gift{% elif occ_key == 'party' %}fa-glass-martini-alt{% else %}fa-shirt{% endif %}"></i>
-                            <span>{{ occ_key | replace('_', ' ') | title }}</span>
-                        </button>
                     {% endfor %}
                 </div>
 
-                <!-- Tab Contents -->
-                {% for occ_key, occ_data in occasions.items() %}
-                    <div class="occasion-details-grid occ-content {% if not loop.first %}is-hidden{% endif %}" id="occ-{{ occ_key }}">
+                <h2 class="panel-section-title">Neutral Essentials</h2>
+                <div class="compact-grid">
+                    {% for item in neutrals %}
+                    {% set hex_code = item.hex if item is mapping else item %}
+                    {% set clr_name = item.name if item is mapping else item %}
+                    <div class="compact-card">
+                        <div class="compact-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                        <div class="compact-name">{{ clr_name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <h2 class="panel-section-title">Avoid</h2>
+                <div class="compact-grid">
+                    {% for color in avoids %}
+                    {% set hex_code = color.hex if color is mapping else color %}
+                    {% set clr_name = color.name if color is mapping else color %}
+                    <div class="compact-card muted">
+                        <div class="compact-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                        <div class="compact-name">{{ clr_name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- TAB 2: BEAUTY (Hair & Jewelry) -->
+            <div class="tab-panel" id="tab-beauty">
+                <h2 class="panel-section-title">Hair Colors</h2>
+                <div class="image-grid">
+                    {% for hair in hairs %}
+                    <div class="image-card">
+                        <img src="{{ url_for('static', filename=hair.image) if hair.image else '#' }}" alt="{{ hair.name }}" onerror="this.style.background='var(--border)'">
+                        <div class="image-card-title">{{ hair.name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <h2 class="panel-section-title">Jewelry Metals</h2>
+                <div class="image-grid">
+                    {% for item in jewels %}
+                    <div class="image-card jewelry-card">
+                        <img src="{{ url_for('static', filename=item.image) if item.image else '#' }}" alt="{{ item.name }}" onerror="this.style.background='var(--border)'">
+                        <div class="image-card-title">{{ item.name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- TAB 3: OCCASIONS -->
+            <!-- TAB 3: OCCASIONS -->
+            <div class="tab-panel" id="tab-occasions">
+                <h2 class="panel-section-title">Curated Looks</h2>
+                <div class="occasion-list">
+                    {% for occ_key, occ_data in occasions.items() %}
+                    <div class="occ-card">
                         
-                        <!-- Clothing Colors -->
-                        <div class="occ-col">
-                            <div class="detail-group-title">Clothing Colors</div>
-                            <div class="swatch-group">
+                        <!-- Left Side: Info & Colors -->
+                        <div class="occ-info">
+                            <h3>{{ occ_key|replace('_',' ')|title }}</h3>
+                            <div class="occ-mini-palette">
                                 {% for clr in occ_data.colors %}
-                                    {% set hex_code = clr.hex if clr is mapping else clr %}
-                                    {% set clr_name = clr.name if clr is mapping else clr %}
-                                    <div class="swatch-circle" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                                {% set hex_code = clr.hex if clr is mapping else clr %}
+                                {% set clr_name = clr.name if clr is mapping else clr %}
+                                <span class="occ-mini-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></span>
                                 {% endfor %}
                             </div>
+                            <p>{{ occ_data.why_it_works if occ_data.why_it_works else "These curated tones provide an elegant match for this setting." }}</p>
                         </div>
-
-                        <!-- Vertical Divider -->
-                        <div class="occ-divider"></div>
-
-                        <!-- Color Combinations -->
-                        <div class="occ-col">
-                            <div class="detail-group-title">Color Combination</div>
-                            <div class="combo-wrapper">
-                                {% for combo in occ_data.color_combinations %}
-                                    <div class="combo-triplet">
-                                        {% for c_clr in combo.colors %}
-                                            {% set combo_hex = c_clr.hex if c_clr is mapping else c_clr %}
-                                            {% set combo_name = c_clr.name if c_clr is mapping else c_clr %}
-                                            <div class="swatch-circle" style="--swatch-bg: {{ combo_hex }}; background-color: var(--swatch-bg);" title="{{ combo_name }}"></div>
-                                        {% endfor %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Vertical Divider -->
-                        <div class="occ-divider"></div>
-
-                        <!-- Jewelry -->
-                        <div class="occ-col occ-jewelry-col">
-    <div class="detail-group-title">Jewelry</div>
-    {% if jewelry %}
-        <div class="jewelry-preview-card">
-            <img src="{{ url_for('static', filename=jewelry[0].image) if jewelry[0].image else '#' }}" alt="{{ jewelry[0].name }}" onerror="this.style.background='#ebdfff'">
-        </div>
-    {% endif %}
-</div>
-
-                        <!-- Why It Works Box -->
-                        <div class="why-works-card">
-                            <i class="fa-solid fa-sparkles sparkle-icon"></i>
-                            <h5>Why it works?</h5>
-                            <p>{{ occ_data.why_it_works if occ_data.why_it_works else "These shades enhance your undertone and give a calm, professional and confident look." }}</p>
+                        
+                        <!-- Right Side: Jewelry Match -->
+                        <!-- Right Side: Jewelry Match -->
+                        <div class="occ-image-wrap">
+                            <span>Jewelry</span>
+                            
+                            <!-- Smart extraction: Checks for both flat fallback and nested JSON structures -->
+                            {% set j_img = '' %}
+                            {% set fallback_jewelry_img = url_for('static', filename='assets/jewelry/female/jewelry_gold_1.jpg') %}
+                            {% if occ_data.jewelry %}
+                                {% if occ_data.jewelry.image %}
+                                    {% set j_img = occ_data.jewelry.image %}
+                                {% elif occ_data.jewelry.images %}
+                                    {% set j_img = occ_data.jewelry.images.female %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <img src="{{ url_for('static', filename=j_img) if j_img else '#' }}" alt="Jewelry Match" onerror="this.onerror=null; this.src='{{ fallback_jewelry_img }}';">
                         </div>
 
                     </div>
-                {% endfor %}
-
-                <!-- Footer Disclaimer -->
-                <div class="occasion-footer-note">
-                    <i class="fa-solid fa-heart"></i> Recommendations are AI-generated based on your undertone and facial analysis.
+                    {% endfor %}
                 </div>
             </div>
-        </main>
-    </div>
+
+        </div>
+    </main>
+
 </div>
 
+<!-- Tab Switching Script & Camera Logic -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Check if the backend passed a fresh uploaded photo URL (server-side template variable)
-        // Replace '{{ image_url if image_url else (user_img if user_img else "") }}' with your actual server variable or check if backend is rendering an upload.
-        const serverImageUrl = "{{ image_url if image_url else (user_img if user_img else '') }}";
-        
-        // If the server explicitly provided an image (meaning it was an upload, not a live camera redirect), clear any old session storage capture
-        if (serverImageUrl && serverImageUrl !== '#' && !serverImageUrl.includes('default_user.jpg')) {
-            sessionStorage.removeItem('styleme_captured_image');
-        }
+        // --- 1. TAB LOGIC ---
+        const tabs = document.querySelectorAll('.nav-tab');
+        const panels = document.querySelectorAll('.tab-panel');
 
-        // 2. Load captured live camera image from session storage if available
-        const capturedImg = sessionStorage.getItem('styleme_captured_image');
-        if (capturedImg) {
-            const portraitImg = document.getElementById('user-portrait');
-            if (portraitImg) {
-                portraitImg.src = capturedImg;
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+
+                tab.classList.add('active');
+                const targetId = tab.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // --- 2. PERSIST ANALYSIS STATE UNTIL PAGE REFRESH ---
+        // --- 2. PERSIST ANALYSIS STATE & IMAGE LOGIC ---
+        const serverImg = "{{ image_url if image_url else '' }}";
+        const currentUndertone = "{{ color_type if color_type else 'neutral' }}".toLowerCase();
+        const portraitImg = document.getElementById('user-portrait');
+
+        // SCENARIO A: File Upload (Backend provided a real image path)
+        if (serverImg && serverImg !== '#' && !serverImg.includes('default_user.jpg')) {
+            // 1. Wipe the lingering camera image so it doesn't override the file upload
+            sessionStorage.removeItem('styleme_captured_image');
+            
+            // 2. Save the state so navigating away and back works
+            const stateQuery = `?undertone=${currentUndertone}&user_img=${encodeURIComponent(serverImg)}`;
+            sessionStorage.setItem("styleme_analysis_state", stateQuery);
+        } 
+        // SCENARIO B: Camera Analysis or Page Reload
+        else {
+            const capturedImg = sessionStorage.getItem('styleme_captured_image');
+            
+            // If there is a camera image saved, force it onto the portrait and save the state
+            if (capturedImg) {
+                if (portraitImg) portraitImg.src = capturedImg;
+                
+                const stateQuery = `?undertone=${currentUndertone}`;
+                sessionStorage.setItem("styleme_analysis_state", stateQuery);
+            } 
+            // SCENARIO C: Default Sample View
+            else {
+                const savedState = sessionStorage.getItem("styleme_analysis_state");
+                if (savedState && !window.location.search && performance.navigation.type !== 1) {
+                    window.location.href = "/color-analysis" + savedState;
+                    return;
+                }
             }
         }
 
-        // 3. Occasion Tab Switching Logic
-        const occTabs = document.querySelectorAll('.occasion-tab');
-        const occContents = document.querySelectorAll('.occ-content');
+        // --- 3. IMAGE LOADING LOGIC ---
+        // Restore the camera image from session storage if the user took a live photo
+      
 
-        occTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                occTabs.forEach(t => t.classList.remove('active'));
-                occContents.forEach(c => c.classList.add('is-hidden'));
+        // const reAnalysisBtn = document.querySelector(".re-analysis-btn");
+        // if (reAnalysisBtn) {
+        //     reAnalysisBtn.addEventListener("click", () => {
+        //         sessionStorage.removeItem("styleme_analysis_state");
+        //         sessionStorage.removeItem("styleme_captured_image");
+        //     });
+        // }
 
-                this.classList.add('active');
-                const targetId = this.getAttribute('data-target');
-                const targetEl = document.getElementById(targetId);
-                if (targetEl) {
-                    targetEl.classList.remove('is-hidden');
-                }
+        const reAnalysisBtn = document.querySelector(".re-analysis-btn");
+        if (reAnalysisBtn) {
+            reAnalysisBtn.addEventListener("click", () => {
+                sessionStorage.removeItem("styleme_analysis_state");
+                sessionStorage.removeItem("styleme_captured_image");
             });
-        });
+        }
 
-        // 4. Top Navigation Tabs Scroll Handler
-        const navTabs = document.querySelectorAll('.overview-tabs .tab-btn');
-        navTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                navTabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-
-                const navTarget = this.getAttribute('data-nav');
-                if (navTarget === 'best-colors') {
-                    document.getElementById('section-best-colors')?.scrollIntoView({ behavior: 'smooth' });
-                } else if (navTarget === 'neutrals') {
-                    document.getElementById('section-neutrals')?.scrollIntoView({ behavior: 'smooth' });
-                } else if (navTarget === 'hair') {
-                    document.getElementById('section-hair')?.scrollIntoView({ behavior: 'smooth' });
-                } else if (navTarget === 'jewelry') {
-                    document.getElementById('section-jewelry')?.scrollIntoView({ behavior: 'smooth' });
-                } else if (navTarget === 'occasions') {
-                    document.getElementById('section-occasions')?.scrollIntoView({ behavior: 'smooth' });
-                }
+        const clearBtn = document.getElementById("clear-analysis-btn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+                sessionStorage.removeItem("styleme_analysis_state");
+                sessionStorage.removeItem("styleme_captured_image");
+                window.location.href = "{{ url_for('color_analysis') }}"; 
             });
+        }
+
+        // --- 2. LUXURY PDF GENERATOR LOGIC ---
+        const btn = document.getElementById("download-report-btn");
+        if (!btn) return;
+
+        // Helper: Converts HTML images to Base64 and crops them to fit (object-fit: cover)
+        function getBase64Image(imgEl, targetW = null, targetH = null) {
+            try {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                
+                const sourceW = imgEl.naturalWidth || imgEl.width || 300;
+                const sourceH = imgEl.naturalHeight || imgEl.height || 300;
+                
+                if (targetW && targetH) {
+                    canvas.width = targetW * 15; 
+                    canvas.height = targetH * 15;
+                    
+                    const targetRatio = targetW / targetH;
+                    const sourceRatio = sourceW / sourceH;
+                    
+                    let sW = sourceW, sH = sourceH, sX = 0, sY = 0;
+                    
+                    if (sourceRatio > targetRatio) {
+                        sW = sourceH * targetRatio;
+                        sX = (sourceW - sW) / 2; 
+                    } else {
+                        sH = sourceW / targetRatio;
+                        sY = sourceH - sH; 
+                    }
+                    
+                    ctx.fillStyle = "#f8f4ee";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(imgEl, sX, sY, sW, sH, 0, 0, canvas.width, canvas.height);
+                } else {
+                    canvas.width = sourceW;
+                    canvas.height = sourceH;
+                    ctx.fillStyle = "#f8f4ee";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+                }
+                
+                return canvas.toDataURL("image/jpeg", 0.9);
+            } catch (e) {
+                console.warn("Could not load image for PDF", e);
+                return null;
+            }
+        }
+
+        btn.addEventListener("click", async () => {
+            const originalText = btn.innerText;
+            btn.innerText = "GENERATING PDF...";
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.7";
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+                
+                // Brand Colors
+                const cream = [248, 244, 238];
+                const textCol = [29, 29, 29];
+                const accentCol = [123, 91, 92];
+                const mutedCol = [119, 119, 119];
+                
+                // Background
+                pdf.setFillColor(...cream);
+                pdf.rect(0, 0, 210, 297, "F");
+
+                // ==========================================
+                // Y-AXIS OFFSET (VERTICAL CENTERING)
+                // ==========================================
+                const offsetY = 10; // Pushes the entire layout down to center it vertically on A4
+
+                // ==========================================
+                // TOP SECTION
+                // ==========================================
+                // Center point for left column is X = 50
+                const portrait = document.getElementById("user-portrait");
+                if (portrait) {
+                    const b64 = getBase64Image(portrait, 45, 45);
+                    // Added offsetY to the Y coordinate
+                    if (b64) pdf.addImage(b64, "JPEG", 27.5, 15 + offsetY, 45, 45); 
+                }
+
+                const undertone = document.querySelector(".undertone-box .result")?.textContent.trim() || "UNKNOWN";
+                pdf.setFont("times", "normal");
+                pdf.setFontSize(22);
+                pdf.setTextColor(...accentCol);
+                pdf.text(undertone.toUpperCase(), 50, 70 + offsetY, { align: "center" });
+
+                const desc = document.querySelector(".analysis-desc")?.textContent.trim() || "";
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(8);
+                pdf.setTextColor(...mutedCol);
+                const splitDesc = pdf.splitTextToSize(desc, 70); 
+                pdf.text(splitDesc, 15, 78 + offsetY);
+
+                // -- Right Side: Palettes --
+                const rightX = 90; 
+                
+                pdf.setFont("times", "italic");
+                pdf.setFontSize(24);
+                pdf.setTextColor(...textCol);
+                pdf.text("Your Color Story", rightX, 22 + offsetY);
+
+                const drawRowPalette = (selector, title, startY, limit) => {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(11);
+                    pdf.setTextColor(...textCol);
+                    pdf.text(title, rightX, startY);
+                    
+                    let currX = rightX;
+                    document.querySelectorAll(`${selector} .compact-card`).forEach((card, i) => {
+                        if (i >= limit) return; 
+                        const bg = window.getComputedStyle(card.querySelector(".compact-swatch")).backgroundColor;
+                        const rgb = bg.match(/\d+/g);
+                        
+                        if (rgb) {
+                            pdf.setFillColor(Number(rgb[0]), Number(rgb[1]), Number(rgb[2]));
+                            pdf.setDrawColor(200, 200, 200);
+                            pdf.circle(currX + 6, startY + 8, 6, "FD");
+                        }
+                        currX += 16; 
+                    });
+                };
+
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 35 + offsetY, 6);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 55 + offsetY, 4);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 75 + offsetY, 6);
+
+                // ==========================================
+                // DIVIDER & MIDDLE SECTION
+                // ==========================================
+                const dividerY = 105 + offsetY; // This automatically pushes the Hair/Jewelry and Occasions down!
+                
+                pdf.setDrawColor(...accentCol);
+                pdf.setLineWidth(0.5);
+                pdf.line(15, dividerY, 195, dividerY);
+
+                const middleTitleY = dividerY + 10; 
+                const middleImageY = middleTitleY + 5; 
+
+                const drawMiddleGallery = (selector, title, startX) => {
+                    pdf.setFont("times", "normal");
+                    pdf.setFontSize(14);
+                    pdf.setTextColor(...textCol);
+                    pdf.text(title, startX, middleTitleY);
+                    
+                    let currX = startX;
+                    document.querySelectorAll(`${selector} .image-card`).forEach((card, i) => {
+                        if (i > 2) return; 
+                        const img = card.querySelector("img");
+                        
+                        if (img && img.complete && img.naturalWidth !== 0) {
+                            const b64 = getBase64Image(img, 24, 34); 
+                            if (b64) pdf.addImage(b64, "JPEG", currX, middleImageY, 24, 34); 
+                            pdf.setDrawColor(150, 150, 150);
+                            pdf.rect(currX, middleImageY, 24, 34, "S"); 
+                        }
+                        currX += 28;
+                    });
+                };
+
+                drawMiddleGallery("#tab-beauty .image-grid:nth-of-type(1)", "Hair Color", 15);
+                // pdf.line(105, dividerY, 105, dividerY + 60);
+                drawMiddleGallery("#tab-beauty .image-grid:nth-of-type(2)", "Jewelry", 110);
+
+                const bottomDividerY = dividerY + 60; 
+                pdf.line(15, bottomDividerY, 195, bottomDividerY);
+
+                // ==========================================
+                // BOTTOM SECTION: Curated Looks (4 Cards)
+                // ==========================================
+                pdf.setFont("times", "normal");
+                pdf.setFontSize(16);
+                pdf.setTextColor(...textCol);
+                pdf.text("Curated Looks", 15, bottomDividerY + 10);
+
+                let occX = 15;
+                let occY = bottomDividerY + 15;
+
+                document.querySelectorAll("#tab-occasions .occ-card").forEach((card, i) => {
+                    if (i > 3) return; // Render up to 4 occasions
+                    
+                    if (i === 1) { occX = 110; occY = bottomDividerY + 15; } 
+                    if (i === 2) { occX = 15;  occY = bottomDividerY + 58; } 
+                    if (i === 3) { occX = 110; occY = bottomDividerY + 58; }
+
+                    pdf.setDrawColor(150, 150, 150);
+                    pdf.roundedRect(occX, occY, 85, 40, 4, 4, "S");
+
+                    const title = card.querySelector("h3")?.textContent.trim() || "";
+                    pdf.setFont("times", "bold");
+                    pdf.setFontSize(11);
+                    pdf.setTextColor(...textCol);
+                    pdf.text(title, occX + 5, occY + 7);
+
+                    let swatchX = occX + 7;
+                    card.querySelectorAll(".occ-mini-swatch").forEach((swatch, j) => {
+                        if (j > 4) return;
+                        const bg = window.getComputedStyle(swatch).backgroundColor;
+                        const rgb = bg.match(/\d+/g);
+                        if (rgb) {
+                            pdf.setFillColor(Number(rgb[0]), Number(rgb[1]), Number(rgb[2]));
+                            pdf.setDrawColor(...cream);
+                            pdf.circle(swatchX, occY + 15, 3.5, "FD"); 
+                        }
+                        swatchX += 5; 
+                    });
+
+                    const text = card.querySelector("p")?.textContent.trim() || "";
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(6.5);
+                    pdf.setTextColor(...mutedCol);
+                    const splitOccDesc = pdf.splitTextToSize(text, 55);
+                    pdf.text(splitOccDesc.slice(0, 3), occX + 5, occY + 24);
+
+                    const imgWrap = card.querySelector(".occ-image-wrap img");
+                    const imgBoxX = occX + 63;
+                    const imgBoxY = occY + 5;
+                    const imgSize = 18;
+
+                    if (imgWrap && imgWrap.complete && imgWrap.naturalWidth !== 0) {
+                        const b64 = getBase64Image(imgWrap, imgSize, imgSize);
+                        if (b64) {
+                            pdf.addImage(b64, "JPEG", imgBoxX, imgBoxY, imgSize, imgSize);
+                        }
+                    } else {
+                        pdf.setFillColor(240, 240, 240);
+                        pdf.rect(imgBoxX, imgBoxY, imgSize, imgSize, "F");
+                        pdf.setFontSize(5);
+                        pdf.text("Image", imgBoxX + 4, imgBoxY + 10);
+                    }
+
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.roundedRect(imgBoxX, imgBoxY, imgSize, imgSize, 2, 2, "S");
+                });
+
+                pdf.save("StyleMe-Lookbook.pdf");
+
+            } catch (error) {
+                console.error("PDF Generation Error:", error);
+                alert("Error generating PDF. Please check the console.");
+            } finally {
+                btn.innerText = originalText;
+                btn.style.pointerEvents = "auto";
+                btn.style.opacity = "1";
+            }
         });
     });
 </script>
-<!-- PDF export: include required libs and page-specific script (no integrity to avoid browser blocking) -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="{{ url_for('static', filename='js/export_pdf.js') }}"></script>

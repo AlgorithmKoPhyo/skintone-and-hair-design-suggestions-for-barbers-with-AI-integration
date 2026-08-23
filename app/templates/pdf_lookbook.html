@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StyleMe - Color Lookbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #7b5b5c;
+            --cream: #f8f4ee;
+            --paper: #ffffff;
+            --text: #1d1d1d;
+            --muted: #777;
+            --border: #ece4dc;
+        }
+
+        /* Enforce absolute A4 sizing and remove browser margins */
+        @page { size: A4 portrait; margin: 0; }
+        
+        body {
+            margin: 0;
+            padding: 10mm; /* Outer border */
+            background-color: var(--cream);
+            font-family: 'Inter', sans-serif;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            
+            /* Lock the body to exactly one A4 page */
+            width: 210mm;
+            height: 297mm;
+            box-sizing: border-box;
+            
+            display: flex;
+            gap: 6mm;
+        }
+
+        /* --- LEFT PANE (COVER & RESULTS) --- */
+        .sidebar {
+            width: 65mm;
+            background: var(--paper);
+            border-radius: 16px;
+            padding: 6mm;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .portrait { 
+            width: 100%; 
+            height: 70mm; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            margin-bottom: 6mm; 
+        }
+
+        .badge { 
+            font-size: 8px; 
+            color: var(--accent); 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 700; 
+        }
+
+        .title { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 24px; 
+            margin: 2mm 0 6mm 0; 
+            color: var(--text); 
+            line-height: 1.1;
+        }
+
+        .result-box { 
+            background: var(--cream); 
+            border-radius: 12px; 
+            padding: 6mm; 
+            text-align: center; 
+            border: 1px solid var(--border); 
+        }
+
+        .result-box h4 { margin: 0 0 3mm 0; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .result-box p { margin: 0; font-family: 'Playfair Display', serif; font-size: 24px; color: var(--accent); }
+
+        /* --- RIGHT PANE (CONTENT) --- */
+        .main-content {
+            flex: 1;
+            background: var(--paper);
+            border-radius: 16px;
+            padding: 8mm;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6mm;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .section-title { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 16px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 2mm; 
+            margin: 0 0 5mm 0; 
+            color: var(--text); 
+        }
+        
+        /* Swatches */
+        .swatch-row { display: flex; flex-wrap: wrap; gap: 4mm; }
+        .swatch-item { text-align: center; width: 17mm; }
+        .swatch-circle { 
+            width: 15mm; 
+            height: 15mm; 
+            border-radius: 50%; 
+            border: 2px solid var(--paper); 
+            box-shadow: 0 0 0 1px var(--border); 
+            margin: 0 auto 2mm auto; 
+        }
+        .swatch-name { font-size: 7px; font-weight: 700; text-transform: uppercase; color: var(--text); }
+        
+        /* Galleries (Hair & Jewelry) */
+        .gallery-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+        .gallery-card { 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            background: var(--cream); 
+            text-align: center; 
+            overflow: hidden; 
+        }
+        
+        .gallery-card img { width: 100%; height: 32mm; object-fit: cover; }
+        .jewelry-card img { width: 22mm; height: 22mm; border-radius: 50%; margin: 5mm auto; border: 1px solid var(--border); }
+        .gallery-card p { margin: 0; padding: 2.5mm; font-size: 8px; font-weight: 600; border-top: 1px solid var(--border); background: var(--paper); }
+    </style>
+</head>
+<body>
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <img class="portrait" src="{{ image_url if image_url else '#' }}" onerror="this.style.display='none'">
+        <span class="badge">AI Color Analysis</span>
+        <h1 class="title">Your Color Story</h1>
+        <div class="result-box">
+            <h4>Undertone Result</h4>
+            <p>{{ color_type }}</p>
+        </div>
+    </div>
+
+    <!-- RIGHT DASHBOARD CONTENT -->
+    <div class="main-content">
+        
+        <!-- Top Colors -->
+        <div>
+            <h2 class="section-title">Color Palette</h2>
+            <div class="swatch-row">
+                <!-- Limit to 6 colors so it fits perfectly on one page -->
+                {% for color in palette[:6] %}
+                {% set hex = color.hex if color is mapping else color %}
+                <div class="swatch-item">
+                    <div class="swatch-circle" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);"></div>
+                    <div class="swatch-name">{{ color.name if color is mapping else color }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Neutral Colors -->
+        <div>
+            <h2 class="section-title">Neutral Essentials</h2>
+            <div class="swatch-row">
+                {% for color in neutral_colors[:4] %}
+                {% set hex = color.hex if color is mapping else color %}
+                <div class="swatch-item">
+                    <div class="swatch-circle" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);"></div>
+                    <div class="swatch-name">{{ color.name if color is mapping else color }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Hair Colors -->
+        <div>
+            <h2 class="section-title">Hair Colors</h2>
+            <div class="gallery-row">
+                <!-- Limit to 3 items to maintain the 1-row grid -->
+                {% for hair in hair_colors[:3] %}
+                <div class="gallery-card">
+                    <img src="{{ hair.image if hair.image else '#' }}">
+                    <p>{{ hair.name }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Jewelry -->
+        <div>
+            <h2 class="section-title">Jewelry Pairings</h2>
+            <div class="gallery-row">
+                {% for item in jewelry[:3] %}
+                <div class="gallery-card jewelry-card">
+                    <img src="{{ item.image if item.image else '#' }}">
+                    <p>{{ item.name }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
