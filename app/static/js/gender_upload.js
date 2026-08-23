@@ -19,8 +19,10 @@
   const $ = (id) => document.getElementById(id);
 
   function getModal() { return $('modal-gender-select'); }
-  function getBtnFemale() { return $('gender-opt-female'); }
-  function getBtnMale() { return $('gender-opt-male'); }
+  function getBtnStep1Hair() { return $('opt-step1-hairstyle'); }
+  function getBtnStep1Color() { return $('opt-step1-color'); }
+  function getBtnStep2Female() { return $('opt-step2-female'); }
+  function getBtnStep2Male() { return $('opt-step2-male'); }
 
   // ---- File size check -----------------------------------------------------
   function validateFile(file) {
@@ -72,8 +74,8 @@
     if (el) el.style.display = 'flex';
 
     // Disable both gender buttons
-    const btnF = getBtnFemale();
-    const btnM = getBtnMale();
+    const btnF = getBtnStep2Female();
+    const btnM = getBtnStep2Male();
     if (btnF) btnF.disabled = true;
     if (btnM) btnM.disabled = true;
   }
@@ -85,9 +87,8 @@
     const warning = $('face-validation-warning');
     const msgEl = $('face-validation-msg');
     const error_type = $('error-type');
-    const btnF = getBtnFemale();
-    const btnM = getBtnMale();
-    const btnC = $('opt-color-analysis');
+    const btnHair = getBtnStep1Hair();
+    const btnColor = getBtnStep1Color();
     const subtitle = $('gender-modal-subtitle');
     const statusIcon = $('gender-modal-status-icon');
 
@@ -102,9 +103,8 @@
         statusIcon.style.color = '#22C55E';
       }
       if (scanStatus) scanStatus.style.display = 'flex';
-      if (btnF) btnF.disabled = true;
-      if (btnM) btnM.disabled = true;
-      if (btnC) btnC.disabled = true;
+      if (btnHair) btnHair.disabled = true;
+      if (btnColor) btnColor.disabled = true;
       if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
 
     } else if (state === 'valid') {
@@ -113,12 +113,8 @@
         statusIcon.className = 'fa-solid fa-circle-check';
         statusIcon.style.color = '#22C55E';
       }
-      if (btnF) btnF.disabled = false;
-      if (btnM) btnM.disabled = false;
-      if (btnC) {
-        btnC.disabled = false;
-        btnC.style.display = 'flex';
-      }
+      if (btnHair) btnHair.disabled = false;
+      if (btnColor) btnColor.disabled = false;
       if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
 
     } else if (state === 'invalid' || state === 'warning') {
@@ -147,33 +143,25 @@
           statusIcon.className = 'fa-solid fa-circle-check';
           statusIcon.style.color = '#22C55E';
         }
-        if (btnF) btnF.disabled = false;
-        if (btnM) btnM.disabled = false;
-        if (btnC) {
-          btnC.disabled = false;
-          btnC.style.display = 'flex';
-        }
+        if (btnHair) btnHair.disabled = false;
+        if (btnColor) btnColor.disabled = false;
         if (subtitle) subtitle.textContent = 'Which recommendation would you like our AI to generate?';
       } else {
-        if (btnF) btnF.disabled = true;
-        if (btnM) btnM.disabled = true;
+        if (btnHair) btnHair.disabled = true;
         
         if (error === 'UNCERTAIN FACE TYPE') {
           if (statusIcon) {
             statusIcon.className = 'fa-solid fa-circle-exclamation';
             statusIcon.style.color = '#EAB308';
           }
-          if (btnC) {
-            btnC.disabled = false;
-            btnC.style.display = 'flex';
-          }
+          if (btnColor) btnColor.disabled = false;
           if (subtitle) subtitle.textContent = 'Face shape unclear. Only Color Analysis is available.';
         } else {
           if (statusIcon) {
             statusIcon.className = 'fa-solid fa-circle-xmark';
             statusIcon.style.color = '#EF4444';
           }
-          if (btnC) btnC.disabled = true;
+          if (btnColor) btnColor.disabled = true;
           if (subtitle) subtitle.textContent = 'Please upload a clear photo showing your face to continue.';
         }
       }
@@ -225,6 +213,18 @@
     const modalSubtitle = $('gender-modal-subtitle');
     if (modalSubtitle) modalSubtitle.textContent = 'Which recommendation would you like our AI to generate?';
 
+    // Ensure Step 1 is visible, Step 2 is hidden
+    const step1 = $('step-1-analysis-type');
+    const step2 = $('step-2-gender');
+    if (step1) step1.style.display = '';
+    if (step2) step2.style.display = 'none';
+
+    // Reset button disabled states for Step 2
+    const btnF = getBtnStep2Female();
+    const btnM = getBtnStep2Male();
+    if (btnF) btnF.disabled = false;
+    if (btnM) btnM.disabled = false;
+
     // Open the modal immediately for good UX
     const modal = getModal();
     if (modal) modal.classList.add('active');
@@ -245,43 +245,62 @@
     showLoading();
 
     const formData = new FormData();
-    if (analysisType === 'color') {
-      formData.append('file', file, 'photo.jpg');
-    } else {
-      formData.append('image', file);
-    }
+    formData.append('image', file);
     formData.append('gender', gender);
     formData.append('analysis_type', analysisType);
 
     try {
-      if (analysisType === 'color') {
-        const res = await fetch('/analyze', { method: 'POST', body: formData });
-        if (!res.ok) throw new Error('Network response was not ok');
-        const html = await res.text();
-        document.open();
-        document.write(html);
-        document.close();
-      } else {
-        const res = await fetch('/api/analyze', { method: 'POST', body: formData });
-        const data = await res.json();
-        window.location.href = data.redirect_url || `/recommendation?gender=${gender}`;
-      }
+      const res = await fetch('/api/analyze', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      window.location.href = data.redirect_url || (analysisType === 'color' ? `/color-analysis?gender=${gender}` : `/recommendation?gender=${gender}`);
     } catch {
-      window.location.href = `/recommendation?gender=${gender}`;
+      window.location.href = analysisType === 'color' ? `/color-analysis?gender=${gender}` : `/recommendation?gender=${gender}`;
     }
   }
 
   // ---- Wire gender buttons (idempotent) ------------------------------------
   function wireGenderButtons() {
-    const btnF = getBtnFemale();
-    const btnM = getBtnMale();
-    const btnC = $('opt-color-analysis');
+    const btnHair = getBtnStep1Hair();
+    const btnColor = getBtnStep1Color();
+    const btnF = getBtnStep2Female();
+    const btnM = getBtnStep2Male();
+
+    if (btnHair && !btnHair._step1Bound) {
+      btnHair._step1Bound = true;
+      btnHair.addEventListener('click', () => {
+        window.currentAnalysisType = 'hairstyle';
+        const step1 = $('step-1-analysis-type');
+        const step2 = $('step-2-gender');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = '';
+        const modalTitle = $('gender-modal-title');
+        if (modalTitle) modalTitle.textContent = "Select Gender Preference";
+        const modalSubtitle = $('gender-modal-subtitle');
+        if (modalSubtitle) modalSubtitle.textContent = "Which hairstyle collection would you like our AI to recommend for your face shape?";
+      });
+    }
+
+    if (btnColor && !btnColor._step1Bound) {
+      btnColor._step1Bound = true;
+      btnColor.addEventListener('click', () => {
+        window.currentAnalysisType = 'color';
+        const step1 = $('step-1-analysis-type');
+        const step2 = $('step-2-gender');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = '';
+        const modalTitle = $('gender-modal-title');
+        if (modalTitle) modalTitle.textContent = "Select Gender Preference";
+        const modalSubtitle = $('gender-modal-subtitle');
+        if (modalSubtitle) modalSubtitle.textContent = "Which gender's colors and accessories should we recommend?";
+      });
+    }
 
     if (btnF && !btnF._genderBound) {
       btnF._genderBound = true;
       btnF.addEventListener('click', () => {
         if (!pendingFile) return;
-        submitToAPI(pendingFile, 'female', 'hairstyle');
+        submitToAPI(pendingFile, 'female', window.currentAnalysisType || 'hairstyle');
       });
     }
 
@@ -289,15 +308,7 @@
       btnM._genderBound = true;
       btnM.addEventListener('click', () => {
         if (!pendingFile) return;
-        submitToAPI(pendingFile, 'male', 'hairstyle');
-      });
-    }
-
-    if (btnC && !btnC._colorBound) {
-      btnC._colorBound = true;
-      btnC.addEventListener('click', () => {
-        if (!pendingFile) return;
-        submitToAPI(pendingFile, 'female', 'color');
+        submitToAPI(pendingFile, 'male', window.currentAnalysisType || 'hairstyle');
       });
     }
 

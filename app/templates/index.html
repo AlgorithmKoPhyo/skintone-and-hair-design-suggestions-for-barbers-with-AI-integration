@@ -148,21 +148,30 @@
             </div>
             <div class="feature-content col-8 col-md-12">
                 <div class="color-swatches">
-                    <div class="c-swatch" style="background: linear-gradient(180deg, #3b2818, #1a120b);">
-                        <div class="c-swatch-label">Dark Brown</div>
-                    </div>
-                    <div class="c-swatch" style="background: linear-gradient(180deg, #6b5042, #4a362b);">
-                        <div class="c-swatch-label">Ash Brown</div>
-                    </div>
-                    <div class="c-swatch" style="background: linear-gradient(180deg, #7c3a21, #522413);">
-                        <div class="c-swatch-label">Chestnut</div>
-                    </div>
-                    <div class="c-swatch" style="background: linear-gradient(180deg, #443c3a, #2c2725);">
-                        <div class="c-swatch-label">Ash Gray</div>
-                    </div>
-                    <div class="c-swatch" style="background: linear-gradient(180deg, #541723, #380d15);">
-                        <div class="c-swatch-label">Burgundy</div>
-                    </div>
+                    {% if featured_colors %}
+                        {% for color in featured_colors %}
+                        <div class="c-swatch" style="background-color: {{ color.hex }}; border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden;">
+                            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%); pointer-events: none;"></div>
+                            <div class="c-swatch-label" style="text-shadow: 0 1px 3px rgba(0,0,0,0.8); color: #fff; position: relative; z-index: 1;">{{ color.name }}</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="c-swatch" style="background: linear-gradient(180deg, #3b2818, #1a120b);">
+                            <div class="c-swatch-label">Dark Brown</div>
+                        </div>
+                        <div class="c-swatch" style="background: linear-gradient(180deg, #6b5042, #4a362b);">
+                            <div class="c-swatch-label">Ash Brown</div>
+                        </div>
+                        <div class="c-swatch" style="background: linear-gradient(180deg, #7c3a21, #522413);">
+                            <div class="c-swatch-label">Chestnut</div>
+                        </div>
+                        <div class="c-swatch" style="background: linear-gradient(180deg, #443c3a, #2c2725);">
+                            <div class="c-swatch-label">Ash Gray</div>
+                        </div>
+                        <div class="c-swatch" style="background: linear-gradient(180deg, #541723, #380d15);">
+                            <div class="c-swatch-label">Burgundy</div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
