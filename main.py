@@ -204,6 +204,19 @@ def color_analysis():
     gender = request.args.get('gender', 'female').lower()
     user_img = request.args.get('user_img', '')
     undertone_raw = request.args.get('undertone', 'warm').lower()
+    raw_conf = request.args.get('confidence', '96%')
+    print(gender)
+    try:
+        # Convert to float, removing any existing '%' sign just in case
+        val = float(str(raw_conf).replace('%', ''))
+        # If the number is a decimal like 0.7572, multiply by 100
+        if val <= 1.0:
+            val = val * 100
+        # Convert to an integer to remove decimals and add the % sign
+        confidence_score = f"{int(val)}%"
+    except (ValueError, TypeError):
+        # Fallback just in case something unexpected gets passed
+        confidence_score = str(raw_conf) if '%' in str(raw_conf) else f"{raw_conf}%"
 
     palette_file = os.path.join(app.root_path, 'modules', 'palettes.json')
     recommendations = {}
@@ -229,7 +242,8 @@ def color_analysis():
         'color_analysis.html',
         image_url=user_img,
         color_type=key.upper(),
-        confidence_score="96%",
+        confidence_score=confidence_score,
+        description=recommendations.get('description', ''),
         recommended_colors=recommendations.get('recommended_colors', []),
         avoid_colors=recommendations.get('avoid_colors', []),
         neutral_colors=recommendations.get('neutral_colors_that_flatter', []),
@@ -376,6 +390,7 @@ def render_analyze_result():
             image_url=user_image_url,
             color_type=color_type,
             confidence_score=confidence_score,
+            description=recommendations.get('description', ''),
             recommended_colors=palette,
             avoid_colors=recommendations.get('avoid_colors', []),
             neutral_colors=recommendations.get('neutral_colors_that_flatter', recommendations.get('neutral_colors', [])),
@@ -420,47 +435,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
-
-# @app.route('/export-pdf', methods=['GET'])
-# def export_pdf():
-#     """Server-side PDF export using Playwright (headless Chromium).
-#     Example: /export-pdf?gender=female&undertone=warm&user_img=/static/uploads/you.jpg
-#     """
-#     gender = request.args.get('gender', 'female')
-#     undertone = request.args.get('undertone', 'warm')
-#     user_img = request.args.get('user_img', '')
-
-#     render_url = url_for('color_analysis', gender=gender, undertone=undertone, user_img=user_img, _external=True)
-
-#     try:
-#         from playwright.sync_api import sync_playwright
-#     except Exception:
-#         return jsonify({
-#             'status': 'error',
-#             'message': 'Playwright not installed. Please install and run `playwright install`.'
-#         }), 500
-
-#     try:
-#         with sync_playwright() as p:
-#             browser = p.chromium.launch()
-#             page = browser.new_page()
-#             # Use a wide viewport to render full-width layout
-#             try:
-#                 page.set_viewport_size({"width": 1800, "height": 1000})
-#             except Exception:
-#                 pass
-#             page.goto(render_url, wait_until='networkidle')
-#             # Render as landscape A4 to capture horizontal layouts
-#             pdf_bytes = page.pdf(format='A4', landscape=True, print_background=True, margin={'top':'4mm','bottom':'4mm','left':'4mm','right':'4mm'})
-#             browser.close()
-
-#         return Response(pdf_bytes, mimetype='application/pdf', headers={
-#             'Content-Disposition': 'attachment; filename="color-analysis.pdf"'
-#         })
-#     except Exception as e:
-#         return jsonify({'status': 'error', 'message': str(e)}), 500
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

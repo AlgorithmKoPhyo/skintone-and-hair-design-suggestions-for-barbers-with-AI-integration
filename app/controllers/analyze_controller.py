@@ -121,11 +121,13 @@ def analyze():
     # TODO: Replace with skin_tone_classifier module.
     # from modules.skin_tone_classifier import SkinToneClassifier
     # undertone = SkinToneClassifier().predict(filepath)
-    undertone = "Warm Autumn"  # ← stub
+    undertone = "Warm Autumn"
+    color_confidence = 0.90  # ← stub
     if skin_tone_service and os.path.exists(filepath):
         analysis_res = skin_tone_service.analyze_image(filepath)
         if analysis_res.get("status") == "success":
             undertone = analysis_res.get("undertone", "warm")
+            color_confidence = analysis_res.get("confidence", 0.90)
 
     # ── Log analysis session ────────────────────────────────────────────────
     hairstyle_service.log_user_analysis(
@@ -148,7 +150,10 @@ def analyze():
         redirect_url = (
             f"/color-analysis?user_img={saved_url}"
             f"&undertone={undertone}&gender={gender}"
+            f"&confidence={color_confidence}"
         )
+
+    # final_confidence = color_confidence if analysis_type == 'color' else confidence
 
     return jsonify({
         "status":             "success",
