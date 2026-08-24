@@ -164,9 +164,13 @@
             <i class="fa-solid fa-scissors"></i> Barber Consultation Board
           </button>
           <a href="{{ url_for('hairstyles', shape=shape|default('oval'), gender=gender|default('female')) }}"
-            class="btn-view-more-styles" style="flex: 1; min-width: 200px; text-align: center; text-decoration: none;">
+            class="btn-view-more-styles" style="flex: 1; min-width: 200px; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
             View All Styles <i class="fa-solid fa-arrow-right"></i>
           </a>
+        </div>
+        
+        <div style="margin-top: 24px; text-align: center; font-size: 0.95rem; color: var(--text-muted);">
+          Would you like to try Personal Color Analysis as well? <a href="#" onclick="runCrossAnalysis('color', '{{ user_img }}', '{{ gender|default('female') }}'); return false;" style="color: var(--purple-primary); text-decoration: underline; font-weight: 600;">Click here</a>
         </div>
       </div>
     </div>
@@ -224,29 +228,31 @@
     {% else %}
 
     <!-- NO PHOTO STATE: Pure Action Landing Container (Drag & Drop Zone) -->
-    <div id="no-photo-dropzone"
-      style="text-align: center; max-width: 680px; margin: 40px auto; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 52px 36px; box-shadow: var(--shadow-sm); cursor: pointer;">
-      <div
-        style="width: 84px; height: 84px; border-radius: 50%; background: var(--purple-light); color: var(--purple-primary); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 24px; box-shadow: var(--shadow-sm);">
-        <i class="fa-solid fa-cloud-arrow-up"></i>
+    <div id="no-photo-dropzone" class="journey-action-card"
+      style="text-align: center; max-width: 680px; margin: 40px auto; padding: 52px 36px; border: 1px solid var(--border); box-shadow: var(--shadow); border-radius: 24px; background: var(--paper);">
+      
+      <div style="margin-bottom: 32px;">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--text); margin-bottom: 12px;">Start Your Analysis</h2>
+        <p style="color: var(--muted); font-size: 1rem; line-height: 1.6;">
+          Our AI analyzes your unique features to recommend styles that truly suit you. Drag & drop your photo or choose an option below.
+        </p>
       </div>
 
-      <h2 style="font-size: 1.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">No Photo Uploaded
-        or Captured Yet</h2>
-
-      <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 32px;">
-        Drag & drop your portrait photo here, or capture a photo using your live camera to get personalized AI
-        recommendations.
-      </p>
-
-      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-        <a href="{{ url_for('camera') }}" class="btn-action-camera" style="padding: 12px 28px; font-size: 0.95rem;">
-          <i class="fa-solid fa-camera"></i> Take Photo With Live Camera
+      <div class="action-buttons-grid">
+        <div class="upload-btn-card" id="btn-quick-upload">
+          <i class="fa-solid fa-upload"></i>
+          <h4>Upload Photo</h4>
+          <p>Upload a clear photo of your face or drag & drop here</p>
+        </div>
+        
+        <a href="{{ url_for('camera') }}" class="camera-btn-card" style="text-decoration: none; color: inherit; display: block;">
+          <i class="fa-solid fa-camera"></i>
+          <h4>Use Live Camera</h4>
+          <p>Take a photo using your camera</p>
         </a>
-        <button class="btn-action-upload" id="btn-quick-upload" style="padding: 12px 28px; font-size: 0.95rem;">
-          <i class="fa-solid fa-upload"></i> Upload Photo File
-        </button>
       </div>
+      
+      <p class="privacy-note" style="margin-top: 32px;">Your privacy is our priority. Your photos are only used for analysis.</p>
 
       <!-- Hidden File Input for Quick Uploads -->
       <input type="file" id="rec-quick-file-input" accept="image/*" style="display: none;">
