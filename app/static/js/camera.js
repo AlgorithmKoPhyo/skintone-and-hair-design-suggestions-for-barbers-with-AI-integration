@@ -382,9 +382,6 @@ async function submitCapturedPhoto(gender, analysisType) {
     formData.append('analysis_type', analysisType);
 
     // Save the captured live camera photo to session storage
-    if (capturedImageDataUrl) {
-      sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
-    }
 
     let res = await fetch('/api/analyze', {
       method: 'POST',
@@ -409,7 +406,7 @@ async function submitCapturedPhoto(gender, analysisType) {
     console.error("Camera submit error:", err);
     stopCamera();
     if (capturedImageDataUrl) {
-      sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
+      // previously saved to session storage here
     }
     if (analysisType === 'color') {
       window.location.href = '/color-analysis';

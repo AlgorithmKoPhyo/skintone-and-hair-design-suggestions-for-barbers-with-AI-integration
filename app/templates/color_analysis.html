@@ -16,7 +16,7 @@
         --text: #1d1d1d;
         --muted: #777;
         --border: #ece4dc;
-        --shadow: 0 10px 35px rgba(0,0,0,.06);
+        --shadow: 0 10px 35px rgba(0, 0, 0, .06);
     }
 
     /* Allow the body to scroll normally so the footer is accessible */
@@ -28,13 +28,16 @@
     /* Lock ONLY this specific section to fit perfectly in the viewport */
     .lookbook-wrapper {
         /* Calculates 100% of the screen height minus the header and margin */
-        height: calc(102vh - 120px); 
-        min-height: 700px; /* Prevents the box from collapsing on extremely tiny screens */
+        height: calc(102vh - 120px);
+        min-height: 700px;
+        /* Prevents the box from collapsing on extremely tiny screens */
         max-width: 1600px;
-        margin: 40px auto 60px auto; /* Top and bottom spacing */
+        margin: 40px auto 60px auto;
+        /* Top and bottom spacing */
         padding: 0 20px;
         display: flex;
-        align-items: stretch; /* Forces left and right panes to match heights perfectly */
+        align-items: stretch;
+        /* Forces left and right panes to match heights perfectly */
         gap: 30px;
         box-sizing: border-box;
     }
@@ -49,11 +52,14 @@
         flex-direction: column;
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
-        overflow-y: auto; /* Allows smooth internal scrolling if viewed on a small laptop */
+        overflow-y: auto;
+        /* Allows smooth internal scrolling if viewed on a small laptop */
     }
 
     /* Hide scrollbar on sidebar for clean look */
-    .lookbook-sidebar::-webkit-scrollbar { display: none; }
+    .lookbook-sidebar::-webkit-scrollbar {
+        display: none;
+    }
 
     /* RIGHT PANE: Tabbed Content */
     .lookbook-content {
@@ -64,29 +70,35 @@
         box-shadow: var(--shadow);
         display: flex;
         flex-direction: column;
-        overflow: hidden; /* Keeps the right side strictly contained within the box */
+        overflow: hidden;
+        /* Keeps the right side strictly contained within the box */
     }
 
     /* Tab Panels Container */
     .panels-container {
         flex: 1;
-        padding: 20px 40px; 
-        display: grid; /* Stacks the tabs to enforce identical height */
-        overflow-y: hidden; /* Internal scroll just in case, scrollbar hidden below */
+        padding: 20px 40px;
+        display: grid;
+        /* Stacks the tabs to enforce identical height */
+        overflow: hidden;
     }
-
-    .panels-container::-webkit-scrollbar { display: none; }
 
     .tab-panel {
         /* Forces ALL tabs into the exact same grid space to freeze the height */
-        grid-area: 1 / 1; 
-        
+        grid-area: 1 / 1;
+
+        overflow-y: auto;
+
         opacity: 0;
         visibility: hidden;
-        pointer-events: none; 
+        pointer-events: none;
         transition: opacity 0.4s ease, transform 0.4s ease;
         transform: translateY(10px);
         padding-bottom: 20px;
+    }
+
+    .tab-panel::-webkit-scrollbar {
+        display: none;
     }
 
     .tab-panel.active {
@@ -96,7 +108,7 @@
         transform: translateY(0);
         z-index: 1;
     }
-    
+
     .hero-image {
         width: 100%;
         height: 45%;
@@ -173,7 +185,9 @@
     }
 
     /* Hide scrollbar for clean look */
-    .analysis-desc::-webkit-scrollbar { display: none; }
+    .analysis-desc::-webkit-scrollbar {
+        display: none;
+    }
 
     .btn-primary {
         width: 100%;
@@ -190,7 +204,9 @@
         letter-spacing: 1px;
     }
 
-    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:hover {
+        opacity: 0.9;
+    }
 
     /* RIGHT PANE: Tabbed Content */
     /* .lookbook-content {
@@ -234,7 +250,8 @@
 
     /* Re-Analysis Button Styling */
     .re-analysis-btn {
-        margin-left: auto; /* Pushes the button all the way to the far right */
+        margin-left: auto;
+        /* Pushes the button all the way to the far right */
         align-self: center;
         margin-right: 20px;
         background: var(--paper);
@@ -249,7 +266,7 @@
         letter-spacing: 1px;
         text-decoration: none;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
 
     .re-analysis-btn:hover {
@@ -261,19 +278,27 @@
 
     /* Tab Panels Container */
     /*  */
-    
+
     /* You can delete the old @keyframes fadeIn block entirely, 
        as the transition is now handled natively above! */
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .panel-section-title {
         font-family: "Playfair Display", serif;
         font-size: 2rem;
-        margin: 0 0 16px 0; /* Reduced bottom margin */
+        margin: 0 0 16px 0;
+        /* Reduced bottom margin */
         color: var(--text);
         display: flex;
         align-items: center;
@@ -296,28 +321,31 @@
 
     .compact-card {
         text-align: center;
-        cursor: pointer; /* Changes the cursor to a pointer on hover */
-        transition: transform 0.3s ease; /* Smoothly animates the lift */
+        cursor: pointer;
+        /* Changes the cursor to a pointer on hover */
+        transition: transform 0.3s ease;
+        /* Smoothly animates the lift */
     }
 
     /* Lifts the entire card up slightly when hovered */
     .compact-card:hover {
-        transform: translateY(-5px); 
+        transform: translateY(-5px);
     }
 
     .compact-swatch {
         height: 80px;
         border-radius: 12px;
         margin-bottom: 12px;
-        border: 1px solid rgba(0,0,0,0.05);
-        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
-        transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smoothly animates the shadow */
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        /* Smoothly animates the shadow */
     }
 
     /* Adds a beautiful, soft outer drop-shadow to the color block when hovered */
     .compact-card:hover .compact-swatch {
-        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02), 0 10px 25px rgba(0,0,0,0.08);
-        border-color: rgba(0,0,0,0.08);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02), 0 10px 25px rgba(0, 0, 0, 0.08);
+        border-color: rgba(0, 0, 0, 0.08);
     }
 
     .compact-name {
@@ -326,13 +354,15 @@
         color: var(--text);
         transition: color 0.3s ease;
     }
-    
+
     /* Slightly darkens the text on hover for a crisp finish */
     .compact-card:hover .compact-name {
-        color: var(--accent); 
+        color: var(--accent);
     }
-    
-    .compact-card.muted .compact-name { color: var(--muted); }
+
+    .compact-card.muted .compact-name {
+        color: var(--muted);
+    }
 
     /* .compact-grid {
         display: flex;
@@ -392,8 +422,9 @@
     .image-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 24px; 
-        margin-bottom: 24px; /* Tighter bottom margin to prevent scrolling */
+        gap: 24px;
+        margin-bottom: 24px;
+        /* Tighter bottom margin to prevent scrolling */
     }
 
     .image-card {
@@ -401,7 +432,7 @@
         overflow: hidden;
         border: 1px solid var(--border);
         background: var(--paper);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); 
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         display: flex;
         flex-direction: column;
@@ -415,24 +446,35 @@
 
     .image-card img {
         width: 100%;
-        height: 240px; 
-        object-fit: contain; /* Keeps the full image visible */
-        object-position: bottom center; /* Anchors the image to the very bottom */
-        background-color: var(--cream); 
-        padding: 20px 20px 0 20px; /* Top: 20px, Sides: 20px, Bottom: 0px */
+        height: 240px;
+        object-fit: contain;
+        /* Keeps the full image visible */
+        object-position: bottom center;
+        /* Anchors the image to the very bottom */
+        background-color: var(--cream);
+        padding: 20px 20px 0 20px;
+        /* Top: 20px, Sides: 20px, Bottom: 0px */
         box-sizing: border-box;
-        display: block; /* Removes any default invisible spacing below HTML images */
+        display: block;
+        /* Removes any default invisible spacing below HTML images */
     }
 
     .jewelry-card img {
-        width: auto; /* Stops the image from stretching to the edges */
-        height: 220px; /* Set a fixed height */
-        aspect-ratio: 4 / 5; /* Forces the perfect rectangle shape (flip to 5/4 for landscape) */
-        margin: 0 auto; /* Centers the image horizontally inside the cream card */
-        padding: 20px 0 0 0; /* 20px gap at the top, perfectly flush at the bottom */
-        object-fit: cover; /* Ensures the photo cleanly fills the 4:5 box */
+        width: auto;
+        /* Stops the image from stretching to the edges */
+        height: 220px;
+        /* Set a fixed height */
+        aspect-ratio: 4 / 5;
+        /* Forces the perfect rectangle shape (flip to 5/4 for landscape) */
+        margin: 0 auto;
+        /* Centers the image horizontally inside the cream card */
+        padding: 20px 0 0 0;
+        /* 20px gap at the top, perfectly flush at the bottom */
+        object-fit: cover;
+        /* Ensures the photo cleanly fills the 4:5 box */
         background-color: transparent;
-        background-color: var(--cream); /* Lets the cream card background show on the sides */
+        background-color: var(--cream);
+        /* Lets the cream card background show on the sides */
     }
 
     .image-card-title {
@@ -487,16 +529,19 @@
     .occ-mini-palette {
         display: flex;
         margin-bottom: 18px;
-        padding-left: 4px; /* Room for shadow */
+        padding-left: 4px;
+        /* Room for shadow */
     }
 
     .occ-mini-swatch {
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        border: 3px solid var(--cream); /* Creates a cut-out overlap effect */
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        margin-left: -14px; /* The overlap amount */
+        border: 3px solid var(--cream);
+        /* Creates a cut-out overlap effect */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-left: -14px;
+        /* The overlap amount */
         position: relative;
         transition: transform 0.2s ease, z-index 0.2s;
     }
@@ -539,22 +584,26 @@
     .occ-image-wrap img {
         width: 85px;
         height: 85px;
-        border-radius: 50%; /* Circular portrait for jewelry */
+        border-radius: 50%;
+        /* Circular portrait for jewelry */
         object-fit: cover;
         border: 1px solid var(--border);
         background: var(--paper);
-        padding: 4px; /* Inner gallery ring */
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        padding: 4px;
+        /* Inner gallery ring */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
     @media (max-width: 1200px) {
-        .occasion-list { grid-template-columns: 1fr; }
+        .occasion-list {
+            grid-template-columns: 1fr;
+        }
     }
 
     .re-analysis-btn {
-        margin-left: auto; 
+        margin-left: auto;
         align-self: center;
-        margin-right: 12px; 
+        margin-right: 12px;
         background: var(--paper);
         border: 1px solid var(--border);
         color: var(--accent);
@@ -567,7 +616,7 @@
         letter-spacing: 1px;
         text-decoration: none;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
 
     .re-analysis-btn:hover {
@@ -577,7 +626,7 @@
         transform: translateY(-2px);
     }
 
-   
+
     .clear-btn {
         align-self: center;
         margin-right: 20px;
@@ -592,7 +641,7 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
 
     .clear-btn:hover {
@@ -604,32 +653,43 @@
 </style>
 
 {% set current_undertone = color_type if color_type else 'neutral' %}
-{% set recommended = recommended_colors if recommended_colors else [{'hex': '#0a192f', 'name': 'Navy'}, {'hex': '#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex': '#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}] %}
-{% set avoids = avoid_colors if avoid_colors else [{'hex': '#e65100', 'name': 'Orange'}, {'hex': '#fbc02d', 'name': 'Mustard'}, {'hex': '#5d4037', 'name': 'Warm Brown'}, {'hex': '#33691e', 'name': 'Olive'}, {'hex': '#ff6f00', 'name': 'Amber'}, {'hex': '#bf360c', 'name': 'Rust'}] %}
-{% set neutrals = neutral_colors if neutral_colors else [{'hex': '#000000', 'name': 'Pure Black'}, {'hex': '#424242', 'name': 'Charcoal'}, {'hex': '#ffffff', 'name': 'Pure White'}] %}
-{% set hairs = hair_colors if hair_colors else [{'name': 'Ash Brown', 'image': 'ash_brown.jpg'}, {'name': 'Cool Brown', 'image': 'cool_brown.jpg'}, {'name': 'Burgundy', 'image': 'burgundy.jpg'}] %}
-{% set jewels = jewelry if jewelry else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image': 'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
+{% set recommended = recommended_colors if recommended_colors else [{'hex': '#0a192f', 'name': 'Navy'}, {'hex':
+'#5a6b7c', 'name': 'Slate'}, {'hex': '#90caf9', 'name': 'Soft Blue'}, {'hex': '#b39ddb', 'name': 'Lavender'}, {'hex':
+'#f48fb1', 'name': 'Pink'}, {'hex': '#ffffff', 'name': 'White'}] %}
+{% set avoids = avoid_colors if avoid_colors else [{'hex': '#e65100', 'name': 'Orange'}, {'hex': '#fbc02d', 'name':
+'Mustard'}, {'hex': '#5d4037', 'name': 'Warm Brown'}, {'hex': '#33691e', 'name': 'Olive'}, {'hex': '#ff6f00', 'name':
+'Amber'}, {'hex': '#bf360c', 'name': 'Rust'}] %}
+{% set neutrals = neutral_colors if neutral_colors else [{'hex': '#000000', 'name': 'Pure Black'}, {'hex': '#424242',
+'name': 'Charcoal'}, {'hex': '#ffffff', 'name': 'Pure White'}] %}
+{% set hairs = hair_colors if hair_colors else [{'name': 'Ash Brown', 'image': 'ash_brown.jpg'}, {'name': 'Cool Brown',
+'image': 'cool_brown.jpg'}, {'name': 'Burgundy', 'image': 'burgundy.jpg'}] %}
+{% set jewels = jewelry if jewelry else [{'name': 'Silver', 'image': 'silver.jpg'}, {'name': 'Pearl', 'image':
+'pearl.jpg'}, {'name': 'White Gold', 'image': 'white_gold.jpg'}] %}
 {% set occasions = occasion_recommendations if occasion_recommendations else {
-    'office': { 
-        'colors': [{'hex': '#000080', 'name': 'Navy Blue'}, {'hex': '#8C92AC', 'name': 'Cool Gray'}, {'hex': '#F8F8F0', 'name': 'Soft White'}], 
-        'why_it_works': 'These refined tones create a polished and professional look for the workplace.',
-        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_silver_1.jpg'}}
-    },
-    'interview': { 
-        'colors': [{'hex': '#000080', 'name': 'Navy Blue'}, {'hex': '#F5F5F5', 'name': 'Cool White'}, {'hex': '#4B4B4B', 'name': 'Charcoal Gray'}], 
-        'why_it_works': 'These balanced tones create a confident, composed, and professional interview look.',
-        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_white_gold_1.jpg'}}
-    },
-    'party': { 
-        'colors': [{'hex': '#0066FF', 'name': 'Electric Blue'}, {'hex': '#FF00FF', 'name': 'Fuchsia'}, {'hex': '#0047AB', 'name': 'Cobalt Blue'}], 
-        'why_it_works': 'These vibrant tones create a bold, glamorous, and eye-catching party look.',
-        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_silver_1.png'}}
-    },
-    'casual': { 
-        'colors': [{'hex': '#99FFFF', 'name': 'Ice Blue'}, {'hex': '#1560BD', 'name': 'Denim Blue'}, {'hex': '#F8F8F0', 'name': 'Soft White'}], 
-        'why_it_works': 'These soft tones create a fresh, relaxed, and effortlessly stylish casual look.',
-        'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_white_gold_1.jpg'}}
-    }
+'office': {
+'colors': [{'hex': '#000080', 'name': 'Navy Blue'}, {'hex': '#8C92AC', 'name': 'Cool Gray'}, {'hex': '#F8F8F0', 'name':
+'Soft White'}],
+'why_it_works': 'These refined tones create a polished and professional look for the workplace.',
+'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_silver_1.jpg'}}
+},
+'interview': {
+'colors': [{'hex': '#000080', 'name': 'Navy Blue'}, {'hex': '#F5F5F5', 'name': 'Cool White'}, {'hex': '#4B4B4B', 'name':
+'Charcoal Gray'}],
+'why_it_works': 'These balanced tones create a confident, composed, and professional interview look.',
+'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_white_gold_1.jpg'}}
+},
+'party': {
+'colors': [{'hex': '#0066FF', 'name': 'Electric Blue'}, {'hex': '#FF00FF', 'name': 'Fuchsia'}, {'hex': '#0047AB',
+'name': 'Cobalt Blue'}],
+'why_it_works': 'These vibrant tones create a bold, glamorous, and eye-catching party look.',
+'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_silver_1.png'}}
+},
+'casual': {
+'colors': [{'hex': '#99FFFF', 'name': 'Ice Blue'}, {'hex': '#1560BD', 'name': 'Denim Blue'}, {'hex': '#F8F8F0', 'name':
+'Soft White'}],
+'why_it_works': 'These soft tones create a fresh, relaxed, and effortlessly stylish casual look.',
+'jewelry': {'images': {'female': 'assets/jewelry/female/jewelry_white_gold_1.jpg'}}
+}
 } %}
 
 <div class="lookbook-wrapper">
@@ -638,17 +698,20 @@
     <aside class="lookbook-sidebar">
         <div class="hero-image">
             {% set default_img = url_for('static', filename='images/slider_1.jpg') %}
-            <img id="user-portrait" src="{{ image_url if image_url and image_url != '#' else default_img }}" alt="Portrait" onerror="this.src='{{ default_img }}'">
+            <img id="user-portrait" src="{{ image_url if image_url and image_url != '#' else default_img }}"
+                alt="Portrait" onerror="this.src='{{ default_img }}'">
         </div>
-        
+
         <!-- Conditional "For Sample" badge if no active analysis image was uploaded -->
         {% if not image_url or image_url == '#' or 'default_user.jpg' in image_url %}
-        <span class="section-badge" style="color: #b8860b; background: #fdf5e6; padding: 2px 8px; border-radius: 4px; display: inline-block; width: fit-content; margin-bottom: 6px;">For Sample</span>
+        <span class="section-badge"
+            style="color: #b8860b; background: #fdf5e6; padding: 2px 8px; border-radius: 4px; display: inline-block; width: fit-content; margin-bottom: 6px;">For
+            Sample</span>
         {% endif %}
 
         <span class="section-badge">AI Color Analysis</span>
         <h1 class="analysis-title">Your Color Story</h1>
-        
+
         <div class="undertone-box">
             <h4>Undertone Result</h4>
             <div class="result">{{ current_undertone }}</div>
@@ -660,28 +723,29 @@
 
         <div class="analysis-desc">
             {% if description %}
-                {{ description }}
+            {{ description }}
             {% else %}
-                Warm undertones usually have subtle golden, yellow, peach, or warm beige tones beneath the skin. Earthy, golden, and rich warm colors often complement this undertone and enhance the skin's natural warmth.
+            Warm undertones usually have subtle golden, yellow, peach, or warm beige tones beneath the skin. Earthy,
+            golden, and rich warm colors often complement this undertone and enhance the skin's natural warmth.
             {% endif %}
         </div>
 
         <!-- Dynamic Button: Start Analysis for samples, Download PDF for real results -->
         {% if not image_url or image_url == '#' or 'default_user.jpg' in image_url %}
-            <a href="{{ url_for('recommendation') }}" class="btn-primary" style="display: block; text-align: center; text-decoration: none; box-sizing: border-box;">
-                Start Your Analyse
-            </a>
+        <a href="{{ url_for('recommendation', user_img=image_url, gender=gender) }}" class="btn-primary"
+            style="display: block; text-align: center; text-decoration: none; box-sizing: border-box;">
+            Start Your Analyse
+        </a>
         {% else %}
-            <button class="btn-primary" id="download-report-btn">
-                Download Result(PDF)
-            </button>
+        <button class="btn-primary" id="download-report-btn">
+            Download Result(PDF)
+        </button>
         {% endif %}
-    </aside>
     </aside>
 
     <!-- RIGHT PANE -->
     <main class="lookbook-content">
-        
+
         <!-- <nav class="lookbook-nav">
             <button class="nav-tab active" data-target="tab-colors">Color Palette</button>
             <button class="nav-tab" data-target="tab-beauty">Hair & Jewelry</button>
@@ -692,21 +756,22 @@
             <button class="nav-tab active" data-target="tab-colors">Color Palette</button>
             <button class="nav-tab" data-target="tab-beauty">Hair & Jewelry</button>
             <button class="nav-tab" data-target="tab-occasions">Occasion Guide</button>
-            
+
             <a href="{{ url_for('camera') }}" class="re-analysis-btn">Re-Analysis</a>
-            
+
             <!-- Conditional Clear Button: Only shows if it's a real analysis -->
             <!-- Conditional Clear Button: Only shows if it's a real analysis -->
             {% if image_url and image_url != '#' and 'default_user.jpg' not in image_url %}
             <button id="clear-analysis-btn" class="clear-btn" title="Clear and return to sample">
                 <!-- Replace 'clear.png' with your actual icon file name -->
-                <img src="{{ url_for('static', filename='assets/icon/brush.png') }}" alt="Clear" style="width: 20px; height: 20px; object-fit: contain;">
+                <img src="{{ url_for('static', filename='assets/icon/brush.png') }}" alt="Clear"
+                    style="width: 20px; height: 20px; object-fit: contain;">
             </button>
             {% endif %}
         </nav>
 
         <div class="panels-container">
-            
+
             <!-- TAB 1: COLORS -->
             <div class="tab-panel active" id="tab-colors">
                 <h2 class="panel-section-title">Best Colors</h2>
@@ -715,7 +780,9 @@
                     {% set hex_code = color.hex if color is mapping else color %}
                     {% set clr_name = color.name if color is mapping else color %}
                     <div class="compact-card">
-                        <div class="compact-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                        <div class="compact-swatch"
+                            style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);"
+                            title="{{ clr_name }}"></div>
                         <div class="compact-name">{{ clr_name }}</div>
                     </div>
                     {% endfor %}
@@ -727,7 +794,9 @@
                     {% set hex_code = item.hex if item is mapping else item %}
                     {% set clr_name = item.name if item is mapping else item %}
                     <div class="compact-card">
-                        <div class="compact-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                        <div class="compact-swatch"
+                            style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);"
+                            title="{{ clr_name }}"></div>
                         <div class="compact-name">{{ clr_name }}</div>
                     </div>
                     {% endfor %}
@@ -739,7 +808,9 @@
                     {% set hex_code = color.hex if color is mapping else color %}
                     {% set clr_name = color.name if color is mapping else color %}
                     <div class="compact-card muted">
-                        <div class="compact-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></div>
+                        <div class="compact-swatch"
+                            style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);"
+                            title="{{ clr_name }}"></div>
                         <div class="compact-name">{{ clr_name }}</div>
                     </div>
                     {% endfor %}
@@ -752,7 +823,8 @@
                 <div class="image-grid">
                     {% for hair in hairs %}
                     <div class="image-card">
-                        <img src="{{ url_for('static', filename=hair.image) if hair.image else '#' }}" alt="{{ hair.name }}" onerror="this.style.background='var(--border)'">
+                        <img src="{{ url_for('static', filename=hair.image) if hair.image else '#' }}"
+                            alt="{{ hair.name }}" onerror="this.style.background='var(--border)'">
                         <div class="image-card-title">{{ hair.name }}</div>
                     </div>
                     {% endfor %}
@@ -762,7 +834,8 @@
                 <div class="image-grid">
                     {% for item in jewels %}
                     <div class="image-card jewelry-card">
-                        <img src="{{ url_for('static', filename=item.image) if item.image else '#' }}" alt="{{ item.name }}" onerror="this.style.background='var(--border)'">
+                        <img src="{{ url_for('static', filename=item.image) if item.image else '#' }}"
+                            alt="{{ item.name }}" onerror="this.style.background='var(--border)'">
                         <div class="image-card-title">{{ item.name }}</div>
                     </div>
                     {% endfor %}
@@ -776,7 +849,7 @@
                 <div class="occasion-list">
                     {% for occ_key, occ_data in occasions.items() %}
                     <div class="occ-card">
-                        
+
                         <!-- Left Side: Info & Colors -->
                         <div class="occ-info">
                             <h3>{{ occ_key|replace('_',' ')|title }}</h3>
@@ -784,32 +857,37 @@
                                 {% for clr in occ_data.colors %}
                                 {% set hex_code = clr.hex if clr is mapping else clr %}
                                 {% set clr_name = clr.name if clr is mapping else clr %}
-                                <span class="occ-mini-swatch" style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);" title="{{ clr_name }}"></span>
+                                <span class="occ-mini-swatch"
+                                    style="--swatch-bg: {{ hex_code }}; background-color: var(--swatch-bg);"
+                                    title="{{ clr_name }}"></span>
                                 {% endfor %}
                             </div>
-                            <p>{{ occ_data.why_it_works if occ_data.why_it_works else "These curated tones provide an elegant match for this setting." }}</p>
+                            <p>{{ occ_data.why_it_works if occ_data.why_it_works else "These curated tones provide an
+                                elegant match for this setting." }}</p>
                         </div>
-                        
+
                         <!-- Right Side: Jewelry Match -->
                         <!-- Right Side: Jewelry Match -->
                         <div class="occ-image-wrap">
                             <span>Jewelry</span>
-                            
+
                             <!-- Smart extraction: Dynamically checks for male or female -->
                             {% set j_img = '' %}
                             {% set user_gender = gender if gender else 'female' %}
-                            {% set fallback_jewelry_img = url_for('static', filename='assets/jewelry/' ~ user_gender ~ '/jewelry_gold_1.jpg') %}
-                            
+                            {% set fallback_jewelry_img = url_for('static', filename='assets/jewelry/' ~ user_gender ~
+                            '/jewelry_gold_1.jpg') %}
+
                             {% if occ_data.jewelry %}
-                                {% if occ_data.jewelry.image %}
-                                    {% set j_img = occ_data.jewelry.image %}
-                                {% elif occ_data.jewelry.images %}
-                                    <!-- Use bracket notation to insert the dynamic variable -->
-                                    {% set j_img = occ_data.jewelry.images[user_gender] %}
-                                {% endif %}
+                            {% if occ_data.jewelry.image %}
+                            {% set j_img = occ_data.jewelry.image %}
+                            {% elif occ_data.jewelry.images %}
+                            <!-- Use bracket notation to insert the dynamic variable -->
+                            {% set j_img = occ_data.jewelry.images[user_gender] %}
                             {% endif %}
-                            
-                            <img src="{{ url_for('static', filename=j_img) if j_img else '#' }}" alt="Jewelry Match" onerror="this.onerror=null; this.src='{{ fallback_jewelry_img }}';">
+                            {% endif %}
+
+                            <img src="{{ url_for('static', filename=j_img) if j_img else '#' }}" alt="Jewelry Match"
+                                onerror="this.onerror=null; this.src='{{ fallback_jewelry_img }}';">
                         </div>
 
                     </div>
@@ -818,13 +896,21 @@
             </div>
 
         </div>
+        
+        {% if image_url and image_url != '#' and 'default_user.jpg' not in image_url %}
+        <div style="padding: 16px 20px; text-align: center; font-size: 0.95rem; color: var(--muted); border-top: 1px solid var(--border); background: var(--paper);">
+            Would you like to try Hairstyle Recommendation as well? <a
+                href="#" onclick="runCrossAnalysis('hairstyle', '{{ image_url }}', '{{ gender|default('female') }}'); return false;"
+                style="color: var(--accent); text-decoration: underline; font-weight: 600;">Click here</a>
+        </div>
+        {% endif %}
     </main>
 
 </div>
 
 <!-- Tab Switching Script & Camera Logic -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // --- 1. TAB LOGIC ---
         const tabs = document.querySelectorAll('.nav-tab');
         const panels = document.querySelectorAll('.tab-panel');
@@ -847,31 +933,31 @@
         const serverImg = "{{ image_url if image_url else '' }}";
         const currentUndertone = "{{ color_type if color_type else 'neutral' }}".toLowerCase();
         const currentConfidence = "{{ confidence_score if confidence_score else '90%' }}"; // Pull the score
-        
+
         // NEW: Grab the current gender so we don't lose it on refresh!
-        const currentGender = "{{ gender if gender else 'female' }}".toLowerCase(); 
-        
+        const currentGender = "{{ gender if gender else 'female' }}".toLowerCase();
+
         const portraitImg = document.getElementById('user-portrait');
 
         // SCENARIO A: File Upload (Backend provided a real image path)
         if (serverImg && serverImg !== '#' && !serverImg.includes('default_user.jpg')) {
             sessionStorage.removeItem('styleme_captured_image');
-            
+
             // Added &gender= to the query string
             const stateQuery = `?undertone=${currentUndertone}&confidence=${encodeURIComponent(currentConfidence)}&gender=${encodeURIComponent(currentGender)}&user_img=${encodeURIComponent(serverImg)}`;
             sessionStorage.setItem("styleme_analysis_state", stateQuery);
-        } 
+        }
         // SCENARIO B: Camera Analysis or Page Reload
         else {
             const capturedImg = sessionStorage.getItem('styleme_captured_image');
-            
+
             if (capturedImg) {
                 if (portraitImg) portraitImg.src = capturedImg;
-                
+
                 // Added &gender= to the query string
                 const stateQuery = `?undertone=${currentUndertone}&confidence=${encodeURIComponent(currentConfidence)}&gender=${encodeURIComponent(currentGender)}`;
                 sessionStorage.setItem("styleme_analysis_state", stateQuery);
-            } 
+            }
             // SCENARIO C: Default Sample View
             else {
                 const savedState = sessionStorage.getItem("styleme_analysis_state");
@@ -884,7 +970,7 @@
 
         // --- 3. IMAGE LOADING LOGIC ---
         // Restore the camera image from session storage if the user took a live photo
-      
+
 
         // const reAnalysisBtn = document.querySelector(".re-analysis-btn");
         // if (reAnalysisBtn) {
@@ -905,9 +991,7 @@
         const clearBtn = document.getElementById("clear-analysis-btn");
         if (clearBtn) {
             clearBtn.addEventListener("click", () => {
-                sessionStorage.removeItem("styleme_analysis_state");
-                sessionStorage.removeItem("styleme_captured_image");
-                window.location.href = "{{ url_for('color_analysis') }}"; 
+                window.location.href = "{{ url_for('color_analysis') }}";
             });
         }
 
@@ -920,27 +1004,27 @@
             try {
                 const canvas = document.createElement("canvas");
                 const ctx = canvas.getContext("2d");
-                
+
                 const sourceW = imgEl.naturalWidth || imgEl.width || 300;
                 const sourceH = imgEl.naturalHeight || imgEl.height || 300;
-                
+
                 if (targetW && targetH) {
-                    canvas.width = targetW * 15; 
+                    canvas.width = targetW * 15;
                     canvas.height = targetH * 15;
-                    
+
                     const targetRatio = targetW / targetH;
                     const sourceRatio = sourceW / sourceH;
-                    
+
                     let sW = sourceW, sH = sourceH, sX = 0, sY = 0;
-                    
+
                     if (sourceRatio > targetRatio) {
                         sW = sourceH * targetRatio;
-                        sX = (sourceW - sW) / 2; 
+                        sX = (sourceW - sW) / 2;
                     } else {
                         sH = sourceW / targetRatio;
-                        sY = sourceH - sH; 
+                        sY = sourceH - sH;
                     }
-                    
+
                     ctx.fillStyle = "#f8f4ee";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(imgEl, sX, sY, sW, sH, 0, 0, canvas.width, canvas.height);
@@ -951,7 +1035,7 @@
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
                 }
-                
+
                 return canvas.toDataURL("image/jpeg", 0.9);
             } catch (e) {
                 console.warn("Could not load image for PDF", e);
@@ -968,13 +1052,13 @@
             try {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-                
+
                 // Brand Colors
                 const cream = [248, 244, 238];
                 const textCol = [29, 29, 29];
                 const accentCol = [123, 91, 92];
                 const mutedCol = [119, 119, 119];
-                
+
                 // Background
                 pdf.setFillColor(...cream);
                 pdf.rect(0, 0, 210, 297, "F");
@@ -983,7 +1067,7 @@
                 // Y-AXIS OFFSET (VERTICAL CENTERING)
                 // ==========================================
                 const offsetY = 10; // Pushes the entire layout down to center it vertically on A4
-                
+
                 const logoImg = document.querySelector(".brand-logo img") || document.querySelector("img[alt*='Logo']");
                 const brandLogoY = 6 + (offsetY > 5 ? offsetY * 0.4 : 2);
 
@@ -1007,7 +1091,7 @@
                 if (portrait) {
                     const b64 = getBase64Image(portrait, 45, 45);
                     // Added offsetY to the Y coordinate
-                    if (b64) pdf.addImage(b64, "JPEG", 27.5, 15 + offsetY, 45, 45); 
+                    if (b64) pdf.addImage(b64, "JPEG", 27.5, 15 + offsetY, 45, 45);
                 }
 
                 const undertone = document.querySelector(".undertone-box .result")?.textContent.trim() || "UNKNOWN";
@@ -1065,19 +1149,19 @@
                     pdf.setFontSize(11);
                     pdf.setTextColor(...textCol);
                     pdf.text(title, rightX, startY);
-                    
+
                     let currX = rightX;
                     document.querySelectorAll(`${selector} .compact-card`).forEach((card, i) => {
-                        if (i >= limit) return; 
+                        if (i >= limit) return;
                         const bg = window.getComputedStyle(card.querySelector(".compact-swatch")).backgroundColor;
                         const rgb = bg.match(/\d+/g);
-                        
+
                         if (rgb) {
                             pdf.setFillColor(Number(rgb[0]), Number(rgb[1]), Number(rgb[2]));
                             pdf.setDrawColor(200, 200, 200);
                             pdf.circle(currX + 6, startY + 8, 6, "FD");
                         }
-                        currX += 16; 
+                        currX += 16;
                     });
                 };
 
@@ -1090,30 +1174,30 @@
                 // DIVIDER & MIDDLE SECTION
                 // ==========================================
                 const dividerY = 105 + offsetY; // This automatically pushes the Hair/Jewelry and Occasions down!
-                
+
                 pdf.setDrawColor(...accentCol);
                 pdf.setLineWidth(0.5);
                 pdf.line(15, dividerY, 195, dividerY);
 
-                const middleTitleY = dividerY + 10; 
-                const middleImageY = middleTitleY + 5; 
+                const middleTitleY = dividerY + 10;
+                const middleImageY = middleTitleY + 5;
 
                 const drawMiddleGallery = (selector, title, startX) => {
                     pdf.setFont("times", "normal");
                     pdf.setFontSize(14);
                     pdf.setTextColor(...textCol);
                     pdf.text(title, startX, middleTitleY);
-                    
+
                     let currX = startX;
                     document.querySelectorAll(`${selector} .image-card`).forEach((card, i) => {
-                        if (i > 2) return; 
+                        if (i > 2) return;
                         const img = card.querySelector("img");
-                        
+
                         if (img && img.complete && img.naturalWidth !== 0) {
-                            const b64 = getBase64Image(img, 24, 34); 
-                            if (b64) pdf.addImage(b64, "JPEG", currX, middleImageY, 24, 34); 
+                            const b64 = getBase64Image(img, 24, 34);
+                            if (b64) pdf.addImage(b64, "JPEG", currX, middleImageY, 24, 34);
                             pdf.setDrawColor(150, 150, 150);
-                            pdf.rect(currX, middleImageY, 24, 34, "S"); 
+                            pdf.rect(currX, middleImageY, 24, 34, "S");
                         }
                         currX += 28;
                     });
@@ -1123,7 +1207,7 @@
                 // pdf.line(105, dividerY, 105, dividerY + 60);
                 drawMiddleGallery("#tab-beauty .image-grid:nth-of-type(2)", "Jewelry", 110);
 
-                const bottomDividerY = dividerY + 60; 
+                const bottomDividerY = dividerY + 60;
                 pdf.line(15, bottomDividerY, 195, bottomDividerY);
 
                 // ==========================================
@@ -1139,9 +1223,9 @@
 
                 document.querySelectorAll("#tab-occasions .occ-card").forEach((card, i) => {
                     if (i > 3) return; // Render up to 4 occasions
-                    
-                    if (i === 1) { occX = 110; occY = bottomDividerY + 15; } 
-                    if (i === 2) { occX = 15;  occY = bottomDividerY + 58; } 
+
+                    if (i === 1) { occX = 110; occY = bottomDividerY + 15; }
+                    if (i === 2) { occX = 15; occY = bottomDividerY + 58; }
                     if (i === 3) { occX = 110; occY = bottomDividerY + 58; }
 
                     pdf.setDrawColor(150, 150, 150);
@@ -1161,9 +1245,9 @@
                         if (rgb) {
                             pdf.setFillColor(Number(rgb[0]), Number(rgb[1]), Number(rgb[2]));
                             pdf.setDrawColor(...cream);
-                            pdf.circle(swatchX, occY + 15, 3.5, "FD"); 
+                            pdf.circle(swatchX, occY + 15, 3.5, "FD");
                         }
-                        swatchX += 5; 
+                        swatchX += 5;
                     });
 
                     const text = card.querySelector("p")?.textContent.trim() || "";

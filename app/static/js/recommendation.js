@@ -295,36 +295,28 @@ function initQuickPhotoUpload() {
     });
   }
 
-  // Add Drag & Drop to NO PHOTO STATE Container (#no-photo-dropzone)
-  if (noPhotoDropZone) {
+  // Add Drag & Drop to Upload Card (#btn-quick-upload)
+  if (btnQuickUpload) {
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      noPhotoDropZone.addEventListener(eventName, (e) => {
+      btnQuickUpload.addEventListener(eventName, (e) => {
         e.preventDefault();
         e.stopPropagation();
       }, false);
     });
 
     ['dragenter', 'dragover'].forEach(eventName => {
-      noPhotoDropZone.addEventListener(eventName, () => {
-        noPhotoDropZone.style.border = '2px dashed var(--purple-primary)';
-        noPhotoDropZone.style.background = 'var(--purple-light)';
+      btnQuickUpload.addEventListener(eventName, () => {
+        btnQuickUpload.classList.add('drag-over');
       }, false);
     });
 
     ['dragleave', 'drop'].forEach(eventName => {
-      noPhotoDropZone.addEventListener(eventName, () => {
-        noPhotoDropZone.style.border = '1px solid var(--border-light)';
-        noPhotoDropZone.style.background = 'var(--bg-card)';
+      btnQuickUpload.addEventListener(eventName, () => {
+        btnQuickUpload.classList.remove('drag-over');
       }, false);
     });
 
-    noPhotoDropZone.addEventListener('click', (e) => {
-      if (e.target !== btnQuickUpload && !btnQuickUpload.contains(e.target) && !e.target.closest('a')) {
-        triggerFileSelect();
-      }
-    });
-
-    noPhotoDropZone.addEventListener('drop', (e) => {
+    btnQuickUpload.addEventListener('drop', (e) => {
       const dt = e.dataTransfer;
       const files = dt.files;
       if (files && files.length > 0 && files[0].type.startsWith('image/')) {
