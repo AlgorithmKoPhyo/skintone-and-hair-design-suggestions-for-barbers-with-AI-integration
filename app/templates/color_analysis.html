@@ -959,10 +959,14 @@
             });
         }
 
-        const clearBtn = document.getElementById("clear-analysis-btn");
+         const clearBtn = document.getElementById("clear-analysis-btn");
         if (clearBtn) {
             clearBtn.addEventListener("click", () => {
+                // 1. Delete the saved analysis from the browser's memory
+                sessionStorage.removeItem("styleme_analysis_state");
                 sessionStorage.removeItem("styleme_captured_image");
+                
+                // 2. Safely redirect to the clean default page
                 window.location.href = "{{ url_for('color_analysis') }}";
             });
         }
