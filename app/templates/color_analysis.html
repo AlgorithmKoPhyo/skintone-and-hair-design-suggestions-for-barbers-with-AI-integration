@@ -1020,10 +1020,48 @@
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(8);
                 pdf.setTextColor(...mutedCol);
+<<<<<<< Updated upstream
                 const splitDesc = pdf.splitTextToSize(desc, 70); 
                 pdf.text(splitDesc, 15, 78 + offsetY);
+=======
+                
+                // NEW: Use maxWidth and align: "justify" for a clean block of text
+                pdf.text(desc, 15, 78 + offsetY, { maxWidth: 70, align: "justify" });
+>>>>>>> Stashed changes
 
+                // const rightX = 90;
+
+                // pdf.setFont("times", "italic");
+                // pdf.setFontSize(24);
+                // pdf.setTextColor(...textCol);
+                // pdf.text("Your Color Story", rightX, 22 + offsetY);
+
+                // const drawRowPalette = (selector, title, startY, limit) => {
+                //     pdf.setFont("helvetica", "bold");
+                //     pdf.setFontSize(11);
+                //     pdf.setTextColor(...textCol);
+                //     pdf.text(title, rightX, startY);
+
+                //     let currX = rightX;
+                //     document.querySelectorAll(`${selector} .compact-card`).forEach((card, i) => {
+                //         if (i >= limit) return;
+                //         const bg = window.getComputedStyle(card.querySelector(".compact-swatch")).backgroundColor;
+                //         const rgb = bg.match(/\d+/g);
+
+                //         if (rgb) {
+                //             pdf.setFillColor(Number(rgb[0]), Number(rgb[1]), Number(rgb[2]));
+                //             pdf.setDrawColor(200, 200, 200);
+                //             pdf.circle(currX + 6, startY + 8, 6, "FD");
+                //         }
+                //         currX += 16;
+                //     });
+                // };
+
+                // drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 35 + offsetY, 6);
+                // drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 55 + offsetY, 4);
+                // drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 75 + offsetY, 6);
                 // -- Right Side: Palettes --
+<<<<<<< Updated upstream
                 const rightX = 90; 
                 
                 pdf.setFont("times", "italic");
@@ -1031,6 +1069,12 @@
                 pdf.setTextColor(...textCol);
                 pdf.text("Your Color Story", rightX, 22 + offsetY);
 
+=======
+                // -- Right Side: Palettes --
+                // Shifted from 90 to 110 so it aligns perfectly with the Jewelry section!
+                const rightX = 110; 
+                
+>>>>>>> Stashed changes
                 const drawRowPalette = (selector, title, startY, limit) => {
                     pdf.setFont("helvetica", "bold");
                     pdf.setFontSize(11);
@@ -1048,13 +1092,19 @@
                             pdf.setDrawColor(200, 200, 200);
                             pdf.circle(currX + 6, startY + 8, 6, "FD");
                         }
+<<<<<<< Updated upstream
                         currX += 16; 
+=======
+                        // Slightly tightened the spacing (from 16 to 15) so all 6 circles fit beautifully inside the right margin
+                        currX += 15; 
+>>>>>>> Stashed changes
                     });
                 };
 
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 35 + offsetY, 6);
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 55 + offsetY, 4);
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 75 + offsetY, 6);
+                // Moved the Y-coordinates slightly UP based on your teacher's feedback
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 22 + offsetY, 6);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 48 + offsetY, 4);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 74 + offsetY, 6);
 
                 // ==========================================
                 // DIVIDER & MIDDLE SECTION
@@ -1164,7 +1214,7 @@
                     pdf.roundedRect(imgBoxX, imgBoxY, imgSize, imgSize, 2, 2, "S");
                 });
 
-                pdf.save("StyleMe-Lookbook.pdf");
+                pdf.save("Shape&Shade-ColorBook.pdf");
 
             } catch (error) {
                 console.error("PDF Generation Error:", error);
