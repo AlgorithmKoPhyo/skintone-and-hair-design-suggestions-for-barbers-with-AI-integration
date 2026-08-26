@@ -1780,8 +1780,14 @@ img {
 }
 
 .social-icon:hover {
-  background: var(--purple-primary);
-  color: white;
+  background-color: var(--purple-primary) !important;
+  color: #ffffff !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+}
+
+.social-icon:hover i {
+  color: #ffffff !important;
 }
 
 /* ==========================================================================
@@ -3123,4 +3129,23 @@ body {
     0% { stroke-dashoffset: 200; opacity: 0; }
     20% { stroke-dashoffset: 200; opacity: 1; }
     100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+/* About Us Team Member Cards */
+.team-member-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.team-member-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(124, 58, 237, 0.15) !important;
+  border-color: var(--purple-light) !important;
+}
+
+.team-member-card:hover .team-member-avatar {
+  transform: scale(1.08);
+}
+
+.team-member-card:hover .team-member-avatar img {
+  transform: scale(1.1);
 }
