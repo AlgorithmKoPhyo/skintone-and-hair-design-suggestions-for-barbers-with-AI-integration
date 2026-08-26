@@ -869,7 +869,8 @@
                         <!-- Right Side: Jewelry Match -->
                         <!-- Right Side: Jewelry Match -->
                         <div class="occ-image-wrap">
-                            <span>Jewelry</span>
+                            <!-- <span>Jewelry</span> -->
+                             <span>{{ occ_data.jewelry.name if occ_data.jewelry and occ_data.jewelry.name else '' }} Jewelry</span>
 
                             <!-- Smart extraction: Dynamically checks for male or female -->
                             {% set j_img = '' %}
