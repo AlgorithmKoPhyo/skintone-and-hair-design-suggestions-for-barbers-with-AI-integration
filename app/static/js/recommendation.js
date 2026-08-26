@@ -111,26 +111,24 @@ function initAngleSwitcher() {
   }
 
   // Next / Prev button click listeners
-  // Remove existing listeners by cloning or just attach once
-  if (btnPrev && !btnPrev.dataset.hasEvent) {
-    btnPrev.addEventListener('click', (e) => {
+  // Use onclick to overwrite existing listeners from previous initializations
+  if (btnPrev) {
+    btnPrev.onclick = (e) => {
       e.stopPropagation();
       goToIndex(currentIndex - 1);
-    });
-    btnPrev.dataset.hasEvent = 'true';
+    };
   }
 
-  if (btnNext && !btnNext.dataset.hasEvent) {
-    btnNext.addEventListener('click', (e) => {
+  if (btnNext) {
+    btnNext.onclick = (e) => {
       e.stopPropagation();
       goToIndex(currentIndex + 1);
-    });
-    btnNext.dataset.hasEvent = 'true';
+    };
   }
 
   // Click on thumbnail card
   angleCards.forEach((card, idx) => {
-    card.addEventListener('click', () => goToIndex(idx));
+    card.onclick = () => goToIndex(idx);
   });
 
   // Touch Swipe Gesture & Auto-play Support
@@ -152,23 +150,23 @@ function initAngleSwitcher() {
 
   startAutoPlay();
 
-  if (wrapper && !wrapper.dataset.hasSwipeEvents) {
-    wrapper.addEventListener('mouseenter', stopAutoPlay);
-    wrapper.addEventListener('mouseleave', startAutoPlay);
+  if (wrapper) {
+    wrapper.onmouseenter = stopAutoPlay;
+    wrapper.onmouseleave = startAutoPlay;
 
     let touchStartX = 0;
     let touchEndX = 0;
 
-    wrapper.addEventListener('touchstart', (e) => {
+    wrapper.ontouchstart = (e) => {
       stopAutoPlay();
       touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+    };
 
-    wrapper.addEventListener('touchend', (e) => {
+    wrapper.ontouchend = (e) => {
       touchEndX = e.changedTouches[0].screenX;
       handleSwipe();
       startAutoPlay();
-    }, { passive: true });
+    };
 
     function handleSwipe() {
       const diff = touchEndX - touchStartX;
@@ -177,8 +175,6 @@ function initAngleSwitcher() {
         else goToIndex(currentIndex - 1);          // Swipe right → Prev
       }
     }
-    
-    wrapper.dataset.hasSwipeEvents = 'true';
   }
 }
 

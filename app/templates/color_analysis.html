@@ -941,49 +941,20 @@
 
         // SCENARIO A: File Upload (Backend provided a real image path)
         if (serverImg && serverImg !== '#' && !serverImg.includes('default_user.jpg')) {
-            sessionStorage.removeItem('styleme_captured_image');
-
-            // Added &gender= to the query string
-            const stateQuery = `?undertone=${currentUndertone}&confidence=${encodeURIComponent(currentConfidence)}&gender=${encodeURIComponent(currentGender)}&user_img=${encodeURIComponent(serverImg)}`;
-            sessionStorage.setItem("styleme_analysis_state", stateQuery);
+            // Backend provides the image directly.
         }
-        // SCENARIO B: Camera Analysis or Page Reload
+        // SCENARIO B: Camera Analysis
         else {
+            // If the user used the camera, get the captured image from session storage so we can display it.
             const capturedImg = sessionStorage.getItem('styleme_captured_image');
-
             if (capturedImg) {
                 if (portraitImg) portraitImg.src = capturedImg;
-
-                // Added &gender= to the query string
-                const stateQuery = `?undertone=${currentUndertone}&confidence=${encodeURIComponent(currentConfidence)}&gender=${encodeURIComponent(currentGender)}`;
-                sessionStorage.setItem("styleme_analysis_state", stateQuery);
-            }
-            // SCENARIO C: Default Sample View
-            else {
-                const savedState = sessionStorage.getItem("styleme_analysis_state");
-                if (savedState && !window.location.search && performance.navigation.type !== 1) {
-                    window.location.href = "/color-analysis" + savedState;
-                    return;
-                }
             }
         }
-
-        // --- 3. IMAGE LOADING LOGIC ---
-        // Restore the camera image from session storage if the user took a live photo
-
-
-        // const reAnalysisBtn = document.querySelector(".re-analysis-btn");
-        // if (reAnalysisBtn) {
-        //     reAnalysisBtn.addEventListener("click", () => {
-        //         sessionStorage.removeItem("styleme_analysis_state");
-        //         sessionStorage.removeItem("styleme_captured_image");
-        //     });
-        // }
 
         const reAnalysisBtn = document.querySelector(".re-analysis-btn");
         if (reAnalysisBtn) {
             reAnalysisBtn.addEventListener("click", () => {
-                sessionStorage.removeItem("styleme_analysis_state");
                 sessionStorage.removeItem("styleme_captured_image");
             });
         }
@@ -991,6 +962,7 @@
         const clearBtn = document.getElementById("clear-analysis-btn");
         if (clearBtn) {
             clearBtn.addEventListener("click", () => {
+                sessionStorage.removeItem("styleme_captured_image");
                 window.location.href = "{{ url_for('color_analysis') }}";
             });
         }

@@ -102,23 +102,29 @@ class HairstyleDAO:
         return None
 
     def get_recommendation_by_shape_and_gender(self, gender, shape):
+        import random
         results = self._fetch_all_from_firebase()
         
         # 1. Exact match by gender & faceshape
-        for item in results:
-            if item.get("gender") == gender and (item.get("faceshape") == shape or item.get("ideal_shape") == shape):
-                return item
+        exact_matches = [
+            item for item in results 
+            if item.get("gender") == gender and (item.get("faceshape") == shape or item.get("ideal_shape") == shape)
+        ]
+        if exact_matches:
+            return random.choice(exact_matches)
 
         # 2. Fallback to gender match
-        for item in results:
-            if item.get("gender") == gender:
-                return item
+        gender_matches = [item for item in results if item.get("gender") == gender]
+        if gender_matches:
+            return random.choice(gender_matches)
 
-        # 3. Default first item
-        return results[0] if results else None
+        # 3. Default random item
+        return random.choice(results) if results else None
 
     def get_related_hairstyles(self, gender=None, shape=None, current_slug=None, limit=5):
-        results = self._fetch_all_from_firebase()
+        import random
+        results = list(self._fetch_all_from_firebase())
+        random.shuffle(results) # Shuffle to get dynamic related styles
         
         seen_categories = set()
         
