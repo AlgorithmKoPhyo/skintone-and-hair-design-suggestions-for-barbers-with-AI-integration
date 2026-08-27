@@ -490,6 +490,46 @@ function updateRecommendationViewFromDB(data, relatedStyles = []) {
     initAngleSwitcher();
   }
 
+  // --- Update Barber Card Modal Data for PDF/Image Export ---
+  const bTitle = document.getElementById('barber-card-title');
+  const bTagline = document.getElementById('barber-card-tagline');
+  const bLength = document.getElementById('barber-card-length');
+  const bTexture = document.getElementById('barber-card-texture');
+  const bAnglesGrid = document.getElementById('barber-card-angles-grid');
+  const bInstructions = document.getElementById('barber-card-instructions');
+
+  if (bTitle && data.name) bTitle.textContent = data.name;
+  if (bTagline && data.tagline) bTagline.textContent = data.tagline;
+  if (bLength && data.hair_length) bLength.textContent = data.hair_length;
+  if (bTexture && data.hair_texture) bTexture.textContent = data.hair_texture;
+
+  if (bAnglesGrid) {
+    if (data.angles && data.angles.length > 0) {
+      bAnglesGrid.innerHTML = data.angles.map(angle => `
+        <div class="col-3 col-sm-6" style="text-align: center;">
+          <div class="barber-angle-img-box" style="width: 100%; border-radius: 12px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: transparent;">
+            <img src="${angle.img}" alt="${angle.name}" style="width: 100%; max-height: 250px; object-fit: contain; object-position: center; background: transparent; border-radius: 12px;">
+          </div>
+          <span style="font-size: 0.73rem; font-weight: 600; color: var(--text-main);">${angle.name}</span>
+        </div>
+      `).join('');
+    } else if (data.main_img) {
+      bAnglesGrid.innerHTML = `
+        <div class="col-3 col-sm-6" style="text-align: center;">
+          <div class="barber-angle-img-box" style="width: 100%; border-radius: 12px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: transparent;">
+            <img src="${data.main_img}" alt="Front View" style="width: 100%; max-height: 250px; object-fit: contain; object-position: center; background: transparent; border-radius: 12px;">
+          </div>
+          <span style="font-size: 0.73rem; font-weight: 600; color: var(--text-main);">Front View</span>
+        </div>`;
+    }
+  }
+
+  if (bInstructions && data.reasons && data.reasons.length) {
+    bInstructions.innerHTML = data.reasons.map(r => `
+      <li style="margin-bottom: 4px;">${r}</li>
+    `).join('');
+  }
+
   if (galleryContainer && relatedStyles && relatedStyles.length) {
     galleryContainer.innerHTML = relatedStyles.map((style, idx) => `
       <a href="#" class="style-variation-card ${idx === 0 ? 'active' : ''}" data-slug="${style.slug}" data-title="${style.name}" data-img="${style.main_img}" style="text-decoration: none; color: inherit;">
