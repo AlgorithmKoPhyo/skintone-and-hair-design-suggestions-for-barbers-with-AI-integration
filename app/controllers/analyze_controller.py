@@ -86,6 +86,8 @@ def analyze():
     filepath  = os.path.join(UPLOAD_FOLDER, filename)
     saved_url = f"/static/uploads/{filename}"
 
+    existing_image_url = request.form.get('existing_image_url')
+
     if 'image' in request.files and request.files['image'].filename != '':
         request.files['image'].save(filepath)
     elif 'image_base64' in request.form and request.form['image_base64'].strip():
@@ -98,12 +100,31 @@ def analyze():
         except Exception as e:
             print("Error decoding base64 image:", e)
             saved_url = ''
+    elif existing_image_url:
+        import urllib.parse
+        parsed = urllib.parse.urlparse(existing_image_url)
+        filename_only = os.path.basename(parsed.path)
+        filepath = os.path.join(UPLOAD_FOLDER, filename_only)
+        if os.path.exists(filepath):
+            saved_url = existing_image_url
+        else:
+            return jsonify({"status": "error", "message": "Image not found."}), 404
     else:
         saved_url = ''
 
     # ── AI Face Shape Detection ────────────────────────────────────────────
     detected_shape = "oval"   # default fallback
     confidence     = 0.0
+
+    if analysis_type == 'hairstyle':
+        from main import face_validator
+        if face_validator:
+            val_res = face_validator.validate(filepath)
+            if not val_res.get('valid'):
+                return jsonify({
+                    "status": "error", 
+                    "message": val_res.get('message', "No face detected. Please retake the photo.")
+                }), 400
 
     if vggface_shape_classifier and os.path.exists(filepath):
         shape_result = vggface_shape_classifier.classify(filepath)
@@ -116,16 +137,24 @@ def analyze():
             print(f"  Face Shape : {shape_result['face_shape']}")
             print(f"  Confidence : {confidence * 100:.1f}%")
             print(f"{'='*40}\n")
+            
+            if analysis_type == 'hairstyle' and confidence < 0.4:
+                return jsonify({
+                    "status": "error", 
+                    "message": f"Face shape is unclear (Confidence: {int(confidence * 100)}%). Please retake a clear photo."
+                }), 400
 
     # ── AI Skin Tone Detection (STUB — replace with real model) ────────────
     # TODO: Replace with skin_tone_classifier module.
     # from modules.skin_tone_classifier import SkinToneClassifier
     # undertone = SkinToneClassifier().predict(filepath)
-    undertone = "Warm Autumn"  # ← stub
+    undertone = "Warm Autumn"
+    color_confidence = 0.90  # ← stub
     if skin_tone_service and os.path.exists(filepath):
         analysis_res = skin_tone_service.analyze_image(filepath)
         if analysis_res.get("status") == "success":
             undertone = analysis_res.get("undertone", "warm")
+            color_confidence = analysis_res.get("confidence", 0.90)
 
     # ── Log analysis session ────────────────────────────────────────────────
     hairstyle_service.log_user_analysis(
@@ -148,7 +177,10 @@ def analyze():
         redirect_url = (
             f"/color-analysis?user_img={saved_url}"
             f"&undertone={undertone}&gender={gender}"
+            f"&confidence={color_confidence}"
         )
+
+    # final_confidence = color_confidence if analysis_type == 'color' else confidence
 
     return jsonify({
         "status":             "success",

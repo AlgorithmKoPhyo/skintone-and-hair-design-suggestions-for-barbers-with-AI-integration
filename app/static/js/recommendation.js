@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initAngleSwitcher();
   initHairstyleGallery();
   initFaceShapeModal();
-  initQuickPhotoUpload();
 });
 
 async function fetchRecommendationFromAPI(gender, shape) {
@@ -111,26 +110,24 @@ function initAngleSwitcher() {
   }
 
   // Next / Prev button click listeners
-  // Remove existing listeners by cloning or just attach once
-  if (btnPrev && !btnPrev.dataset.hasEvent) {
-    btnPrev.addEventListener('click', (e) => {
+  // Use onclick to overwrite existing listeners from previous initializations
+  if (btnPrev) {
+    btnPrev.onclick = (e) => {
       e.stopPropagation();
       goToIndex(currentIndex - 1);
-    });
-    btnPrev.dataset.hasEvent = 'true';
+    };
   }
 
-  if (btnNext && !btnNext.dataset.hasEvent) {
-    btnNext.addEventListener('click', (e) => {
+  if (btnNext) {
+    btnNext.onclick = (e) => {
       e.stopPropagation();
       goToIndex(currentIndex + 1);
-    });
-    btnNext.dataset.hasEvent = 'true';
+    };
   }
 
   // Click on thumbnail card
   angleCards.forEach((card, idx) => {
-    card.addEventListener('click', () => goToIndex(idx));
+    card.onclick = () => goToIndex(idx);
   });
 
   // Touch Swipe Gesture & Auto-play Support
@@ -152,23 +149,23 @@ function initAngleSwitcher() {
 
   startAutoPlay();
 
-  if (wrapper && !wrapper.dataset.hasSwipeEvents) {
-    wrapper.addEventListener('mouseenter', stopAutoPlay);
-    wrapper.addEventListener('mouseleave', startAutoPlay);
+  if (wrapper) {
+    wrapper.onmouseenter = stopAutoPlay;
+    wrapper.onmouseleave = startAutoPlay;
 
     let touchStartX = 0;
     let touchEndX = 0;
 
-    wrapper.addEventListener('touchstart', (e) => {
+    wrapper.ontouchstart = (e) => {
       stopAutoPlay();
       touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+    };
 
-    wrapper.addEventListener('touchend', (e) => {
+    wrapper.ontouchend = (e) => {
       touchEndX = e.changedTouches[0].screenX;
       handleSwipe();
       startAutoPlay();
-    }, { passive: true });
+    };
 
     function handleSwipe() {
       const diff = touchEndX - touchStartX;
@@ -177,8 +174,6 @@ function initAngleSwitcher() {
         else goToIndex(currentIndex - 1);          // Swipe right → Prev
       }
     }
-    
-    wrapper.dataset.hasSwipeEvents = 'true';
   }
 }
 
@@ -237,204 +232,6 @@ function initFaceShapeModal() {
   }
 }
 
-
-function initQuickPhotoUpload() {
-  const quickFileInput = document.getElementById('rec-quick-file-input');
-  const btnQuickUpload = document.getElementById('btn-quick-upload');
-  const btnModalUpload = document.getElementById('btn-modal-upload');
-  const btnModalChange = document.getElementById('btn-modal-change-photo');
-  const heroDropZone = document.getElementById('rec-drag-drop-zone');
-  const noPhotoDropZone = document.getElementById('no-photo-dropzone');
-  const modalImageContainer = document.getElementById('modal-analyzed-img')?.parentElement;
-  const genderModal = document.getElementById('modal-gender-select');
-  const btnOptFemale = document.getElementById('gender-opt-female');
-  const btnOptMale = document.getElementById('gender-opt-male');
-
-  let pendingFile = null;
-
-  const triggerFileSelect = () => {
-    if (quickFileInput) quickFileInput.click();
-  };
-
-  if (btnQuickUpload) btnQuickUpload.addEventListener('click', triggerFileSelect);
-  if (btnModalUpload) btnModalUpload.addEventListener('click', triggerFileSelect);
-  if (btnModalChange) btnModalChange.addEventListener('click', triggerFileSelect);
-
-  // Add Drag & Drop to Hero Preview Card (#rec-drag-drop-zone)
-  if (heroDropZone) {
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      heroDropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }, false);
-    });
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      heroDropZone.addEventListener(eventName, () => {
-        heroDropZone.classList.add('drag-over');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      heroDropZone.addEventListener(eventName, () => {
-        heroDropZone.classList.remove('drag-over');
-      }, false);
-    });
-
-    heroDropZone.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      if (files && files.length > 0 && files[0].type.startsWith('image/')) {
-        pendingFile = files[0];
-        if (genderModal) {
-          genderModal.classList.add('active');
-        } else {
-          submitQuickUploadFile(pendingFile, activeGender);
-        }
-      }
-    });
-  }
-
-  // Add Drag & Drop to NO PHOTO STATE Container (#no-photo-dropzone)
-  if (noPhotoDropZone) {
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      noPhotoDropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }, false);
-    });
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      noPhotoDropZone.addEventListener(eventName, () => {
-        noPhotoDropZone.style.border = '2px dashed var(--purple-primary)';
-        noPhotoDropZone.style.background = 'var(--purple-light)';
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      noPhotoDropZone.addEventListener(eventName, () => {
-        noPhotoDropZone.style.border = '1px solid var(--border-light)';
-        noPhotoDropZone.style.background = 'var(--bg-card)';
-      }, false);
-    });
-
-    noPhotoDropZone.addEventListener('click', (e) => {
-      if (e.target !== btnQuickUpload && !btnQuickUpload.contains(e.target) && !e.target.closest('a')) {
-        triggerFileSelect();
-      }
-    });
-
-    noPhotoDropZone.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      if (files && files.length > 0 && files[0].type.startsWith('image/')) {
-        pendingFile = files[0];
-        if (genderModal) {
-          genderModal.classList.add('active');
-        } else {
-          submitQuickUploadFile(pendingFile, activeGender);
-        }
-      }
-    });
-  }
-
-  // Add Drag & Drop to Modal Analyzed Image Container
-  if (modalImageContainer) {
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      modalImageContainer.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }, false);
-    });
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      modalImageContainer.addEventListener(eventName, () => {
-        modalImageContainer.style.border = '2px dashed var(--purple-primary)';
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      modalImageContainer.addEventListener(eventName, () => {
-        modalImageContainer.style.border = '1px solid var(--border-light)';
-      }, false);
-    });
-
-    modalImageContainer.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      if (files && files.length > 0 && files[0].type.startsWith('image/')) {
-        pendingFile = files[0];
-        if (genderModal) {
-          genderModal.classList.add('active');
-        } else {
-          submitQuickUploadFile(pendingFile, activeGender);
-        }
-      }
-    });
-  }
-
-  if (quickFileInput) {
-    quickFileInput.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        pendingFile = e.target.files[0];
-        if (genderModal) {
-          genderModal.classList.add('active');
-        } else {
-          submitQuickUploadFile(pendingFile, activeGender);
-        }
-      }
-    });
-  }
-
-  if (btnOptFemale) {
-    btnOptFemale.addEventListener('click', () => {
-      if (genderModal) genderModal.classList.remove('active');
-      if (pendingFile) submitQuickUploadFile(pendingFile, 'female');
-    });
-  }
-
-  if (btnOptMale) {
-    btnOptMale.addEventListener('click', () => {
-      if (genderModal) genderModal.classList.remove('active');
-      if (pendingFile) submitQuickUploadFile(pendingFile, 'male');
-    });
-  }
-}
-
-async function submitQuickUploadFile(file, gender) {
-  const btnQuickUpload = document.getElementById('btn-quick-upload');
-  const btnModalUpload = document.getElementById('btn-modal-upload');
-
-  if (btnQuickUpload) {
-    btnQuickUpload.disabled = true;
-    btnQuickUpload.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
-  }
-  if (btnModalUpload) {
-    btnModalUpload.disabled = true;
-    btnModalUpload.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
-  }
-
-  const formData = new FormData();
-  formData.append('image', file);
-  formData.append('gender', gender);
-  formData.append('analysis_type', 'hairstyle');
-
-  try {
-    const res = await fetch('/api/analyze', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    if (data.redirect_url) {
-      window.location.href = data.redirect_url;
-    } else {
-      window.location.reload();
-    }
-  } catch (err) {
-    console.error("Quick photo upload error:", err);
-    window.location.reload();
-  }
-}
 
 function updateRecommendationViewFromDB(data, relatedStyles = []) {
   const titleElem = document.getElementById('rec-style-title');
@@ -500,6 +297,46 @@ function updateRecommendationViewFromDB(data, relatedStyles = []) {
     
     // Re-initialize the angle switcher with the new angle cards
     initAngleSwitcher();
+  }
+
+  // --- Update Barber Card Modal Data for PDF/Image Export ---
+  const bTitle = document.getElementById('barber-card-title');
+  const bTagline = document.getElementById('barber-card-tagline');
+  const bLength = document.getElementById('barber-card-length');
+  const bTexture = document.getElementById('barber-card-texture');
+  const bAnglesGrid = document.getElementById('barber-card-angles-grid');
+  const bInstructions = document.getElementById('barber-card-instructions');
+
+  if (bTitle && data.name) bTitle.textContent = data.name;
+  if (bTagline && data.tagline) bTagline.textContent = data.tagline;
+  if (bLength && data.hair_length) bLength.textContent = data.hair_length;
+  if (bTexture && data.hair_texture) bTexture.textContent = data.hair_texture;
+
+  if (bAnglesGrid) {
+    if (data.angles && data.angles.length > 0) {
+      bAnglesGrid.innerHTML = data.angles.map(angle => `
+        <div class="col-3 col-sm-6" style="text-align: center;">
+          <div class="barber-angle-img-box" style="width: 100%; border-radius: 12px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: transparent;">
+            <img src="${angle.img}" alt="${angle.name}" style="width: 100%; max-height: 250px; object-fit: contain; object-position: center; background: transparent; border-radius: 12px;">
+          </div>
+          <span style="font-size: 0.73rem; font-weight: 600; color: var(--text-main);">${angle.name}</span>
+        </div>
+      `).join('');
+    } else if (data.main_img) {
+      bAnglesGrid.innerHTML = `
+        <div class="col-3 col-sm-6" style="text-align: center;">
+          <div class="barber-angle-img-box" style="width: 100%; border-radius: 12px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; background: transparent;">
+            <img src="${data.main_img}" alt="Front View" style="width: 100%; max-height: 250px; object-fit: contain; object-position: center; background: transparent; border-radius: 12px;">
+          </div>
+          <span style="font-size: 0.73rem; font-weight: 600; color: var(--text-main);">Front View</span>
+        </div>`;
+    }
+  }
+
+  if (bInstructions && data.reasons && data.reasons.length) {
+    bInstructions.innerHTML = data.reasons.map(r => `
+      <li style="margin-bottom: 4px;">${r}</li>
+    `).join('');
   }
 
   if (galleryContainer && relatedStyles && relatedStyles.length) {

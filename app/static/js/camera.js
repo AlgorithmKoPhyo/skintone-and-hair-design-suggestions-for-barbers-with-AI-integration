@@ -40,8 +40,13 @@ function initLiveCamera() {
   // Open Gender Selection Modal when clicking "Choose Hairstyle"
   if (btnChooseHairstyle && genderModal) {
     btnChooseHairstyle.addEventListener('click', () => {
-      const optColor = document.getElementById('opt-color-analysis');
-      if (optColor) optColor.style.display = 'none';
+      window.currentAnalysisType = 'hairstyle';
+      const step1 = document.getElementById('step-1-analysis-type');
+      const step2 = document.getElementById('step-2-gender');
+
+      if (step1) step1.style.display = 'none';
+      if (step2) step2.style.display = '';
+
       const modalTitle = document.getElementById('gender-modal-title');
       if (modalTitle) modalTitle.textContent = "Select Gender Preference";
       const modalSubtitle = document.getElementById('gender-modal-subtitle');
@@ -51,44 +56,47 @@ function initLiveCamera() {
   }
 
   // Handle "Choose Color Analysis" directly from camera flow
-  if (btnChooseColor) {
-    btnChooseColor.addEventListener('click', async () => {
-      const originalText = btnChooseColor.innerHTML;
-      btnChooseColor.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...';
-      btnChooseColor.disabled = true;
-      if (btnChooseHairstyle) btnChooseHairstyle.disabled = true;
+  if (btnChooseColor && genderModal) {
+    btnChooseColor.addEventListener('click', () => {
+      window.currentAnalysisType = 'color';
+      const step1 = document.getElementById('step-1-analysis-type');
+      const step2 = document.getElementById('step-2-gender');
 
-      await submitCapturedPhoto('female', 'color');
+      if (step1) step1.style.display = 'none';
+      if (step2) step2.style.display = '';
 
-      // Restore in case of error (normally it redirects)
-      btnChooseColor.innerHTML = originalText;
-      btnChooseColor.disabled = false;
-      if (btnChooseHairstyle) btnChooseHairstyle.disabled = false;
+      const modalTitle = document.getElementById('gender-modal-title');
+      if (modalTitle) modalTitle.textContent = "Select Gender Preference";
+      const modalSubtitle = document.getElementById('gender-modal-subtitle');
+      if (modalSubtitle) modalSubtitle.textContent = "Which gender's colors and accessories should we recommend?";
+      genderModal.classList.add('active');
     });
   }
 
   // Handle Gender selection inside modal
-  if (btnOptFemale) {
-    btnOptFemale.addEventListener('click', async () => {
-      // Show loading inside modal instead of closing it
+  const btnStep2Female = document.getElementById('opt-step2-female');
+  if (btnStep2Female) {
+    btnStep2Female.addEventListener('click', async () => {
       const loading = document.getElementById('gender-modal-loading');
       if (loading) loading.style.display = 'flex';
-      btnOptFemale.disabled = true;
-      if (btnOptMale) btnOptMale.disabled = true;
+      btnStep2Female.disabled = true;
+      const btnStep2Male = document.getElementById('opt-step2-male');
+      if (btnStep2Male) btnStep2Male.disabled = true;
 
-      await submitCapturedPhoto('female', 'hairstyle');
+      await submitCapturedPhoto('female', window.currentAnalysisType || 'hairstyle');
     });
   }
 
-  if (btnOptMale) {
-    btnOptMale.addEventListener('click', async () => {
-      // Show loading inside modal instead of closing it
+  const btnStep2Male = document.getElementById('opt-step2-male');
+  if (btnStep2Male) {
+    btnStep2Male.addEventListener('click', async () => {
       const loading = document.getElementById('gender-modal-loading');
       if (loading) loading.style.display = 'flex';
-      if (btnOptFemale) btnOptFemale.disabled = true;
-      btnOptMale.disabled = true;
+      btnStep2Male.disabled = true;
+      const btnStep2Female = document.getElementById('opt-step2-female');
+      if (btnStep2Female) btnStep2Female.disabled = true;
 
-      await submitCapturedPhoto('male', 'hairstyle');
+      await submitCapturedPhoto('male', window.currentAnalysisType || 'hairstyle');
     });
   }
 
@@ -374,28 +382,11 @@ async function submitCapturedPhoto(gender, analysisType) {
     formData.append('analysis_type', analysisType);
 
     // Save the captured live camera photo to session storage
-    if (capturedImageDataUrl) {
-      sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
-    }
 
-    let res;
-    if (analysisType === 'color') {
-      res = await fetch('/analyze', {
-        method: 'POST',
-        body: formData
-      });
-      if (!res.ok) throw new Error('Network response was not ok');
-      const html = await res.text();
-      document.open();
-      document.write(html);
-      document.close();
-      return;
-    } else {
-      res = await fetch('/api/analyze', {
-        method: 'POST',
-        body: formData
-      });
-    }
+    let res = await fetch('/api/analyze', {
+      method: 'POST',
+      body: formData
+    });
 
     if (!res.ok) throw new Error('Network response was not ok');
 
@@ -406,7 +397,7 @@ async function submitCapturedPhoto(gender, analysisType) {
       window.location.href = data.redirect_url;
     } else {
       if (analysisType === 'color') {
-        window.location.href = data.color_url || '/color-analysis';
+        window.location.href = data.color_url || `/color-analysis?gender=${gender}`;
       } else {
         window.location.href = `/recommendation?gender=${gender}`;
       }
@@ -415,7 +406,7 @@ async function submitCapturedPhoto(gender, analysisType) {
     console.error("Camera submit error:", err);
     stopCamera();
     if (capturedImageDataUrl) {
-      sessionStorage.setItem('styleme_captured_image', capturedImageDataUrl);
+      // previously saved to session storage here
     }
     if (analysisType === 'color') {
       window.location.href = '/color-analysis';

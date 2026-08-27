@@ -3,11 +3,9 @@
   <div class="container">
     <div class="footer-grid grid-12">
       <div class="footer-brand col-4 col-md-6 col-sm-12">
-        <div class="brand-logo">
-          <div class="logo-icon">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-          </div>
-          <span>Style<span class="gradient-text">Me</span></span>
+        <div class="brand-logo" style="display: flex; align-items: flex-end; gap: 0px; margin-bottom: 20px;">
+          <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Shape & Shade Logo" style="height: 50px; width: auto; object-fit: contain; position: relative; z-index: 0;">
+          <span style="font-family: 'Great Vibes', cursive; font-size: 1.0rem; font-weight: 400; color: var(--text-main); white-space: nowrap; margin-bottom: -8px; margin-left: -14px; padding-right: 4px; position: relative; z-index: 1;">Shape <span class="gradient-text">& Shade</span></span>
         </div>
         <p>AI-Powered Beauty & Style Recommendation</p>
       </div>
@@ -27,6 +25,7 @@
         <ul>
           <li><a href="#">FAQ</a></li>
           <li><a href="#">Privacy Policy</a></li>
+          <li><a href="{{ url_for('about') }}#ai-ethics">AI Ethics</a></li>
           <li><a href="#">Terms of Use</a></li>
         </ul>
       </div>
@@ -45,7 +44,7 @@
     <div
       style="border-top: 1px solid var(--border-light); margin-top: 32px; padding-top: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
       <span style="font-size: 0.8rem; color: var(--text-light);">
-        &copy; {{ 2025 }} StyleMe. All rights reserved.
+        &copy; {{ 2026 }} Shape & Shade. All rights reserved.
       </span>
       <span style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
         <span>
