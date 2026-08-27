@@ -733,14 +733,15 @@
         <!-- Dynamic Button: Start Analysis for samples, Download PDF for real results -->
         {% if not image_url or image_url == '#' or 'default_user.jpg' in image_url %}
         <a href="{{ url_for('recommendation', user_img=image_url, gender=gender) }}" class="btn-primary"
-            style="display: block; text-align: center; text-decoration: none; box-sizing: border-box;">
+            style="display: block; text-align: center; text-decoration: none; box-sizing: border-box; flex-shrink: 0;">
             Start Your Analyse
         </a>
         {% else %}
-        <button class="btn-primary" id="download-report-btn">
+        <button class="btn-primary" id="download-report-btn" style="flex-shrink: 0;">
             Download Result(PDF)
         </button>
         {% endif %}
+
     </aside>
 
     <!-- RIGHT PANE -->
@@ -907,6 +908,14 @@
         {% endif %}
     </main>
 
+</div>
+
+<!-- Global AI Disclaimer at the bottom of the page -->
+<div class="container" style="max-width: 1600px; margin: 0 auto 40px auto; padding: 0 20px;">
+    <div style="font-size: 0.85rem; color: var(--muted); text-align: center; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px dashed #CBD5E1;">
+        <i class="fa-solid fa-triangle-exclamation" style="color: #F59E0B; margin-right: 4px;"></i>
+        <strong>Disclaimer:</strong> AI recommendations are based on algorithmic analysis and can occasionally make mistakes. Please verify with a professional stylist.
+    </div>
 </div>
 
 <!-- Tab Switching Script & Camera Logic -->

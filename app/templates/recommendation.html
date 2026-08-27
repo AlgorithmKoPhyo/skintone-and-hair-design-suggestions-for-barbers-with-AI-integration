@@ -229,6 +229,12 @@
     <!-- More Bob Cut Styles Partial Component Include -->
     {% include 'components/more_styles.html' %}
 
+    <!-- Global AI Disclaimer at the bottom of the page -->
+    <div style="margin: 40px auto; max-width: 100%; font-size: 0.85rem; color: var(--text-muted); text-align: center; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px dashed #CBD5E1;">
+        <i class="fa-solid fa-triangle-exclamation" style="color: #F59E0B; margin-right: 4px;"></i>
+        <strong>Disclaimer:</strong> AI recommendations are based on algorithmic analysis and can occasionally make mistakes. Please verify with a professional stylist.
+    </div>
+
     {% else %}
 
     <!-- NO PHOTO STATE: Pure Action Landing Container (Drag & Drop Zone) -->
@@ -242,7 +248,7 @@
         </p>
       </div>
 
-      <div class="action-buttons-grid">
+      <div class="action-buttons-grid" id="main-action-buttons-rec" style="opacity: 0.5; pointer-events: none; transition: opacity 0.3s ease;">
         <div class="upload-btn-card" id="btn-quick-upload">
           <i class="fa-solid fa-upload"></i>
           <h4>Upload Photo</h4>
@@ -256,7 +262,15 @@
         </a>
       </div>
       
-      <p class="privacy-note" style="margin-top: 32px;">Your privacy is our priority. Your photos are only used for analysis.</p>
+      <div style="margin-top: 32px; padding: 14px 18px; background: rgba(243, 244, 246, 0.7); border-radius: 12px; border: 1px solid #E5E7EB; text-align: left;">
+          <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              <input type="checkbox" id="ai-ethics-consent-rec" onchange="document.getElementById('main-action-buttons-rec').style.opacity = this.checked ? '1' : '0.5'; document.getElementById('main-action-buttons-rec').style.pointerEvents = this.checked ? 'auto' : 'none';" style="margin-top: 2px; cursor: pointer; width: 18px; height: 18px; accent-color: var(--purple-primary); flex-shrink: 0;">
+              <span>
+                  I agree to the <a href="{{ url_for('about') }}#ai-ethics" style="color: var(--purple-primary); font-weight: 600; text-decoration: underline;" target="_blank">AI Ethics & Privacy Policy</a>. 
+                  My photo will be processed instantly and never stored on any server.
+              </span>
+          </label>
+      </div>
 
       <!-- Hidden File Input for Quick Uploads -->
       <input type="file" id="rec-quick-file-input" accept="image/*" style="display: none;">

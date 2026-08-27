@@ -2925,6 +2925,13 @@ body {
     padding: 40px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.05);
     text-align: center;
+    transition: all 0.3s ease;
+}
+
+.journey-action-card.drag-over {
+    border-color: var(--purple-primary) !important;
+    background: var(--purple-light) !important;
+    transform: scale(1.02);
 }
 
 .journey-action-card h3 {

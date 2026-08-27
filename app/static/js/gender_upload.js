@@ -385,9 +385,11 @@
 
     if (quickInput) patchFileInput(quickInput);
     if (heroDropZone) patchDropZone(heroDropZone);
-    if (noPhotoZone) patchDropZone(noPhotoZone);
+    
+    const btnQuickUpload = $('btn-quick-upload');
+    if (btnQuickUpload) patchDropZone(btnQuickUpload);
 
-    [$('btn-quick-upload'), $('btn-modal-upload'), $('btn-modal-change-photo')].forEach(btn => {
+    [btnQuickUpload, $('btn-modal-upload'), $('btn-modal-change-photo')].forEach(btn => {
       if (btn && !btn._triggerBound) {
         btn._triggerBound = true;
         btn.addEventListener('click', () => quickInput && quickInput.click());

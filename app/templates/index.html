@@ -240,7 +240,7 @@
             </div>
             <div class="journey-action-card col-7 col-md-12">
                 <h3>Start Your Analysis</h3>
-                <div class="action-buttons-grid">
+                <div class="action-buttons-grid" id="main-action-buttons" style="opacity: 0.5; pointer-events: none; transition: opacity 0.3s ease;">
                     <div class="upload-btn-card" id="upload-action-card" onclick="document.getElementById('file-upload-input').click()">
                         <i class="fa-solid fa-upload"></i>
                         <h4>Upload Photo</h4>
@@ -253,7 +253,16 @@
                         <p>Take a photo using your camera</p>
                     </div>
                 </div>
-                <p class="privacy-note">Your privacy is our priority. Your photos are only used for analysis.</p>
+                
+                <div style="margin-top: 24px; padding: 14px 18px; background: rgba(243, 244, 246, 0.7); border-radius: 12px; border: 1px solid #E5E7EB;">
+                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                        <input type="checkbox" id="ai-ethics-consent" onchange="document.getElementById('main-action-buttons').style.opacity = this.checked ? '1' : '0.5'; document.getElementById('main-action-buttons').style.pointerEvents = this.checked ? 'auto' : 'none';" style="margin-top: 2px; cursor: pointer; width: 18px; height: 18px; accent-color: var(--purple-primary); flex-shrink: 0;">
+                        <span>
+                            I agree to the <a href="{{ url_for('about') }}#ai-ethics" style="color: var(--purple-primary); font-weight: 600; text-decoration: underline;" target="_blank">AI Ethics & Privacy Policy</a>. 
+                            My photo will be processed instantly and never stored on any server.
+                        </span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
