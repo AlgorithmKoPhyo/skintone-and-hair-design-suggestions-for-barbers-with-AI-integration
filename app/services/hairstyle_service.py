@@ -6,11 +6,11 @@ Encapsulates business rules and communicates with the DAO layer.
 Follows Request -> Service -> DAO clean architecture.
 """
 
-from app.dao.hairstyle_dao import HairstyleDAO
+from app.dao.sqlite_hairstyle_dao import SqliteHairstyleDAO
 
 class HairstyleService:
     def __init__(self):
-        self.dao = HairstyleDAO()
+        self.dao = SqliteHairstyleDAO()
 
     def get_all_hairstyles(self, gender=None, shape=None, search=None, category=None):
         """Retrieve all catalog hairstyles with optional filtering."""

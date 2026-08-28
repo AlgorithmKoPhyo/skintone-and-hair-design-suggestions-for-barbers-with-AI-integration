@@ -97,13 +97,18 @@ function initCatalogFilters() {
     isLoading = true;
     
     if (!append) {
-      grid.innerHTML = '';
       currentPage = 1;
       emptyState.style.display = 'none';
+      // Smooth fade out instead of clearing immediately
+      grid.style.transition = 'opacity 0.3s ease';
+      grid.style.opacity = '0.5';
     }
     
     loadMoreContainer.style.display = 'none';
-    loadingIndicator.style.display = 'block';
+    // Only show loading indicator at the bottom if we are appending
+    if (append) {
+      loadingIndicator.style.display = 'block';
+    }
 
     try {
       const url = new URL(window.location.origin + '/api/hairstyles');
@@ -134,6 +139,7 @@ function initCatalogFilters() {
           loadMoreContainer.style.display = 'block';
         }
       } else if (!append) {
+        grid.innerHTML = '';
         if (countDisplay) {
           countDisplay.textContent = `0 Hairstyles`;
         }
@@ -144,6 +150,9 @@ function initCatalogFilters() {
       loadingIndicator.style.display = 'none';
     } finally {
       isLoading = false;
+      if (!append) {
+        grid.style.opacity = '1';
+      }
     }
   };
 

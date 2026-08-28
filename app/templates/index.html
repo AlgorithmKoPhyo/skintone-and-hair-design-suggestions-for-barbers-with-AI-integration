@@ -89,7 +89,7 @@
                             <div class="swiper-slide">
                                 <div class="f-card">
                                     {% set img_url = style.get('main_img', '') %}
-                                    <img src="{{ img_url if img_url.startswith('http') else url_for('static', filename=img_url) if img_url else 'https://placehold.co/300x400/e0e0e0/333333?text=No+Image' }}" alt="{{ style.get('name', '') }}" onerror="this.src='https://placehold.co/300x400/e0e0e0/333333?text=No+Image'">
+                                    <img src="{{ img_url if (img_url.startswith('http') or img_url.startswith('/static/')) else url_for('static', filename=img_url) if img_url else 'https://placehold.co/300x400/e0e0e0/333333?text=No+Image' }}" alt="{{ style.get('name', '') }}" onerror="this.src='https://placehold.co/300x400/e0e0e0/333333?text=No+Image'">
                                     <div class="f-card-label-overlay">
                                         <strong>{{ style.get('name', '') }}</strong>
                                     </div>

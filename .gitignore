@@ -37,3 +37,8 @@ modules/face_shape_classification/src/prediction/
 modules/face_shape_classification/src/training/
 modules/face_shape_classification/src/pipeline.py
 
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
