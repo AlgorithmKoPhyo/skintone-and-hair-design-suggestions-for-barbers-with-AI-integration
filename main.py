@@ -310,15 +310,15 @@ def render_analyze_result():
 
     user_image_url = url_for('static', filename=f'uploads/{filename}')
 
-    undertone = 'warm'
-    confidence_val = 0.90
+    undertone = 'neutral'
+    confidence_val = 0.0
     recommendations = {}
 
     if skin_tone_service:
         analysis_res = skin_tone_service.analyze_image(filepath)
         if analysis_res.get("status") == "success":
-            undertone = analysis_res.get("undertone", "warm")
-            confidence_val = analysis_res.get("confidence", 0.90)
+            undertone = analysis_res.get("undertone", "neutral")
+            confidence_val = analysis_res.get("confidence", 0.0)
             recommendations = analysis_res.get("recommendations", {})
 
     palette_file = os.path.join(app.root_path, 'modules', 'palettes.json')

@@ -112,6 +112,9 @@ def analyze():
     else:
         saved_url = ''
 
+    if not saved_url or not os.path.exists(filepath):
+        return jsonify({"status": "error", "message": "No valid image uploaded. Please provide an image."}), 400
+
     # ── AI Face Shape Detection ────────────────────────────────────────────
     detected_shape = "oval"   # default fallback
     confidence     = 0.0
@@ -144,17 +147,30 @@ def analyze():
                     "message": f"Face shape is unclear (Confidence: {int(confidence * 100)}%). Please retake a clear photo."
                 }), 400
 
-    # ── AI Skin Tone Detection (STUB — replace with real model) ────────────
-    # TODO: Replace with skin_tone_classifier module.
-    # from modules.skin_tone_classifier import SkinToneClassifier
-    # undertone = SkinToneClassifier().predict(filepath)
-    undertone = "Warm Autumn"
-    color_confidence = 0.90  # ← stub
-    if skin_tone_service and os.path.exists(filepath):
+    # ── AI Skin Tone Detection ─────────────────────────────────────────────
+    undertone = "neutral"
+    color_confidence = 0.0
+    if analysis_type == 'color':
+        if not skin_tone_service or not os.path.exists(filepath):
+            return jsonify({
+                "status": "error",
+                "message": "Skin tone analysis service is currently unavailable."
+            }), 500
+
+        analysis_res = skin_tone_service.analyze_image(filepath)
+        if analysis_res.get("status") != "success":
+            return jsonify({
+                "status": "error",
+                "message": analysis_res.get("message", "Unable to analyze skin tone. Please upload a clear photo with good lighting.")
+            }), 400
+
+        undertone = analysis_res.get("undertone", "neutral")
+        color_confidence = analysis_res.get("confidence", 0.0)
+    elif skin_tone_service and os.path.exists(filepath):
         analysis_res = skin_tone_service.analyze_image(filepath)
         if analysis_res.get("status") == "success":
-            undertone = analysis_res.get("undertone", "warm")
-            color_confidence = analysis_res.get("confidence", 0.90)
+            undertone = analysis_res.get("undertone", "neutral")
+            color_confidence = analysis_res.get("confidence", 0.0)
 
     # ── Log analysis session ────────────────────────────────────────────────
     hairstyle_service.log_user_analysis(
@@ -180,14 +196,14 @@ def analyze():
             f"&confidence={color_confidence}"
         )
 
-    # final_confidence = color_confidence if analysis_type == 'color' else confidence
+    final_confidence = color_confidence if analysis_type == 'color' else confidence
 
     return jsonify({
         "status":             "success",
         "detected_face_shape": detected_shape,
         "face_shape_title":    detected_shape.capitalize() + " Face",
         "undertone":           undertone,
-        "confidence":          confidence,
+        "confidence":          final_confidence,
         "user_image_url":      saved_url,
         "gender":              gender,
         "analysis_type":       analysis_type,

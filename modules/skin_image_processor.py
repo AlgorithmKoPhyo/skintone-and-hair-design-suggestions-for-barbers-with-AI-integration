@@ -183,10 +183,11 @@ def validate_face_lighting(face_crop: np.ndarray) -> dict[str, Any]:
 #     return np.clip(result, 0, 255).astype(np.uint8)
 # modules/skin_image_processor.py ထဲတွင် အောက်ပါ Function ကို ထည့်ပါ
 
-def apply_face_aware_wb(img: np.ndarray, face_bbox: tuple[int, int, int, int]) -> np.ndarray:
+def apply_face_aware_wb(img: np.ndarray, face_bbox: tuple[int, int, int, int], strength: float = 0.5) -> np.ndarray:
     """
-    Applies Gray World white balance based ONLY on the detected face region.
-    face_bbox format: (x, y, width, height)
+    Applies gentle Gray World white balance based on the detected face region
+    to reduce ambient lighting cast while preserving natural skin undertone.
+    strength: 0.0 (no change) to 1.0 (full Gray World). Default 0.5.
     """
     if img is None or img.size == 0:
         raise ValueError("Input image is empty or invalid.")
@@ -221,9 +222,13 @@ def apply_face_aware_wb(img: np.ndarray, face_bbox: tuple[int, int, int, int]) -
 
     gray_mean = sum(channel_means) / 3.0
 
-    # တစ်ပုံလုံးကို မျက်နှာအလင်းရောင်ပေါ်မူတည်ပြီး ချိန်ညှိခြင်း
+    # တစ်ပုံလုံးကို မျက်နှာအလင်းရောင်ပေါ်မူတည်ပြီး သဘာဝကျကျ ချိန်ညှိခြင်း (Gentle Scaling)
     for channel_idx, mean in enumerate(channel_means):
-        result[:, :, channel_idx] *= gray_mean / mean
+        scale = gray_mean / mean
+        blended_scale = 1.0 + strength * (scale - 1.0)
+        # Limit scaling factor to safe range [0.75, 1.35]
+        blended_scale = max(0.75, min(1.35, blended_scale))
+        result[:, :, channel_idx] *= blended_scale
 
     return np.clip(result, 0, 255).astype(np.uint8)
 
@@ -302,25 +307,24 @@ def compute_skin_validated_mean_color(
     cb_max: int = SKIN_CB_MAX,
     min_skin_ratio: float = MIN_SKIN_PIXEL_RATIO,
 ) -> dict[str, object]:
-    """Compute mean BGR/RGB using only YCrCb-validated skin pixels in a patch."""
+    """Compute mean BGR/RGB using YCrCb-validated skin pixels in a patch with robust fallback."""
+    if bgr_patch is None or bgr_patch.size == 0:
+        raise ValueError("Patch is empty or invalid.")
+
     skin_mask = create_ycrcb_skin_mask(bgr_patch, cr_min, cr_max, cb_min, cb_max)
     total_pixels = int(skin_mask.size)
     skin_pixels = bgr_patch[skin_mask == 1]
     skin_pixel_count = int(skin_pixels.shape[0])
     skin_pixel_ratio = skin_pixel_count / total_pixels if total_pixels else 0.0
 
-    # INSTEAD OF FALLING BACK TO ALL PIXELS, MARK AS INVALID
-    if skin_pixel_count == 0 or skin_pixel_ratio < min_skin_ratio:
-        return {
-            "mean_bgr": [0, 0, 0],
-            "mean_rgb": [0, 0, 0],
-            "skin_pixel_count": skin_pixel_count,
-            "skin_pixel_ratio": round(skin_pixel_ratio, 4),
-            "quality_status": "invalid_skin_region",
-            "quality_message": f"Only {skin_pixel_ratio:.0%} of pixels classified as skin.",
-        }
+    if skin_pixel_count > 0:
+        mean_bgr_raw = cv2.mean(skin_pixels)[:3]
+        quality_status = "good" if skin_pixel_ratio >= min_skin_ratio else "low_skin_coverage"
+    else:
+        # Fallback to patch mean if YCrCb mask is overly strict
+        mean_bgr_raw = cv2.mean(bgr_patch)[:3]
+        quality_status = "fallback_patch_mean"
 
-    mean_bgr_raw = cv2.mean(skin_pixels)[:3]
     mean_bgr = [round(mean_bgr_raw[0]), round(mean_bgr_raw[1]), round(mean_bgr_raw[2])]
     mean_rgb = [mean_bgr[2], mean_bgr[1], mean_bgr[0]]
 
@@ -329,8 +333,8 @@ def compute_skin_validated_mean_color(
         "mean_rgb": mean_rgb,
         "skin_pixel_count": skin_pixel_count,
         "skin_pixel_ratio": round(skin_pixel_ratio, 4),
-        "quality_status": "good",
-        "quality_message": None,
+        "quality_status": quality_status,
+        "quality_message": None if quality_status == "good" else f"{skin_pixel_ratio:.0%} of pixels classified as skin.",
     }
 
 

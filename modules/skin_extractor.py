@@ -31,7 +31,12 @@ POSE_SYMMETRY_THRESHOLD = 1.5
 PATCH_SIZE_FACE_WIDTH_RATIO = 0.04
 MIN_PATCH_SIZE = 15
 
-DEFAULT_MODEL_PATH = Path(__file__).resolve().parent.parent / "models" / "face_landmarker.task"
+DEFAULT_MODEL_PATH = Path(__file__).resolve().parent / "models" / "face_landmarker.task"
+if not DEFAULT_MODEL_PATH.exists():
+    # Fallback to project root models/ if present
+    _alt_path = Path(__file__).resolve().parent.parent / "models" / "face_landmarker.task"
+    if _alt_path.exists():
+        DEFAULT_MODEL_PATH = _alt_path
 
 
 class ModelNotFoundError(FileNotFoundError):
