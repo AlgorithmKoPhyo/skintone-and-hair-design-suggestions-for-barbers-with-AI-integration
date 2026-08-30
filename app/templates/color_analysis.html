@@ -871,7 +871,8 @@
                         <!-- Right Side: Jewelry Match -->
                         <div class="occ-image-wrap">
                             <!-- <span>Jewelry</span> -->
-                             <span>{{ occ_data.jewelry.name if occ_data.jewelry and occ_data.jewelry.name else '' }} Jewelry</span>
+                            <span>{{ occ_data.jewelry.name if occ_data.jewelry and occ_data.jewelry.name else '' }}
+                                Jewelry</span>
 
                             <!-- Smart extraction: Dynamically checks for male or female -->
                             {% set j_img = '' %}
@@ -898,11 +899,12 @@
             </div>
 
         </div>
-        
+
         {% if image_url and image_url != '#' and 'default_user.jpg' not in image_url %}
-        <div style="padding: 16px 20px; text-align: center; font-size: 0.95rem; color: var(--muted); border-top: 1px solid var(--border); background: var(--paper);">
-            Would you like to try Hairstyle Recommendation as well? <a
-                href="#" onclick="runCrossAnalysis('hairstyle', '{{ image_url }}', '{{ gender|default('female') }}'); return false;"
+        <div
+            style="padding: 16px 20px; text-align: center; font-size: 0.95rem; color: var(--muted); border-top: 1px solid var(--border); background: var(--paper);">
+            Would you like to try Hairstyle Recommendation as well? <a href="#"
+                onclick="runCrossAnalysis('hairstyle', '{{ image_url }}', '{{ gender|default('female') }}'); return false;"
                 style="color: var(--accent); text-decoration: underline; font-weight: 600;">Click here</a>
         </div>
         {% endif %}
@@ -912,15 +914,31 @@
 
 <!-- Global AI Disclaimer at the bottom of the page -->
 <div class="container" style="max-width: 1600px; margin: 0 auto 40px auto; padding: 0 20px;">
-    <div style="font-size: 0.85rem; color: var(--muted); text-align: center; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px dashed #CBD5E1;">
+    <div
+        style="font-size: 0.85rem; color: var(--muted); text-align: center; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px dashed #CBD5E1;">
         <i class="fa-solid fa-triangle-exclamation" style="color: #F59E0B; margin-right: 4px;"></i>
-        <strong>Disclaimer:</strong> AI recommendations are based on algorithmic analysis and can occasionally make mistakes. Please verify with a professional stylist.
+        <strong>Disclaimer:</strong> AI recommendations are based on algorithmic analysis and can occasionally make
+        mistakes. Please verify with a professional stylist.
     </div>
 </div>
 
 <!-- Tab Switching Script & Camera Logic -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        function shuffleGrid(grid) {
+            if (!grid) return;
+
+            const cards = Array.from(grid.children);
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            cards.forEach(card => grid.appendChild(card));
+        }
+
+        const gridsToShuffle = document.querySelectorAll('.compact-grid, .swatch-row');
+        gridsToShuffle.forEach(grid => shuffleGrid(grid));
         // --- 1. TAB LOGIC ---
         const tabs = document.querySelectorAll('.nav-tab');
         const panels = document.querySelectorAll('.tab-panel');
@@ -969,13 +987,13 @@
             });
         }
 
-         const clearBtn = document.getElementById("clear-analysis-btn");
+        const clearBtn = document.getElementById("clear-analysis-btn");
         if (clearBtn) {
             clearBtn.addEventListener("click", () => {
                 // 1. Delete the saved analysis from the browser's memory
                 sessionStorage.removeItem("styleme_analysis_state");
                 sessionStorage.removeItem("styleme_captured_image");
-                
+
                 // 2. Safely redirect to the clean default page
                 window.location.href = "{{ url_for('color_analysis') }}";
             });
@@ -1090,7 +1108,7 @@
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(8);
                 pdf.setTextColor(...mutedCol);
-                
+
                 // NEW: Use maxWidth and align: "justify" for a clean block of text
                 pdf.text(desc, 15, 78 + offsetY, { maxWidth: 70, align: "justify" });
 
@@ -1128,8 +1146,8 @@
                 // -- Right Side: Palettes --
                 // -- Right Side: Palettes --
                 // Shifted from 90 to 110 so it aligns perfectly with the Jewelry section!
-                const rightX = 110; 
-                
+                const rightX = 110;
+
                 const drawRowPalette = (selector, title, startY, limit) => {
                     pdf.setFont("helvetica", "bold");
                     pdf.setFontSize(11);
