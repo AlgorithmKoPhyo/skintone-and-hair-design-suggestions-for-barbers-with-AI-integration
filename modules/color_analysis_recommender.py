@@ -140,6 +140,17 @@ def get_recommendations(undertone,gender="female"):
             gender
         )
 
+    raw_recommended = palette.get("recommended_colors", [])
+    recommended_colors = random.sample(raw_recommended, min(6, len(raw_recommended))) if raw_recommended else []
+        
+    # 2. Pick exactly 6 Random Avoid Colors
+    raw_avoid = palette.get("avoid_colors", [])
+    avoid_colors = random.sample(raw_avoid, min(6, len(raw_avoid))) if raw_avoid else []
+        
+    # 3. Pick exactly 3 Random Neutral Colors
+    raw_neutral = palette.get("neutral_colors_that_flatter", [])
+    neutral_colors = random.sample(raw_neutral, min(3, len(raw_neutral))) if raw_neutral else []
+
     return {
         "status": "success",
         "undertone": undertone,
@@ -150,21 +161,24 @@ def get_recommendations(undertone,gender="female"):
             ""
         ),
 
-        "recommended_colors": palette.get(
-            "recommended_colors",
-            []
-        ),
+        # "recommended_colors": palette.get(
+        #     "recommended_colors",
+        #     []
+        # ),
 
 
-         "avoid_colors": palette.get(
-            "avoid_colors",
-            []
-        ),
+        #  "avoid_colors": palette.get(
+        #     "avoid_colors",
+        #     []
+        # ),
 
-        "neutral_colors": palette.get(
-            "neutral_colors_that_flatter",
-            []
-        ),
+        # "neutral_colors": palette.get(
+        #     "neutral_colors_that_flatter",
+        #     []
+        # ),
+        "recommended_colors": recommended_colors,
+        "avoid_colors": avoid_colors,
+        "neutral_colors": neutral_colors,
 
        "hair_colors": selected_hair_colors,
 

@@ -803,7 +803,7 @@
                     {% endfor %}
                 </div>
 
-                <h2 class="panel-section-title">Avoid</h2>
+                <h2 class="panel-section-title">Less Recommended</h2>
                 <div class="compact-grid">
                     {% for color in avoids %}
                     {% set hex_code = color.hex if color is mapping else color %}
@@ -926,19 +926,32 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        function shuffleGrid(grid) {
+        function shuffleAndLimitGrid(grid, limit) {
             if (!grid) return;
 
-            const cards = Array.from(grid.children);
+            let cards = Array.from(grid.children);
+            
+            // 1. Shuffle ALL the cards (all 12+ of them)
             for (let i = cards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [cards[i], cards[j]] = [cards[j], cards[i]];
             }
-            cards.forEach(card => grid.appendChild(card));
+            
+            // 2. Clear out the grid entirely
+            grid.innerHTML = '';
+            
+            // 3. Put back ONLY the random selection up to your limit (e.g., 3 or 6)
+            cards.slice(0, limit).forEach(card => grid.appendChild(card));
         }
 
-        const gridsToShuffle = document.querySelectorAll('.compact-grid, .swatch-row');
-        gridsToShuffle.forEach(grid => shuffleGrid(grid));
+        // Target the 3 color grids exactly in the order they appear on the page
+        const colorGrids = document.querySelectorAll('.compact-grid');
+        
+        if (colorGrids.length >= 3) {
+            shuffleAndLimitGrid(colorGrids[0], 6); // Best Colors: Keep 6
+            shuffleAndLimitGrid(colorGrids[1], 3); // Neutral Essentials: Keep 3
+            shuffleAndLimitGrid(colorGrids[2], 6); // Avoid Colors: Keep 6
+        }
         // --- 1. TAB LOGIC ---
         const tabs = document.querySelectorAll('.nav-tab');
         const panels = document.querySelectorAll('.tab-panel');
@@ -1172,7 +1185,7 @@
                 // Moved the Y-coordinates slightly UP based on your teacher's feedback
                 drawRowPalette("#tab-colors .compact-grid:nth-of-type(1)", "Best Colors", 22 + offsetY, 6);
                 drawRowPalette("#tab-colors .compact-grid:nth-of-type(2)", "Neutral Essentials", 48 + offsetY, 4);
-                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Avoid Colors", 74 + offsetY, 6);
+                drawRowPalette("#tab-colors .compact-grid:nth-of-type(3)", "Less Recommended", 74 + offsetY, 6);
 
                 // ==========================================
                 // DIVIDER & MIDDLE SECTION

@@ -2,25 +2,46 @@
   "cool": {
     "description": "Cool undertones usually have subtle pink, red, or bluish tones beneath the skin. Colors with cool, crisp, or jewel-like qualities often complement this undertone and help create a balanced, fresh appearance.",
     "recommended_colors": [
-      { "name": "Navy Blue", "hex": "#000080" },
-      { "name": "Lavender", "hex": "#E6E6FA" },
+      { "name": "Sapphire Blue", "hex": "#0F52BA" },
       { "name": "Emerald Green", "hex": "#50C878" },
-      { "name": "Bright Rose Pink", "hex": "#FF66CC" },
-      { "name": "Ice Blue", "hex": "#99FFFF" },
-      { "name": "Pure White", "hex": "#FFFFFF" }
+      { "name": "Ruby Red", "hex": "#E0115F" },
+      { "name": "Amethyst", "hex": "#9966CC" },
+      { "name": "Magenta", "hex": "#FF00FF" },
+      { "name": "Royal Blue", "hex": "#4169E1" },
+      { "name": "Cool Fuchsia", "hex": "#C154C1" },
+      { "name": "Icy Blue", "hex": "#A5F2F3" },
+      { "name": "True Berry", "hex": "#990F4B" },
+      { "name": "Cool Pink", "hex": "#FF69B4" },
+      { "name": "Deep Violet", "hex": "#9400D3" },
+      { "name": "Teal Blue", "hex": "#367588" }
     ],
     "avoid_colors": [
-      { "name": "Orange", "hex": "#FFA500" },
-      { "name": "Mustard Yellow", "hex": "#D4A017" },
-      { "name": "Warm Brown", "hex": "#A52A2A" },
-      { "name": "Camel", "hex": "#C19A6B" },
+      { "name": "Mustard Yellow", "hex": "#FFDB58" },
+      { "name": "Terracotta", "hex": "#E2725B" },
       { "name": "Rust", "hex": "#B7410E" },
-      { "name": "Golden Yellow", "hex": "#FFD700" }
+      { "name": "Copper", "hex": "#B87333" },
+      { "name": "Tomato Red", "hex": "#E13D2F" },
+      { "name": "Warm Olive", "hex": "#708238" },
+      { "name": "Goldenrod", "hex": "#DAA520" },
+      { "name": "Burnt Orange", "hex": "#CC5500" },
+      { "name": "Coral", "hex": "#FF7F50" },
+      { "name": "Warm Peach", "hex": "#FFCBA4" },
+      { "name": "Camel", "hex": "#C19A6B" },
+      { "name": "Warm Earth Brown", "hex": "#8B4513" }
     ],
     "neutral_colors_that_flatter": [
-      { "name": "Navy Blue", "hex": "#000080" },
-      { "name": "Cool Gray", "hex": "#8C92AC" },
-      { "name": "Pure White", "hex": "#FFFFFF" }
+      { "name": "Pure White", "hex": "#FFFFFF" },
+      { "name": "True Black", "hex": "#000000" },
+      { "name": "Charcoal Gray", "hex": "#36454F" },
+      { "name": "Silver", "hex": "#C0C0C0" },
+      { "name": "Slate", "hex": "#708090" },
+      { "name": "Classic Navy", "hex": "#000080" },
+      { "name": "Ash Brown", "hex": "#8A8583" },
+      { "name": "Pewter", "hex": "#8E9294" },
+      { "name": "Icy Gray", "hex": "#D3D3D3" },
+      { "name": "Cool Taupe", "hex": "#8B8589" },
+      { "name": "Stone Blue", "hex": "#A8A9AD" },
+      { "name": "Steel Blue", "hex": "#4682B4" }
     ],
     "hair_colors": [
       {
@@ -286,25 +307,46 @@
   "warm": {
     "description": "Warm undertones usually have subtle golden, yellow, peach, or warm beige tones beneath the skin. Earthy, golden, and rich warm colors often complement this undertone and enhance the skin's natural warmth.",
     "recommended_colors": [
-      { "name": "Mustard Yellow", "hex": "#D4A017" },
-      { "name": "Olive Green", "hex": "#708238" },
-      { "name": "Coral", "hex": "#FF7F50" },
-      { "name": "Peach", "hex": "#FFDAB9" },
       { "name": "Terracotta", "hex": "#E2725B" },
-      { "name": "Cream", "hex": "#FFFDD0" }
+      { "name": "Mustard Yellow", "hex": "#E1AD01" },
+      { "name": "Olive Green", "hex": "#708238" },
+      { "name": "Warm Peach", "hex": "#FFCBA4" },
+      { "name": "Goldenrod", "hex": "#DAA520" },
+      { "name": "Copper", "hex": "#B87333" },
+      { "name": "Coral", "hex": "#FF7F50" },
+      { "name": "Burnt Orange", "hex": "#CC5500" },
+      { "name": "Rust", "hex": "#B7410E" },
+      { "name": "Warm Teal", "hex": "#008080" },
+      { "name": "Tomato Red", "hex": "#E13D2F" },
+      { "name": "Amber", "hex": "#FFBF00" }
     ],
     "avoid_colors": [
-      { "name": "Icy Blue", "hex": "#D6F5FF" },
-      { "name": "Lavender", "hex": "#E6E6FA" },
-      { "name": "Pure White", "hex": "#FFFFFF" },
-      { "name": "Cobalt Blue", "hex": "#0047AB" },
-      { "name": "Cool Gray", "hex": "#8C92AC" },
-      { "name": "Fuchsia", "hex": "#FF00FF" }
+      { "name": "Icy Blue", "hex": "#A5F2F3" },
+      { "name": "Fuchsia", "hex": "#FF00FF" },
+      { "name": "Stark White", "hex": "#FFFFFF" },
+      { "name": "True Black", "hex": "#000000" },
+      { "name": "Neon Pink", "hex": "#FF1493" },
+      { "name": "Electric Blue", "hex": "#0000FF" },
+      { "name": "Royal Blue", "hex": "#4169E1" },
+      { "name": "Cool Lavender", "hex": "#E6E6FA" },
+      { "name": "Icy Mint", "hex": "#B4F8C8" },
+      { "name": "Cool Silver", "hex": "#C0C0C0" },
+      { "name": "Amethyst", "hex": "#9966CC" },
+      { "name": "Periwinkle", "hex": "#CCCCFF" }
     ],
     "neutral_colors_that_flatter": [
       { "name": "Cream", "hex": "#FFFDD0" },
+      { "name": "Ivory", "hex": "#FFFFF0" },
       { "name": "Camel", "hex": "#C19A6B" },
-      { "name": "Warm Beige", "hex": "#D8C3A5" }
+      { "name": "Chocolate Brown", "hex": "#5D3A1A" },
+      { "name": "Warm Beige", "hex": "#E8D6B3" },
+      { "name": "Espresso", "hex": "#362312" },
+      { "name": "Khaki", "hex": "#C3B091" },
+      { "name": "Latte", "hex": "#E5C49F" },
+      { "name": "Mocha", "hex": "#4E312D" },
+      { "name": "Warm Gray", "hex": "#968D85" },
+      { "name": "Oat", "hex": "#DFD1BB" },
+      { "name": "Cinnamon", "hex": "#D2691E" }
     ],
     "hair_colors": [
       {
@@ -570,25 +612,46 @@
   "neutral": {
     "description": "Neutral undertones have a balance of warm and cool tones beneath the skin. They tend to work well with a wide range of colors, including both warm and cool shades, giving you greater flexibility when choosing clothing and accessories.",
     "recommended_colors": [
-      { "name": "Taupe", "hex": "#8B8589" },
-      { "name": "Dusty Rose", "hex": "#D8A7B1" },
+      { "name": "Dusty Rose", "hex": "#DCAEBA" },
+      { "name": "Plum", "hex": "#8E4585" },
+      { "name": "Muted Blue", "hex": "#6687A3" },
       { "name": "Soft Teal", "hex": "#6FA3A3" },
-      { "name": "Beige", "hex": "#F5F5DC" },
-      { "name": "Soft White", "hex": "#F8F8F0" },
-      { "name": "Charcoal Gray", "hex": "#4B4B4B" }
+      { "name": "Pine Green", "hex": "#2A6049" },
+      { "name": "Jade", "hex": "#00A86B" },
+      { "name": "Cranberry", "hex": "#9E003A" },
+      { "name": "Slate Blue", "hex": "#6A5ACD" },
+      { "name": "Raspberry", "hex": "#E30B5C" },
+      { "name": "Navy Blue", "hex": "#000080" },
+      { "name": "Soft Lavender", "hex": "#B59EBD" },
+      { "name": "Rose Red", "hex": "#C75B63" }
     ],
     "avoid_colors": [
       { "name": "Neon Yellow", "hex": "#FFFF33" },
-      { "name": "Neon Orange", "hex": "#FF5F1F" },
-      { "name": "Neon Pink", "hex": "#FF1493" },
-      { "name": "Lime Green", "hex": "#32CD32" },
-      { "name": "Ultra Violet", "hex": "#7F00FF" },
-      { "name": "Highlighter Green", "hex": "#39FF14" }
+      { "name": "Harsh Magenta", "hex": "#FF00FF" },
+      { "name": "Electric Orange", "hex": "#FF5F1F" },
+      { "name": "Icy Blue", "hex": "#A5F2F3" },
+      { "name": "Chartreuse", "hex": "#7FFF00" },
+      { "name": "Stark White", "hex": "#FFFFFF" },
+      { "name": "Neon Green", "hex": "#39FF14" },
+      { "name": "Mustard Yellow", "hex": "#FFDB58" },
+      { "name": "Bright Poppy", "hex": "#FF2400" },
+      { "name": "Highlighter Pink", "hex": "#FF1493" },
+      { "name": "Saturated Lemon", "hex": "#FDFF00" },
+      { "name": "Dayglow Orange", "hex": "#FF7034" }
     ],
     "neutral_colors_that_flatter": [
-      { "name": "Taupe", "hex": "#8B8589" },
       { "name": "Beige", "hex": "#F5F5DC" },
-      { "name": "Soft White", "hex": "#F8F8F0" }
+      { "name": "Charcoal Gray", "hex": "#36454F" },
+      { "name": "Taupe", "hex": "#483C32" },
+      { "name": "Off-White", "hex": "#FAF9F6" },
+      { "name": "Pebble Gray", "hex": "#9B9B9B" },
+      { "name": "Soft Camel", "hex": "#C19A6B" },
+      { "name": "Light Taupe", "hex": "#C8BFAF" },
+      { "name": "Muted Taupe", "hex": "#988C82" },
+      { "name": "Soft Charcoal", "hex": "#4A4F54" },
+      { "name": "Stone", "hex": "#877F7D" },
+      { "name": "Greige", "hex": "#BCAAA4" },
+      { "name": "Medium Gray", "hex": "#808080" }
     ],
     "hair_colors": [
       {
