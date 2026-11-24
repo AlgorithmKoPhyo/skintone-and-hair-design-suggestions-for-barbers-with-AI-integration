@@ -62,11 +62,11 @@ git --version
 ## Installation & Setup
 1. Clone the Repository
 ```
-git clone git@github.com:KhantKhantWinTintt/shape_and_shade_project.git
+git clone https://github.com/AlgorithmKoPhyo/skintone-and-hair-design-suggestions-for-barbers-with-AI-integration.git
 
 ```
 ```
-cd shape_and_shade_project
+cd skintone-and-hair-design-suggestions-for-barbers-with-AI-integration
 ```
 2. Create a Virtual Environment
 
